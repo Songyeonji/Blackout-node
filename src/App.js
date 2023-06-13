@@ -1,67 +1,47 @@
+import { useState } from 'react';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 import './index.css';
-import {useState} from 'react';
 import moment from 'moment';
 
-const App =()=>{
-
-  const [getMoment, setMoment]=useState(moment());
-
-  const today = getMoment;
-  const firstWeek = today.clone().startOf('month').week();
-  const lastWeek = today.clone().endOf('month').week() === 1 ? 53 : today.clone().endOf('month').week();
-
-    const calendarArr=()=>{
-
-      let result = [];
-      let week = firstWeek;
-      for ( week; week <= lastWeek; week++) {
-        result = result.concat(
-          <tr key={week}>
-            {
-              Array(7).fill(0).map((data, index) => {
-                let days = today.clone().startOf('year').week(week).startOf('week').add(index, 'day'); //d로해도되지만 직관성
-
-                if(moment().format('YYYYMMDD') === days.format('YYYYMMDD')){
-                  return(
-                      <td key={index} style={{backgroundColor:'red'}} >
-                        <span>{days.format('D')}</span>
-                      </td>
-                  );
-                }else if(days.format('MM') !== today.format('MM')){
-                  return(
-                      <td key={index} style={{backgroundColor:'gray'}} >
-                        <span>{days.format('D')}</span>
-                      </td>
-                  );
-                }else{
-                  return(
-                      <td key={index}  >
-                        <span>{days.format('D')}</span>
-                      </td>
-                  );
-                }
-              })
-            }
-          </tr>
-        );
-      }
-      return result;
-    }
+function App() {
+  const curDate = new Date(); // 현재 날짜
+  const [value, onChange] = useState(curDate); // 클릭한 날짜 (초기값으로 현재 날짜 넣어줌)
+  const activeDate = moment(value).format('YYYY-MM-DD'); // 클릭한 날짜 (년-월-일))
 
   return (
-    <div className="App">
-
-        <div className="control">
-          <button onClick={()=>{ setMoment(getMoment.clone().subtract(1, 'month')) }} >이전달</button>
-          <span>{today.format('YYYY 년 MM 월')}</span>
-          <button onClick={()=>{ setMoment(getMoment.clone().add(1, 'month')) }} >다음달</button>
-        </div>
-        <table>
-          <tbody>
-            {calendarArr()}
-          </tbody>
-        </table>
+    <div className='app'>
+      <h1 className='text-center'>React Calendar with Range</h1>
+      <div className='calendar-container'>
+        <Calendar
+          onChange={onChange}
+          value={value}
+          selectRange={true}
+          locale="en"
+          next2Label={null}
+          prev2Label={null}
+          formatDay={(locale, date) => moment(date).format('D')}
+         // tileContent={addContent}
+          showNeighboringMonth={false}
+          // onActiveStartDateChange={({ activeStartDate }) =>
+          //   getActiveMonth(activeStartDate)}
+        />
+      </div>
+      {value.length > 0 ? (
+        <p className='text-center'>
+          <span className='bold'>Start:</span>{' '}
+          {value[0].toDateString()}
+          &nbsp;|&nbsp;
+          <span className='bold'>End:</span> {value[1].toDateString()}
+        </p>
+      ) : (
+        <p className='text-center'>
+          <span className='bold'>Default selected date:</span>{' '}
+          {value.toDateString()}
+        </p>
+      )}
     </div>
   );
 }
+
 export default App;
