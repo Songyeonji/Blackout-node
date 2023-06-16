@@ -44,3 +44,25 @@ return (
   </div>
   )
 }
+
+
+
+/*<div className='app'>
+<h1 className='text-center'>React Calendar with Range</h1>
+<div className='calendar-container'>
+  <Calendar
+    onChange={onChange}
+    value={value}
+    locale="en"
+    formatDay={(locale, date) => moment(date).format('D')}
+   // tileContent={addContent}
+    showNeighboringMonth={false}
+    // onActiveStartDateChange={({ activeStartDate }) =>
+    //   getActiveMonth(activeStartDate)}
+  />
+</div>
+  <p className='text-center'>
+    <span className='bold'>Default selected date:</span>{' '}
+    {value.toDateString()}
+  </p>
+</div>*/
