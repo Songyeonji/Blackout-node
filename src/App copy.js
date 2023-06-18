@@ -8,18 +8,11 @@ import moment from 'moment';
 function App() {
   const curDate = new Date(); // 현재 날짜
   const [value, onChange] = useState(curDate); // 클릭한 날짜 (초기값으로 현재 날짜 넣어줌)
-  const activeDate = moment(value).format('YYYY-MM-DD');
+  const activeDate = moment(value).format('YYYY-MM-DD'); // 클릭한 날짜 (년-월-일))
+
   return (
-    <>
-      <AppBar position="fixed">
-        <Toolbar>
-          <div className="flex-1"></div>
-          <span className="font-bold">Black out</span>
-          <div className="flex-1"></div>
-        </Toolbar>
-      </AppBar>
-      <Toolbar />
-      <div className='app'>
+    
+    <div className='app'>
       <h1 className="mr-auto">React Calendar with Range</h1>
       <div className='calendar-container'>
         <Calendar
@@ -37,10 +30,8 @@ function App() {
           <span className='bold'>Default selected date:</span>{' '}
           {value.toDateString()}
         </p>
-      </div>
-    </>
+    </div>
   );
 }
-
 
 export default App;

@@ -18,7 +18,7 @@ return (
     <Calendar
       onChange={onChange}
       value={value}
-      locale="ko-KO" // 한글버전
+      locale="en" 
       formatDay={(locale, date) => moment(date).format('D')} // '일' 표시 x
       tileDisabled={({ date, view }) =>
         moment(date).format('MM-DD') < currDateTime

@@ -71,6 +71,10 @@ abbr[title] {
 }
 .react-calendar__tile{
   height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   
 }
 
