@@ -48,7 +48,7 @@ const addContent = ({ date, view }) => {
 
 return (
   <>
-   <AppBar position="fixed">
+   <AppBar position="fixed" >
         <Toolbar>
           <div className="flex-1"></div>
           <span className="font-bold">Black out</span>
