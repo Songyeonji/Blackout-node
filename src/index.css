@@ -113,11 +113,22 @@ abbr[title] {
   color: white;
 }
 
+
+
 .dot {
-  height: 8px;
-  width: 8px;
-  background-color: #f87171;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  display: flex;
-  margin-left: 1px;
+}
+.dot.wine {
+  background-color: red;
+}
+.dot.soju {
+  background-color: green;
+}
+.dot.beer {
+  background-color: yellow;
+}
+.dot.makgeolli {
+  background-color: brown;
 }
