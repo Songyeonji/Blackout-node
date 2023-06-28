@@ -1,7 +1,11 @@
+import React, { useState } from "react";
 import moment from "moment";
-import { useState, useQuery } from 'react';
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import wineIcon from "./icon/wine-bottle.png";
+import sojuIcon from "./icon/soju.png";
+import beerIcon from "./icon/beer.png";
+import makgeolliIcon from "./icon/rice-wine.png";
 
 const DiaryCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -27,22 +31,44 @@ const DiaryCalendar = () => {
     }));
   };
 
+  const getImageByDrink = (drink) => {
+    switch (drink) {
+      case "wine":
+        return wineIcon;
+      case "soju":
+        return sojuIcon;
+      case "beer":
+        return beerIcon;
+      case "makgeolli":
+        return makgeolliIcon;
+      default:
+        return null;
+    }
+  };
+
   const tileContent = ({ date }) => {
     const entry = diaryEntries[moment(date).format("YYYY-MM-DD")];
     if (entry) {
-      return <div className={`dot ${entry}`}></div>;
+      const imageSrc = getImageByDrink(entry);
+      if (imageSrc) {
+        return <img className="dot" src={imageSrc} alt={entry} />;
+      }
     }
     return null;
+  };
+
+  const getRadioLabel = (value, text) => {
+    const entryValue = diaryEntries[moment(selectedDate).format("YYYY-MM-DD")];
+    if (entryValue === value) {
+      return <span className="selected">{text}</span>;
+    }
+    return text;
   };
 
   return (
     <div>
       <h1>Diary Calendar</h1>
-      <Calendar
-        onChange={handleDateChange}
-        value={selectedDate}
-        tileContent={tileContent}
-      />
+      <Calendar onChange={handleDateChange} value={selectedDate} tileContent={tileContent} />
       {selectedDate && (
         <div>
           <h2>{moment(selectedDate).format("YYYY-MM-DD")}</h2>
@@ -60,7 +86,7 @@ const DiaryCalendar = () => {
                 checked={diaryEntries[moment(selectedDate).format("YYYY-MM-DD")] === "wine"}
                 onChange={handleRadioChange}
               />
-              와인
+              {getRadioLabel("wine", "와인")}
             </label>
             <label>
               <input
@@ -70,7 +96,7 @@ const DiaryCalendar = () => {
                 checked={diaryEntries[moment(selectedDate).format("YYYY-MM-DD")] === "soju"}
                 onChange={handleRadioChange}
               />
-              소주
+              {getRadioLabel("soju", "소주")}
             </label>
             <label>
               <input
@@ -80,7 +106,7 @@ const DiaryCalendar = () => {
                 checked={diaryEntries[moment(selectedDate).format("YYYY-MM-DD")] === "beer"}
                 onChange={handleRadioChange}
               />
-              맥주
+              {getRadioLabel("beer", "맥주")}
             </label>
             <label>
               <input
@@ -90,7 +116,7 @@ const DiaryCalendar = () => {
                 checked={diaryEntries[moment(selectedDate).format("YYYY-MM-DD")] === "makgeolli"}
                 onChange={handleRadioChange}
               />
-              막걸리
+              {getRadioLabel("makgeolli", "막걸리")}
             </label>
           </div>
         </div>

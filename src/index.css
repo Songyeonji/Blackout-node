@@ -116,11 +116,10 @@ abbr[title] {
 
 
 .dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+  width: 30px;
+  height: 30px;
 }
-.dot.wine {
+/* .dot.wine {
   background-color: red;
 }
 .dot.soju {
@@ -131,4 +130,4 @@ abbr[title] {
 }
 .dot.makgeolli {
   background-color: brown;
-}
+} */
