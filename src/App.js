@@ -20,6 +20,7 @@ const theme = createTheme({
 const DiaryCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [diaryEntries, setDiaryEntries] = useState({});
+  const [currentMonth, setCurrentMonth] = useState(moment().month());
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -67,6 +68,18 @@ const DiaryCalendar = () => {
     return (drinkCount / entryCount) * 100;
   };
 
+  const calculateTotalDrinkRatio = () => {
+    const entriesInMonth = Object.entries(diaryEntries).filter(([date]) => {
+      const dateMoment = moment(date);
+      return dateMoment.year() === selectedDate.getFullYear() && dateMoment.month() === selectedDate.getMonth();
+    });
+
+    const drinkCount = entriesInMonth.length;
+    const entryCount = moment().month(currentMonth).daysInMonth();
+
+    return (drinkCount / entryCount) * 100;
+  };
+  
   const tileContent = ({ date }) => {
     const entry = diaryEntries[moment(date).format("YYYY-MM-DD")];
     if (entry) {
@@ -85,6 +98,8 @@ const DiaryCalendar = () => {
     }
     return text;
   };
+  
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -155,6 +170,7 @@ const DiaryCalendar = () => {
             </div>
 
             <div style={{ width: "100%", marginTop: "20px" }}>
+              <h2>이번달 알콜 수치</h2>
               {/* 와인 프로그레스 바 */}
               <div style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}>
                 <div style={{ width: "100px", marginRight: "10px" }}>
@@ -199,9 +215,21 @@ const DiaryCalendar = () => {
                 </div>
                 <span>{`${calculateDrinkRatio("makgeolli").toFixed(0)}% 막걸리`}</span>
               </div>
+                  {/* 총 음주량 프로그레스 바 */}
+                  <div style={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
+                <div style={{ width: "100%", marginRight: "10px" }}>
+                  <LinearProgress
+                    variant="determinate"
+                    value={calculateTotalDrinkRatio()}
+                    style={{ backgroundColor: "#B799FF", height: "15px", borderRadius: "10px" }}
+                  />
+                </div>
+                <span>{`${calculateTotalDrinkRatio().toFixed(0)}% 총 음주량`}</span>
+              </div>
             </div>
 
-          </div>
+            </div>
+
         )}
       </div>
     </ThemeProvider>
