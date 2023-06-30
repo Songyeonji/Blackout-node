@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import moment from "moment";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { AppBar, Toolbar, createTheme, ThemeProvider } from "@mui/material";
+import { AppBar, Toolbar, createTheme, ThemeProvider,LinearProgress } from "@mui/material";
 
 import wineIcon from "./icon/wine-bottle.png";
 import sojuIcon from "./icon/soju.png";
@@ -55,6 +55,12 @@ const DiaryCalendar = () => {
         return null;
     }
   };
+  const calculateDrinkRatio = (drink) => {
+    const drinkCount = Object.values(diaryEntries).filter((entry) => entry === drink).length;
+    const entryCount = moment(selectedDate).daysInMonth();
+    return (drinkCount / entryCount) * 100;
+  };
+
 
   const tileContent = ({ date }) => {
     const entry = diaryEntries[moment(date).format("YYYY-MM-DD")];
@@ -77,7 +83,7 @@ const DiaryCalendar = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
         <AppBar position="fixed">
           <Toolbar>
             <div className="flex-1"></div>
@@ -90,13 +96,15 @@ const DiaryCalendar = () => {
           <Calendar onChange={handleDateChange} locale="en" value={selectedDate} tileContent={tileContent} />
         </div>
         {selectedDate && (
-          <div>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginLeft:"30px"  }}> {/* 텍스트 필드를 가운데로 정렬 */}
             <h2>{moment(selectedDate).format("YYYY-MM-DD")}</h2>
-            <textarea
-              value={diaryEntries[moment(selectedDate).format("YYYY-MM-DD")] || ""}
-              onChange={handleDiaryEntry}
-              rows={5}
-            />
+            <div style={{ display: "flex", justifyContent: "center" }}> {/* 텍스트 필드를 가운데로 정렬 */}
+              <textarea
+                value={diaryEntries[moment(selectedDate).format("YYYY-MM-DD")] || ""}
+                onChange={handleDiaryEntry}
+                rows={5}
+              />
+            </div>
             <div>
               <label>
                 <input
@@ -139,6 +147,54 @@ const DiaryCalendar = () => {
                 {getRadioLabel("makgeolli", "막걸리")}
               </label>
             </div>
+
+            <div style={{ width: "100%", marginTop: "20px" }}>
+              {/* 와인 프로그레스 바 */}
+              <div style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}>
+                <div style={{ width: "100px", marginRight: "10px" }}>
+                  <LinearProgress
+                    variant="determinate"
+                    value={calculateDrinkRatio("wine")}
+                    style={{ backgroundColor: "#D5A9E3", height: "15px", borderRadius: "10px" }}
+                  />
+                </div>
+                <span>{`${calculateDrinkRatio("wine").toFixed(0)}% 와인`}</span>
+              </div>
+              {/* 소주 프로그레스 바 */}
+              <div style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}>
+                <div style={{ width: "100px", marginRight: "10px" }}>
+                  <LinearProgress
+                    variant="determinate"
+                    value={calculateDrinkRatio("soju")}
+                    style={{ backgroundColor: "#98EECC", height: "15px", borderRadius: "10px" }}
+                  />
+                </div>
+                <span>{`${calculateDrinkRatio("soju").toFixed(0)}% 소주`}</span>
+              </div>
+              {/* 맥주 프로그레스 바 */}
+              <div style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}>
+                <div style={{ width: "100px", marginRight: "10px" }}>
+                  <LinearProgress
+                    variant="determinate"
+                    value={calculateDrinkRatio("beer")}
+                    style={{ backgroundColor: "#AED6F1", height: "15px", borderRadius: "10px" }}
+                  />
+                </div>
+                <span>{`${calculateDrinkRatio("beer").toFixed(0)}% 맥주`}</span>
+              </div>
+              {/* 막걸리 프로그레스 바 */}
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <div style={{ width: "100px", marginRight: "10px" }}>
+                  <LinearProgress
+                    variant="determinate"
+                    value={calculateDrinkRatio("makgeolli")}
+                    style={{ backgroundColor: "#F9E79F", height: "15px", borderRadius: "10px" }}
+                  />
+                </div>
+                <span>{`${calculateDrinkRatio("makgeolli").toFixed(0)}% 막걸리`}</span>
+              </div>
+            </div>
+
           </div>
         )}
       </div>
