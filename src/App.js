@@ -56,11 +56,16 @@ const DiaryCalendar = () => {
     }
   };
   const calculateDrinkRatio = (drink) => {
-    const drinkCount = Object.values(diaryEntries).filter((entry) => entry === drink).length;
+    const entriesInMonth = Object.entries(diaryEntries).filter(([date]) => {
+      const dateMoment = moment(date);
+      return dateMoment.year() === selectedDate.getFullYear() && dateMoment.month() === selectedDate.getMonth();
+    });
+
+    const drinkCount = entriesInMonth.filter(([_, entry]) => entry === drink).length;
     const entryCount = moment(selectedDate).daysInMonth();
+
     return (drinkCount / entryCount) * 100;
   };
-
 
   const tileContent = ({ date }) => {
     const entry = diaryEntries[moment(date).format("YYYY-MM-DD")];
@@ -92,6 +97,7 @@ const DiaryCalendar = () => {
           </Toolbar>
         </AppBar>
         <Toolbar />
+        
         <div className="calendar-container">
           <Calendar onChange={handleDateChange} locale="en" value={selectedDate} tileContent={tileContent} />
         </div>
