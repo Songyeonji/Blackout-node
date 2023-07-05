@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import moment from "moment";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { AppBar, Toolbar, createTheme, ThemeProvider,LinearProgress } from "@mui/material";
-import axios from 'axios';
 
 import wineIcon from "./icon/wine-bottle.png";
 import sojuIcon from "./icon/soju.png";
 import beerIcon from "./icon/beer.png";
 import makgeolliIcon from "./icon/rice-wine.png";
-
 
 const theme = createTheme({
   palette: {
@@ -23,26 +21,7 @@ const DiaryCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [diaryEntries, setDiaryEntries] = useState({});
   const [currentMonth, setCurrentMonth] = useState(moment().month());
-  //날씨
-  const [weather, setWeather] = useState(null);
-
-  const [drinkValue, setDrinkValue] = useState(0);
-
-  useEffect(() => {
-    const fetchWeatherData = async () => {
-      try {
-        const response = await axios.get(
-          `https://api.openweathermap.org/data/2.5/weather?q=Daejeon,kr&appid=af984965d76ffbb83dbfda6c8e3faae3&units=metric`
-        );
-        setWeather(response.data);
-      } catch (error) {
-        console.log("Error fetching weather data:", error);
-      }
-    };
-
-    fetchWeatherData();
-  }, []);
-
+  
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -62,8 +41,6 @@ const DiaryCalendar = () => {
       ...prevDiaryEntries,
       [moment(selectedDate).format("YYYY-MM-DD")]: value,
     }));
-    
-    return event.target.value;
   };
 
   const getImageByDrink = (drink) => {
@@ -80,7 +57,6 @@ const DiaryCalendar = () => {
         return null;
     }
   };
-  //프로그래스 바
   const calculateDrinkRatio = (drink) => {
     const entriesInMonth = Object.entries(diaryEntries).filter(([date]) => {
       const dateMoment = moment(date);
@@ -90,31 +66,24 @@ const DiaryCalendar = () => {
     const drinkCount = entriesInMonth.filter(([_, entry]) => entry === drink).length;
     const entryCount = moment(selectedDate).daysInMonth();
 
-    setDrinkValue(drinkCount);
-
-    
-    console.log("entriesInMonth : " + entriesInMonth);
-    console.log("drinkValue : " + drinkValue);
-
     return (drinkCount / entryCount) * 100;
   };
 
   const calculateTotalDrinkRatio = () => {
     const entriesInMonth = Object.entries(diaryEntries).filter(([date]) => {
       const dateMoment = moment(date);
-
       return dateMoment.year() === selectedDate.getFullYear() && dateMoment.month() === selectedDate.getMonth();
     });
 
     const drinkCount = entriesInMonth.length;
     const entryCount = moment(selectedDate).daysInMonth();
 
-    // console.log("entriesInMonth : " + entriesInMonth);
-    // console.log("drinkCount : " + drinkCount);
+    if (entryCount === 0 || drinkCount === 0) {
+      return 0;
+    }
 
     return (drinkCount / entryCount) * 100;
   };
-
 
   const tileContent = ({ date }) => {
     const entry = diaryEntries[moment(date).format("YYYY-MM-DD")];
@@ -152,27 +121,6 @@ const DiaryCalendar = () => {
         <div className="calendar-container">
           <Calendar onChange={handleDateChange} locale="en" value={selectedDate} tileContent={tileContent} />
         </div>
-           {/* 현재 날씨 정보 */}
-          {weather && (
-          <div style={{ marginTop: "20px" }}>
-            <h2>현재 날씨</h2>
-            <div>
-              <strong>도시:</strong> {weather.name}
-            </div>
-          {weather.main && (
-            <div>
-            <strong>기온:</strong> {weather.main.temp}°C
-            </div>
-          )}
-          {weather.weather && (
-            <div>
-            <strong>날씨:</strong> {weather.weather[0].description}
-            </div>
-          )}
-        </div>
-        )}
-        
-        
         {selectedDate && (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginLeft:"30px"  }}> {/* 텍스트 필드를 가운데로 정렬 */}
             <h2>{moment(selectedDate).format("YYYY-MM-DD")}</h2>
@@ -183,7 +131,6 @@ const DiaryCalendar = () => {
                 rows={5}
               />
             </div>
-  
             <div>
               <label>
                 <input
@@ -224,16 +171,6 @@ const DiaryCalendar = () => {
                   onChange={handleRadioChange}
                 />
                 {getRadioLabel("makgeolli", "막걸리")}
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="drink"
-                  value="nonAlcohol"
-                  checked={diaryEntries[moment(selectedDate).format("YYYY-MM-DD")] === "nonAlcohol"}
-                  onChange={handleRadioChange}
-                />
-                {getRadioLabel("makgeolli", "nonAlcohol")}
               </label>
             </div>
 
@@ -284,16 +221,21 @@ const DiaryCalendar = () => {
                 <span>{`${calculateDrinkRatio("makgeolli").toFixed(0)}% 막걸리`}</span>
               </div>
                {/* 총 음주량 프로그레스 바 */}
-              <div style={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
-                <div style={{ width: "100%", marginRight: "10px" }}>
-                  <LinearProgress
-                    variant="determinate"
-                    value={calculateTotalDrinkRatio()}
-                    style={{ backgroundColor: "#B799FF", height: "15px", borderRadius: "10px" }}
-                  />
+              {Object.values(diaryEntries).includes("wine") ||
+              Object.values(diaryEntries).includes("soju") ||
+              Object.values(diaryEntries).includes("beer") ||
+              Object.values(diaryEntries).includes("makgeolli") ? (
+                <div style={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
+                  <div style={{ width: "100%", marginRight: "10px" }}>
+                    <LinearProgress
+                      variant="determinate"
+                      value={calculateTotalDrinkRatio()}
+                      style={{ backgroundColor: "#B799FF", height: "15px", borderRadius: "10px" }}
+                    />
+                  </div>
+                  <span>{`${calculateTotalDrinkRatio().toFixed(0)}% 총 음주량`}</span>
                 </div>
-                <span>{`${calculateTotalDrinkRatio().toFixed(0)}% 총 음주량`}</span>
-              </div>
+              ) : null}
             </div>
 
             </div>
