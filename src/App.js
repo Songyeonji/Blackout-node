@@ -25,9 +25,6 @@ const DiaryCalendar = () => {
   const [currentMonth, setCurrentMonth] = useState(moment().month());
   //날씨
   const [weather, setWeather] = useState(null);
-
-  const [drinkValue, setDrinkValue] = useState(0);
-
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
@@ -45,6 +42,9 @@ const DiaryCalendar = () => {
 
 
   const handleDateChange = (date) => {
+    if (selectedDate && date.getMonth() !== selectedDate.getMonth()) {
+      setDiaryEntries({});
+    }
     setSelectedDate(date);
   };
 
@@ -90,31 +90,22 @@ const DiaryCalendar = () => {
     const drinkCount = entriesInMonth.filter(([_, entry]) => entry === drink).length;
     const entryCount = moment(selectedDate).daysInMonth();
 
-    setDrinkValue(drinkCount);
-
-    
-    console.log("entriesInMonth : " + entriesInMonth);
-    console.log("drinkValue : " + drinkValue);
-
     return (drinkCount / entryCount) * 100;
   };
 
   const calculateTotalDrinkRatio = () => {
     const entriesInMonth = Object.entries(diaryEntries).filter(([date]) => {
       const dateMoment = moment(date);
-
-      return dateMoment.year() === selectedDate.getFullYear() && dateMoment.month() === selectedDate.getMonth();
+      return (
+        dateMoment.year() === selectedDate.getFullYear() &&
+        dateMoment.month() === selectedDate.getMonth()
+      );
     });
-
-    const drinkCount = entriesInMonth.length;
+  
+    const drinkCount = Object.values(diaryEntries).filter(entry => entry !== "nonAlcohol").length;
     const entryCount = moment(selectedDate).daysInMonth();
-
-    // console.log("entriesInMonth : " + entriesInMonth);
-    // console.log("drinkCount : " + drinkCount);
-
     return (drinkCount / entryCount) * 100;
   };
-
 
   const tileContent = ({ date }) => {
     const entry = diaryEntries[moment(date).format("YYYY-MM-DD")];
@@ -137,7 +128,7 @@ const DiaryCalendar = () => {
   
 
 
-  return (
+return (
     <ThemeProvider theme={theme}>
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
         <AppBar position="fixed">
@@ -152,9 +143,10 @@ const DiaryCalendar = () => {
         <div className="calendar-container">
           <Calendar onChange={handleDateChange} locale="en" value={selectedDate} tileContent={tileContent} />
         </div>
+        
            {/* 현재 날씨 정보 */}
-          {weather && (
-          <div style={{ marginTop: "20px" }}>
+           {weather && (
+          <div style={{ marginTop: "30px", marginLeft: "30px" }}>
             <h2>현재 날씨</h2>
             <div>
               <strong>도시:</strong> {weather.name}
@@ -172,9 +164,10 @@ const DiaryCalendar = () => {
         </div>
         )}
         
-        
         {selectedDate && (
+          
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginLeft:"30px"  }}> {/* 텍스트 필드를 가운데로 정렬 */}
+          
             <h2>{moment(selectedDate).format("YYYY-MM-DD")}</h2>
             <div style={{ display: "flex", justifyContent: "center" }}> {/* 텍스트 필드를 가운데로 정렬 */}
               <textarea
@@ -183,6 +176,7 @@ const DiaryCalendar = () => {
                 rows={5}
               />
             </div>
+            
   
             <div>
               <label>
