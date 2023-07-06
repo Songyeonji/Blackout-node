@@ -21,7 +21,10 @@ const theme = createTheme({
 
 const DiaryCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(null);
-  const [diaryEntries, setDiaryEntries] = useState({});
+  const [diaryEntries, setDiaryEntries] = useState(() => {
+    const storedDiaryEntries = localStorage.getItem("diaryEntries");
+    return storedDiaryEntries ? JSON.parse(storedDiaryEntries) : {};
+  });
   const [currentMonth, setCurrentMonth] = useState(moment().month());
   //날씨
   const [weather, setWeather] = useState(null);
@@ -34,11 +37,19 @@ const DiaryCalendar = () => {
         setWeather(response.data);
       } catch (error) {
         console.log("Error fetching weather data:", error);
+        
       }
     };
 
+    
     fetchWeatherData();
   }, []);
+  
+  useEffect(() => {
+    // Save diary entries to localStorage whenever it changes
+    localStorage.setItem("diaryEntries", JSON.stringify(diaryEntries));
+  }, [diaryEntries]);
+
 
 
   const handleDateChange = (date) => {
