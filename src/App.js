@@ -63,6 +63,13 @@ const [currentMonthEntries, setCurrentMonthEntries] = useState({});
       [moment(selectedDate).format("YYYY-MM-DD")]: value,
     }));
   };
+  const handleAdditionalDiaryEntry = (event) => {
+    const { value } = event.target;
+    setDiaryEntries((prevDiaryEntries) => ({
+      ...prevDiaryEntries,
+      [moment(selectedDate).format("YYYY-MM-DD") + "-additional"]: value,
+    }));
+  };
 
   const handleRadioChange = (event) => {
     const { value } = event.target;
@@ -152,7 +159,7 @@ return (
         </div>
         
            {/* 현재 날씨 정보 */}
-           {weather && (
+          {weather && (
           <div style={{ marginTop: "30px", marginLeft: "30px" }}>
             <h2>현재 날씨</h2>
             <div>
@@ -176,6 +183,14 @@ return (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginLeft:"30px"  }}> {/* 텍스트 필드를 가운데로 정렬 */}
           
             <h2>{moment(selectedDate).format("YYYY-MM-DD")}</h2>
+            <div style={{ marginTop: "10px", display: "flex", justifyContent: "center" }}>
+            <textarea
+            value={diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-additional"] || ""}
+            rows={5}
+            onChange={handleAdditionalDiaryEntry}
+            placeholder="Additional notes..."
+            />
+            </div>
             <div style={{ display: "flex", justifyContent: "center" }}> {/* 텍스트 필드를 가운데로 정렬 */}
               <textarea
                 value={diaryEntries[moment(selectedDate).format("YYYY-MM-DD")] || ""}
@@ -190,7 +205,6 @@ return (
                 <input
                   type="radio"
                   name="drink"
-                  value="wine"
                   checked={diaryEntries[moment(selectedDate).format("YYYY-MM-DD")] === "wine"}
                   onChange={handleRadioChange}
                 />
