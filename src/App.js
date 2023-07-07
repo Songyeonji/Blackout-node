@@ -22,10 +22,11 @@ const theme = createTheme({
 const DiaryCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [diaryEntries, setDiaryEntries] = useState(() => {
-    const storedDiaryEntries = localStorage.getItem("diaryEntries");
-    return storedDiaryEntries ? JSON.parse(storedDiaryEntries) : {};
-  });
-  const [currentMonth, setCurrentMonth] = useState(moment().month());
+  const storedDiaryEntries = localStorage.getItem("diaryEntries");
+  return storedDiaryEntries ? JSON.parse(storedDiaryEntries) : {};
+});
+const [currentMonth, setCurrentMonth] = useState(moment().month());
+const [currentMonthEntries, setCurrentMonthEntries] = useState({});
   //날씨
   const [weather, setWeather] = useState(null);
   useEffect(() => {
@@ -37,24 +38,20 @@ const DiaryCalendar = () => {
         setWeather(response.data);
       } catch (error) {
         console.log("Error fetching weather data:", error);
-        
       }
     };
 
-    
     fetchWeatherData();
   }, []);
-  
+
   useEffect(() => {
     // Save diary entries to localStorage whenever it changes
     localStorage.setItem("diaryEntries", JSON.stringify(diaryEntries));
   }, [diaryEntries]);
 
-
-
   const handleDateChange = (date) => {
     if (selectedDate && date.getMonth() !== selectedDate.getMonth()) {
-      setDiaryEntries({});
+      setCurrentMonthEntries(diaryEntries[moment(date).format("YYYY-MM")] || {});
     }
     setSelectedDate(date);
   };
@@ -103,7 +100,6 @@ const DiaryCalendar = () => {
 
     return (drinkCount / entryCount) * 100;
   };
-
   const calculateTotalDrinkRatio = () => {
     const entriesInMonth = Object.entries(diaryEntries).filter(([date]) => {
       const dateMoment = moment(date);
@@ -113,7 +109,7 @@ const DiaryCalendar = () => {
       );
     });
   
-    const drinkCount = Object.values(diaryEntries).filter(entry => entry !== "nonAlcohol").length;
+    const drinkCount = entriesInMonth.filter(([_, entry]) => entry !== "nonAlcohol").length;
     const entryCount = moment(selectedDate).daysInMonth();
     return (drinkCount / entryCount) * 100;
   };
