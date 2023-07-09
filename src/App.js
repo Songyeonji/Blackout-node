@@ -5,6 +5,10 @@ import "react-calendar/dist/Calendar.css";
 import { AppBar, Toolbar, createTheme, ThemeProvider,LinearProgress } from "@mui/material";
 import axios from 'axios';
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
+import { faStar as emptyStar } from "@fortawesome/free-regular-svg-icons";
+
 import wineIcon from "./icon/wine-bottle.png";
 import sojuIcon from "./icon/soju.png";
 import beerIcon from "./icon/beer.png";
@@ -139,6 +143,17 @@ const [currentMonthEntries, setCurrentMonthEntries] = useState({});
     }
     return text;
   };
+  const handleRatingChange = (event) => {
+    const { value } = event.target;
+    setDiaryEntries((prevDiaryEntries) => ({
+      ...prevDiaryEntries,
+      [moment(selectedDate).format("YYYY-MM-DD") + "-rating"]: value,
+    }));
+  };
+  const getStarRating = (rating) => {
+    const selectedRating = diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-rating"];
+    return rating <= selectedRating ? solidStar : emptyStar;
+  };
   
 
 
@@ -195,7 +210,7 @@ return (
               <textarea
                 value={diaryEntries[moment(selectedDate).format("YYYY-MM-DD")] || ""}
                 onChange={handleDiaryEntry}
-                rows={5}
+                rows={1}
               />
             </div>
             
@@ -205,6 +220,7 @@ return (
                 <input
                   type="radio"
                   name="drink"
+                  value="wine"
                   checked={diaryEntries[moment(selectedDate).format("YYYY-MM-DD")] === "wine"}
                   onChange={handleRadioChange}
                 />
@@ -251,7 +267,21 @@ return (
                 {getRadioLabel("makgeolli", "nonAlcohol")}
               </label>
             </div>
-
+            
+            <div style={{ marginTop: "20px" }}>
+              <h2>별점</h2>
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                {[1, 2, 3, 4, 5].map((rating) => (
+                  <FontAwesomeIcon
+                    key={rating}
+                    icon={getStarRating(rating)}
+                    style={{ cursor: "pointer", margin: "0 3px" }}
+                    onClick={() => handleRatingChange({ target: { value: rating } })}
+                  />
+                ))}
+              </div>
+            </div>
+            
             <div style={{ width: "100%", marginTop: "20px" }}>
               <h2>이번달 알콜 수치</h2>
               {/* 와인 프로그레스 바 */}
