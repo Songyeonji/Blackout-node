@@ -6,6 +6,7 @@ import { AppBar, Toolbar, createTheme, ThemeProvider,LinearProgress } from "@mui
 import axios from 'axios';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faWineGlassEmpty, faWineGlass } from "@fortawesome/free-solid-svg-icons";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as emptyStar } from "@fortawesome/free-regular-svg-icons";
 
@@ -125,6 +126,7 @@ const [currentMonthEntries, setCurrentMonthEntries] = useState({});
     return (drinkCount / entryCount) * 100;
   };
 
+//술 아이콘 찍히게  
   const tileContent = ({ date }) => {
     const entry = diaryEntries[moment(date).format("YYYY-MM-DD")];
     if (entry) {
@@ -143,17 +145,57 @@ const [currentMonthEntries, setCurrentMonthEntries] = useState({});
     }
     return text;
   };
-  const handleRatingChange = (event) => {
-    const { value } = event.target;
+  const handleStarClick = (rating) => {
     setDiaryEntries((prevDiaryEntries) => ({
       ...prevDiaryEntries,
-      [moment(selectedDate).format("YYYY-MM-DD") + "-rating"]: value,
+      [moment(selectedDate).format("YYYY-MM-DD") + "-rating"]: rating,
     }));
   };
-  const getStarRating = (rating) => {
-    const selectedRating = diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-rating"];
-    return rating <= selectedRating ? solidStar : emptyStar;
+
+  const renderStars = () => {
+    const selectedRating = diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-rating"] || 0;
+    const starArray = [];
+
+    for (let i = 1; i <= 5; i++) {
+      const filled = i <= selectedRating;
+
+      starArray.push(
+        <FontAwesomeIcon
+          key={i}
+          icon={filled ? solidStar : emptyStar}
+          className={`star ${filled ? "filled" : ""}`}
+          onClick={() => handleStarClick(i)}
+        />
+      );
+    }
+
+    return starArray;
   };
+
+  const renderWineGlasses = () => {
+    const selectedDrink = diaryEntries[moment(selectedDate).format("YYYY-MM-DD")];
+    const wineGlasses = [];
+
+    if (selectedDrink === "wine") {
+      const glassCount = 2; // Total number of wine glasses to display
+
+      for (let i = 1; i <= glassCount; i++) {
+        const filled = i <= diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-rating"] ? "filled" : "";
+
+        wineGlasses.push(
+          <FontAwesomeIcon
+            key={i}
+            icon={faWineGlass}
+            className={`wine-glass ${filled}`}
+          />
+        );
+      }
+    }
+
+    return wineGlasses;
+  };
+
+
   
 
 
@@ -266,22 +308,14 @@ return (
                 />
                 {getRadioLabel("makgeolli", "nonAlcohol")}
               </label>
-            </div>
-            
-            <div style={{ marginTop: "20px" }}>
-              <h2>별점</h2>
-              <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                {[1, 2, 3, 4, 5].map((rating) => (
-                  <FontAwesomeIcon
-                    key={rating}
-                    icon={getStarRating(rating)}
-                    style={{ cursor: "pointer", margin: "0 3px" }}
-                    onClick={() => handleRatingChange({ target: { value: rating } })}
-                  />
-                ))}
+              <div className="star-group">{renderStars()}</div>
+                {diaryEntries[moment(selectedDate).format("YYYY-MM-DD")] === "wine" && (
+                  <div className="wine-glass-group">{renderWineGlasses()}</div>
+                )}
               </div>
-            </div>
-            
+
+
+
             <div style={{ width: "100%", marginTop: "20px" }}>
               <h2>이번달 알콜 수치</h2>
               {/* 와인 프로그레스 바 */}
