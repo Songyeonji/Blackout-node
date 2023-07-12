@@ -6,7 +6,6 @@ import { AppBar, Toolbar, createTheme, ThemeProvider,LinearProgress } from "@mui
 import axios from 'axios';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faWineGlassEmpty, faWineGlass } from "@fortawesome/free-solid-svg-icons";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as emptyStar } from "@fortawesome/free-regular-svg-icons";
 
@@ -152,47 +151,29 @@ const [currentMonthEntries, setCurrentMonthEntries] = useState({});
     }));
   };
 
-  const renderStars = () => {
-    const selectedRating = diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-rating"] || 0;
-    const starArray = [];
-
-    for (let i = 1; i <= 5; i++) {
-      const filled = i <= selectedRating;
-
-      starArray.push(
-        <FontAwesomeIcon
-          key={i}
-          icon={filled ? solidStar : emptyStar}
-          className={`star ${filled ? "filled" : ""}`}
-          onClick={() => handleStarClick(i)}
-        />
-      );
-    }
-
-    return starArray;
-  };
-
-  const renderWineGlasses = () => {
+  const renderDrinkIcon = () => {
     const selectedDrink = diaryEntries[moment(selectedDate).format("YYYY-MM-DD")];
-    const wineGlasses = [];
-
-    if (selectedDrink === "wine") {
-      const glassCount = 2; // Total number of wine glasses to display
-
-      for (let i = 1; i <= glassCount; i++) {
-        const filled = i <= diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-rating"] ? "filled" : "";
-
-        wineGlasses.push(
-          <FontAwesomeIcon
-            key={i}
-            icon={faWineGlass}
-            className={`wine-glass ${filled}`}
-          />
-        );
-      }
+    let drinkIcon = null;
+  
+    switch (selectedDrink) {
+      case "wine":
+        drinkIcon = <img src={wineIcon} alt="Wine" className="drink-icon" style={{ width: "30px", height: "30px" }} />;
+        break;
+      case "soju":
+        drinkIcon = <img src={sojuIcon} alt="Soju" className="drink-icon" style={{ width: "30px", height: "30px" }} />;
+        break;
+      case "beer":
+        drinkIcon = <img src={beerIcon} alt="Beer" className="drink-icon" style={{ width: "30px", height: "30px" }} />;
+        break;
+      case "makgeolli":
+        drinkIcon = <img src={makgeolliIcon} alt="Makgeolli" className="drink-icon" style={{ width: "30px", height: "30px" }} />;
+        break;
+      default:
+        drinkIcon = null;
+        break;
     }
-
-    return wineGlasses;
+  
+    return drinkIcon;
   };
 
 
@@ -308,11 +289,40 @@ return (
                 />
                 {getRadioLabel("makgeolli", "nonAlcohol")}
               </label>
-              <div className="star-group">{renderStars()}</div>
-                {diaryEntries[moment(selectedDate).format("YYYY-MM-DD")] === "wine" && (
-                  <div className="wine-glass-group">{renderWineGlasses()}</div>
-                )}
               </div>
+              <div style={{ marginLeft: "10px" }}>{renderDrinkIcon()}</div>
+              <div>
+                <label>
+                  병수:
+                  <input
+                    type="number"
+                    min={0}
+                    value={diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-quantity"] || ""}
+                    onChange={(event) => {
+                      const { value } = event.target;
+                      setDiaryEntries((prevDiaryEntries) => ({
+                        ...prevDiaryEntries,
+                        [moment(selectedDate).format("YYYY-MM-DD") + "-quantity"]: value,
+                      }));
+                    }}
+                    style={{ marginLeft: "5px", width: "50px" }}
+                  />
+                </label>
+              </div>
+
+            <div>
+              <div className="star-group">
+                <span className="star-label">별점:</span>
+                {Array.from({ length: 5 }, (_, index) => (
+                  <FontAwesomeIcon
+                    key={index}
+                    icon={index + 1 <= diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-rating"] ? solidStar : emptyStar}
+                    className={`star ${index + 1 <= diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-rating"] ? "filled" : ""}`}
+                    onClick={() => handleStarClick(index + 1)}
+                  />
+                ))}
+              </div>
+            </div>
 
 
 
