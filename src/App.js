@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { AppBar, Toolbar, createTheme, ThemeProvider,LinearProgress } from "@mui/material";
+import { AppBar, Toolbar, createTheme, ThemeProvider, LinearProgress } from "@mui/material";
 import axios from 'axios';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -26,11 +26,11 @@ const theme = createTheme({
 const DiaryCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [diaryEntries, setDiaryEntries] = useState(() => {
-  const storedDiaryEntries = localStorage.getItem("diaryEntries");
-  return storedDiaryEntries ? JSON.parse(storedDiaryEntries) : {};
-});
-const [currentMonth, setCurrentMonth] = useState(moment().month());
-const [currentMonthEntries, setCurrentMonthEntries] = useState({});
+    const storedDiaryEntries = localStorage.getItem("diaryEntries");
+    return storedDiaryEntries ? JSON.parse(storedDiaryEntries) : {};
+  });
+  const [currentMonth, setCurrentMonth] = useState(moment().month());
+  const [currentMonthEntries, setCurrentMonthEntries] = useState({});
   //날씨
   const [weather, setWeather] = useState(null);
   useEffect(() => {
@@ -81,7 +81,7 @@ const [currentMonthEntries, setCurrentMonthEntries] = useState({});
       ...prevDiaryEntries,
       [moment(selectedDate).format("YYYY-MM-DD")]: value,
     }));
-    
+
     return event.target.value;
   };
 
@@ -119,13 +119,13 @@ const [currentMonthEntries, setCurrentMonthEntries] = useState({});
         dateMoment.month() === selectedDate.getMonth()
       );
     });
-  
+
     const drinkCount = entriesInMonth.filter(([_, entry]) => entry !== "nonAlcohol").length;
     const entryCount = moment(selectedDate).daysInMonth();
     return (drinkCount / entryCount) * 100;
   };
 
-//술 아이콘 찍히게  
+  //술 아이콘 찍히게
   const tileContent = ({ date }) => {
     const entry = diaryEntries[moment(date).format("YYYY-MM-DD")];
     if (entry) {
@@ -154,7 +154,7 @@ const [currentMonthEntries, setCurrentMonthEntries] = useState({});
   const renderDrinkIcon = () => {
     const selectedDrink = diaryEntries[moment(selectedDate).format("YYYY-MM-DD")];
     let drinkIcon = null;
-  
+
     switch (selectedDrink) {
       case "wine":
         drinkIcon = <img src={wineIcon} alt="Wine" className="drink-icon" style={{ width: "30px", height: "30px" }} />;
@@ -172,15 +172,11 @@ const [currentMonthEntries, setCurrentMonthEntries] = useState({});
         drinkIcon = null;
         break;
     }
-  
+
     return drinkIcon;
   };
 
-
-  
-
-
-return (
+  return (
     <ThemeProvider theme={theme}>
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
         <AppBar position="fixed">
@@ -191,54 +187,44 @@ return (
           </Toolbar>
         </AppBar>
         <Toolbar />
-        
-        <div className="calendar-container">
+
+        <div className="calendar-container" style={{ marginTop: "10px" }}>
           <Calendar onChange={handleDateChange} locale="en" value={selectedDate} tileContent={tileContent} />
-        </div>
-        
-           {/* 현재 날씨 정보 */}
+
+          {/* 현재 날씨 정보 */}
           {weather && (
-          <div style={{ marginTop: "30px", marginLeft: "30px" }}>
-            <h2>현재 날씨</h2>
-            <div>
-              <strong>도시:</strong> {weather.name}
-            </div>
-          {weather.main && (
-            <div>
-            <strong>기온:</strong> {weather.main.temp}°C
-            </div>
-          )}
-          {weather.weather && (
-            <div>
-            <strong>날씨:</strong> {weather.weather[0].description}
+            <div style={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
+              <div>
+                <strong>도시:</strong> {weather.name}
+              </div>
+              {weather.main && (
+                <div>
+                  <strong>기온:</strong> {weather.main.temp}°C
+                </div>
+              )}
+              {weather.weather && (
+                <div>
+                  <strong>날씨:</strong> {weather.weather[0].description}
+                </div>
+              )}
             </div>
           )}
         </div>
-        )}
-        
+
         {selectedDate && (
-          
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginLeft:"30px"  }}> {/* 텍스트 필드를 가운데로 정렬 */}
-          
-            <h2>{moment(selectedDate).format("YYYY-MM-DD")}</h2>
-            <div style={{ marginTop: "10px", display: "flex", justifyContent: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", margin: "20px" }}>
+            {/* 날짜 */}
+            <h2 style={{ margin: "10px" }}>{moment(selectedDate).format("YYYY-MM-DD")}</h2>
+
             <textarea
-            value={diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-additional"] || ""}
-            rows={5}
-            onChange={handleAdditionalDiaryEntry}
-            placeholder="Additional notes..."
+              value={diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-additional"] || ""}
+              rows={5}
+              onChange={handleAdditionalDiaryEntry}
+              placeholder="Additional notes..."
+              style={{ marginBottom: "10px" }}
             />
-            </div>
-            <div style={{ display: "flex", justifyContent: "center" }}> {/* 텍스트 필드를 가운데로 정렬 */}
-              <textarea
-                value={diaryEntries[moment(selectedDate).format("YYYY-MM-DD")] || ""}
-                onChange={handleDiaryEntry}
-                rows={1}
-              />
-            </div>
-            
-  
-            <div>
+
+            <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
               <label>
                 <input
                   type="radio"
@@ -287,11 +273,13 @@ return (
                   checked={diaryEntries[moment(selectedDate).format("YYYY-MM-DD")] === "nonAlcohol"}
                   onChange={handleRadioChange}
                 />
-                {getRadioLabel("makgeolli", "nonAlcohol")}
+                {getRadioLabel("", "nonAlcohol")}
               </label>
-              </div>
-              <div style={{ marginLeft: "10px" }}>{renderDrinkIcon()}</div>
-              <div>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", margin: "10px" }}>
+              {renderDrinkIcon()}
+              <div style={{ marginLeft: "5px" }}>
                 <label>
                   병수:
                   <input
@@ -309,6 +297,7 @@ return (
                   />
                 </label>
               </div>
+            </div>
 
             <div>
               <div className="star-group">
@@ -324,12 +313,10 @@ return (
               </div>
             </div>
 
-
-
             <div style={{ width: "100%", marginTop: "20px" }}>
               <h2>이번달 알콜 수치</h2>
               {/* 와인 프로그레스 바 */}
-              <div style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}>
+              <div style={{ display: "flex", alignItems: "center", margin: "5px" }}>
                 <div style={{ width: "100px", marginRight: "10px" }}>
                   <LinearProgress
                     variant="determinate"
@@ -340,7 +327,7 @@ return (
                 <span>{`${calculateDrinkRatio("wine").toFixed(0)}% 와인`}</span>
               </div>
               {/* 소주 프로그레스 바 */}
-              <div style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}>
+              <div style={{ display: "flex", alignItems: "center", margin: "5px" }}>
                 <div style={{ width: "100px", marginRight: "10px" }}>
                   <LinearProgress
                     variant="determinate"
@@ -351,7 +338,7 @@ return (
                 <span>{`${calculateDrinkRatio("soju").toFixed(0)}% 소주`}</span>
               </div>
               {/* 맥주 프로그레스 바 */}
-              <div style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}>
+              <div style={{ display: "flex", alignItems: "center", margin: "5px" }}>
                 <div style={{ width: "100px", marginRight: "10px" }}>
                   <LinearProgress
                     variant="determinate"
@@ -362,7 +349,7 @@ return (
                 <span>{`${calculateDrinkRatio("beer").toFixed(0)}% 맥주`}</span>
               </div>
               {/* 막걸리 프로그레스 바 */}
-              <div style={{ display: "flex", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", margin: "5px" }}>
                 <div style={{ width: "100px", marginRight: "10px" }}>
                   <LinearProgress
                     variant="determinate"
@@ -372,7 +359,7 @@ return (
                 </div>
                 <span>{`${calculateDrinkRatio("makgeolli").toFixed(0)}% 막걸리`}</span>
               </div>
-               {/* 총 음주량 프로그레스 바 */}
+              {/* 총 음주량 프로그레스 바 */}
               <div style={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
                 <div style={{ width: "100%", marginRight: "10px" }}>
                   <LinearProgress
@@ -384,9 +371,7 @@ return (
                 <span>{`${calculateTotalDrinkRatio().toFixed(0)}% 총 음주량`}</span>
               </div>
             </div>
-
-            </div>
-
+          </div>
         )}
       </div>
     </ThemeProvider>
