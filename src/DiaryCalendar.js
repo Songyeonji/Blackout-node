@@ -242,6 +242,7 @@ const DiaryCalendar = () => {
             handleStarClick={handleStarClick}
             calculateDrinkRatio={calculateDrinkRatio}
             calculateTotalDrinkRatio={calculateTotalDrinkRatio}
+            setDiaryEntries={setDiaryEntries}
           />
         )}
       </div>
