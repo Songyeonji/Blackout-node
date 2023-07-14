@@ -60,6 +60,8 @@ const DrinkRecommendation = () => {
     }
   };
 
+  
+
   const getDrinkRecommendationByWeather = () => {
     if (!weather || !weather.weather) return "Unknown";
 
@@ -76,21 +78,31 @@ const DrinkRecommendation = () => {
     }
   };
 
+  const foodRecommendations = {
+    makgeolli: ["파전", "수제비", "김치전"],
+    soju: ["김치우동", "알탕", "회", "삼겹살"],
+    wine: ["치즈", "과일"],
+    beer: ["튀김", "나초", "건어물"],
+  };
+  
+  const getFoodRecommendation = (drinkRecommendation) => {
+    const foodList = foodRecommendations[drinkRecommendation.toLowerCase()] || [];
+    const randomIndex = Math.floor(Math.random() * foodList.length);
+    return foodList[randomIndex] || "No recommendation available.";
+  };
+
   const temperature = weather?.main?.temp;
   const weatherDescription = weather?.weather?.[0]?.description;
   const weatherIcon = getWeatherIcon(weatherDescription);
-  const recommendation = getDrinkRecommendation(weatherDescription);
+  const drinkRecommendation = getDrinkRecommendation(weatherDescription);
+  const foodRecommendation = getFoodRecommendation(drinkRecommendation);
+
 
   return (
     <ThemeProvider theme={theme}>
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
         <AppBar position="fixed">
           <Toolbar>
-            <div className="flex-1"></div>
-            <Typography variant="h6">
-              {recommendationType === "drink" ? "Drink Recommendations" : "Food Recommendations"}
-            </Typography>
-            <div className="flex-1"></div>
             <div className="flex-1"></div>
             <Link to="/" style={{ color: "white", textDecoration: "none" }}>
               <span className="font-bold">달력</span>
@@ -105,9 +117,10 @@ const DrinkRecommendation = () => {
             <Card>
               <CardContent>
                 <Typography variant="h5" component="div" align="center">
-                  Weather: {weatherDescription}
+                  Drink Recommendation
                 </Typography>
-                <Typography variant="h5" component="div" align="center">
+                <Typography variant="h7" component="div" align="center">
+                  Weather: {weatherDescription}
                   Temperature: {temperature}°C
                 </Typography>
                 <Typography variant="body1" align="center">
@@ -131,10 +144,10 @@ const DrinkRecommendation = () => {
             <Card>
               <CardContent>
                 <Typography variant="h5" component="div" align="center">
-                  Drink Recommendation
+                  Food Recommendation
                 </Typography>
                 <Typography variant="body1" align="center">
-                  {recommendation}
+                  {foodRecommendation}
                 </Typography>
               </CardContent>
             </Card>
