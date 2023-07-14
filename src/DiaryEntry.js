@@ -1,9 +1,12 @@
 import React from "react";
 import moment from "moment";
-import { LinearProgress } from "@mui/material";
+import { LinearProgress, Rating } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as emptyStar } from "@fortawesome/free-regular-svg-icons";
+
+import StarIcon from "@mui/icons-material/Star";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
 
 import wineIcon from "./icon/wine-bottle.png";
 import sojuIcon from "./icon/soju.png";
@@ -130,19 +133,18 @@ const DiaryEntry = ({
       </div>
 
       <div>
-        <div className="star-group">
-          <span className="star-label">별점:</span>
-          {Array.from({ length: 5 }, (_, index) => (
-            <FontAwesomeIcon
-              key={index}
-              icon={index + 1 <= diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-rating"] ? solidStar : emptyStar}
-              className={`star ${index + 1 <= diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-rating"] ? "filled" : ""}`}
-              onClick={() => handleStarClick(index + 1)}
-            />
-          ))}
+        <div className="star-group" style={{ display: "flex", alignItems: "center", marginTop: "10px" }}>
+          <span className="star-label" style={{ marginRight: "10px" }}>별점:</span>
+          <Rating
+            name="highlight-selected-only"
+            value={diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-rating"] || 0}
+            onChange={(event, rating) => handleStarClick(rating)}
+            emptyIcon={<FontAwesomeIcon icon={emptyStar} />}
+            icon={<FontAwesomeIcon icon={solidStar} />}
+            hover
+          />
         </div>
       </div>
-
       <div style={{ width: "100%", marginTop: "20px" }}>
         <h2>이번달 알콜 수치</h2>
         <AlcoholProgress

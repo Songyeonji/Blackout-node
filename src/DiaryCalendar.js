@@ -5,7 +5,9 @@ import "react-calendar/dist/Calendar.css";
 import { AppBar, Toolbar, createTheme, ThemeProvider, LinearProgress } from "@mui/material";
 import { Link } from "react-router-dom";
 import axios from "axios";
-
+import { StyledRating } from "@mui/lab";
+import StarIcon from "@mui/icons-material/Star";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as emptyStar } from "@fortawesome/free-regular-svg-icons";
@@ -14,6 +16,7 @@ import wineIcon from "./icon/wine-bottle.png";
 import sojuIcon from "./icon/soju.png";
 import beerIcon from "./icon/beer.png";
 import makgeolliIcon from "./icon/rice-wine.png";
+
 import WeatherInfo from "./WeatherInfo";
 import DiaryEntry from "./DiaryEntry";
 import AlcoholProgress from "./AlcoholProgress";
