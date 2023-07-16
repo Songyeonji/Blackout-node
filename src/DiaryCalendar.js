@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { AppBar, Toolbar, createTheme, ThemeProvider, LinearProgress } from "@mui/material";
+import { AppBar, Toolbar, createTheme, ThemeProvider, LinearProgress, Snackbar , Alert   } from "@mui/material";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { StyledRating } from "@mui/lab";
+
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -37,6 +37,8 @@ const DiaryCalendar = () => {
   });
   const [currentMonth, setCurrentMonth] = useState(moment().month());
   const [currentMonthEntries, setCurrentMonthEntries] = useState({});
+  const [showSnackbar, setShowSnackbar] = useState(false);
+
   // 날씨
   const [weather, setWeather] = useState(null);
 
@@ -133,9 +135,19 @@ const DiaryCalendar = () => {
 
     const drinkCount = entriesInMonth.filter(([_, entry]) => entry !== "nonAlcohol").length;
     const entryCount = moment(selectedDate).daysInMonth();
-    return (drinkCount / entryCount) * 100;
-  };
+    const ratio = (drinkCount / entryCount) * 100;
 
+    if (ratio > 20) {
+      setShowSnackbar(true);
+      setTimeout(() => {
+        setShowSnackbar(false);
+      }, 3000);
+    } else {
+      setShowSnackbar(false);
+    }
+  
+    return ratio;
+  };
   const handleStarClick = (rating) => {
     setDiaryEntries((prevDiaryEntries) => ({
       ...prevDiaryEntries,
@@ -233,7 +245,24 @@ const DiaryCalendar = () => {
 
           {weather && <WeatherInfo weather={weather} />}
         </div>
-
+        <Snackbar
+  open={showSnackbar}
+  message="당신은 정말 술을 사랑하는군요!"
+  anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+>
+  <Alert
+    onClose={() => setShowSnackbar(false)}
+    severity="info"
+    sx={{
+      backgroundColor: "#6f48eb",
+      color: "#ffffff",
+      fontWeight: "bold",
+      borderRadius: "8px",
+    }}
+  >
+    당신은 정말 술을 사랑하는군요!
+  </Alert>
+</Snackbar>
         {selectedDate && (
           <DiaryEntry
             selectedDate={selectedDate}
