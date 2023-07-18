@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { AppBar, Toolbar, Card, CardContent, Typography, Grid, createTheme, ThemeProvider } from "@mui/material";
+import { AppBar, Toolbar, Card, CardContent, Typography, Grid, createTheme, ThemeProvider, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloud, faSun, faCloudSun, faCloudRain } from "@fortawesome/free-solid-svg-icons";
+import wineIcon from "./icon/wine-bottle.png";
+import sojuIcon from "./icon/soju.png";
+import beerIcon from "./icon/beer.png";
+import makgeolliIcon from "./icon/rice-wine.png";
 
 const theme = createTheme({
   palette: {
@@ -16,6 +20,8 @@ const theme = createTheme({
 const DrinkRecommendation = () => {
   const [weather, setWeather] = useState(null);
   const [recommendationType, setRecommendationType] = useState("drink");
+  const [selectedDrink, setSelectedDrink] = useState(null);
+  const [foodRecommendation, setFoodRecommendation] = useState(null);
 
   useEffect(() => {
     const fetchWeatherData = async () => {
@@ -32,6 +38,18 @@ const DrinkRecommendation = () => {
     fetchWeatherData();
   }, []);
 
+  const drinkOptions = [
+    { name: "Wine", icon: wineIcon },
+    { name: "Soju", icon: sojuIcon },
+    { name: "Beer", icon: beerIcon },
+    { name: "Makgeolli", icon: makgeolliIcon },
+  ];
+
+  const handleDrinkSelection = (drink) => {
+    setSelectedDrink(drink);
+    setFoodRecommendation(null);
+  };
+
   const drinkRecommendations = [
     { weather: "Clear", temperature: "Sunny", recommendation: "Enjoy a refreshing cocktail or a glass of wine." },
     { weather: "Clouds", temperature: "Cloudy", recommendation: "Indulge in a soothing cup of tea or coffee." },
@@ -39,16 +57,12 @@ const DrinkRecommendation = () => {
   ];
 
   const getDrinkRecommendation = (weather) => {
-    const recommendation = drinkRecommendations.find((item) => item.weather.toLowerCase() === (weather?.toLowerCase() ?? ''));
+    const recommendation = drinkRecommendations.find((item) => item.weather.toLowerCase() === (weather?.toLowerCase() ?? ""));
     return recommendation ? recommendation.recommendation : "No recommendation available.";
   };
 
-  const handleRecommendationTypeChange = (type) => {
-    setRecommendationType(type);
-  };
-
   const getWeatherIcon = (weather) => {
-    switch ((weather?.toLowerCase() ?? '')) {
+    switch ((weather?.toLowerCase() ?? "")) {
       case "clear":
         return faSun;
       case "clouds":
@@ -60,43 +74,41 @@ const DrinkRecommendation = () => {
     }
   };
 
-  
-
   const getDrinkRecommendationByWeather = () => {
     if (!weather || !weather.weather) return "Unknown";
 
-    const weatherDescription = (weather.weather[0]?.description?.toLowerCase() ?? '');
+    const weatherDescription = (weather.weather[0]?.description?.toLowerCase() ?? "");
 
     if (weatherDescription.includes("rain")) {
-      return "makgeolli";
+      return "Makgeolli";
     } else if (weatherDescription.includes("hot")) {
-      return "beer";
+      return "Beer";
     } else if (weatherDescription.includes("cool")) {
-      return "wine";
+      return "Wine";
     } else {
-      return "soju";
+      return "Soju";
     }
   };
 
   const foodRecommendations = {
-    makgeolli: ["파전", "수제비", "김치전"],
+    makgeolli: ["파전", "수제비", "김치전", "도토리묵", "두부김치"],
     soju: ["김치우동", "알탕", "회", "삼겹살"],
     wine: ["치즈", "과일"],
     beer: ["튀김", "나초", "건어물"],
   };
-  
-  const getFoodRecommendation = (drinkRecommendation) => {
-    const foodList = foodRecommendations[drinkRecommendation.toLowerCase()] || [];
-    const randomIndex = Math.floor(Math.random() * foodList.length);
-    return foodList[randomIndex] || "No recommendation available.";
+
+  const handleRecommendationButtonClick = () => {
+    if (selectedDrink) {
+      const foodList = foodRecommendations[selectedDrink.toLowerCase()] || [];
+      const randomIndex = Math.floor(Math.random() * foodList.length);
+      const recommendation = foodList[randomIndex] || "No recommendation available.";
+      setFoodRecommendation(recommendation);
+    }
   };
 
   const temperature = weather?.main?.temp;
   const weatherDescription = weather?.weather?.[0]?.description;
   const weatherIcon = getWeatherIcon(weatherDescription);
-  const drinkRecommendation = getDrinkRecommendation(weatherDescription);
-  const foodRecommendation = getFoodRecommendation(drinkRecommendation);
-
 
   return (
     <ThemeProvider theme={theme}>
@@ -127,16 +139,15 @@ const DrinkRecommendation = () => {
                   <FontAwesomeIcon icon={weatherIcon} size="2x" />
                 </Typography>
                 {recommendationType === "drink" && (
-          <div>
-            {/* Display drink recommendations */}
-            <h2>Today's Drink Recommendation:</h2>
-            {weather && weather.weather ? (
-              <p>Recommended Drink: {getDrinkRecommendationByWeather()}</p>
-            ) : (
-              <p>Loading weather data...</p>
-            )}
-          </div>
-        )}
+                  <div>
+                    <Typography variant="h6" align="center">
+                      Today's Drink Recommendation:
+                    </Typography>
+                    <Typography variant="h4" align="center" style={{ marginBottom: "20px" }}>
+                      {getDrinkRecommendationByWeather()}
+                    </Typography>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </Grid>
@@ -146,9 +157,23 @@ const DrinkRecommendation = () => {
                 <Typography variant="h5" component="div" align="center">
                   Food Recommendation
                 </Typography>
-                <Typography variant="body1" align="center">
+                <Typography variant="body1" align="center" style={{ marginBottom: "20px" }}>
                   {foodRecommendation}
                 </Typography>
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  {drinkOptions.map((option) => (
+                    <div key={option.name} onClick={() => handleDrinkSelection(option.name)}>
+                      <img src={option.icon} alt={option.name} style={{ width: "50px", height: "50px", cursor: "pointer" }} />
+                    </div>
+                  ))}
+                </div>
+                {selectedDrink && (
+                  <div style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}>
+                    <Button variant="contained" onClick={handleRecommendationButtonClick}>
+                      Get New Recommendation
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </Grid>
