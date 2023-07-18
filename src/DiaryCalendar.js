@@ -249,7 +249,20 @@ const DiaryCalendar = () => {
   open={showSnackbar}
   message="당신은 정말 술을 사랑하는군요!"
   anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-/>
+>
+  <Alert
+    onClose={() => setShowSnackbar(false)}
+    severity="info"
+    sx={{
+      backgroundColor: "#6f48eb",
+      color: "#ffffff",
+      fontWeight: "bold",
+      borderRadius: "8px",
+    }}
+  >
+    당신은 정말 술을 사랑하는군요!
+  </Alert>
+</Snackbar>
 
         {selectedDate && (
           <DiaryEntry
