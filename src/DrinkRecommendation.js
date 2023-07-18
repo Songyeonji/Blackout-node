@@ -91,10 +91,10 @@ const DrinkRecommendation = () => {
   };
 
   const foodRecommendations = {
-    makgeolli: ["파전", "수제비", "김치전", "도토리묵", "두부김치"],
-    soju: ["김치우동", "알탕", "회", "삼겹살"],
-    wine: ["치즈", "과일"],
-    beer: ["튀김", "나초", "건어물"],
+    makgeolli: ["파전", "수제비", "김치전", "도토리묵", "두부김치", "계란찜", "모둠 전","김치찌개", "불고기"],
+    soju: ["김치우동", "알탕", "회", "삼겹살", "소고기", "닭발","곱창", "닭도리탕","쭈꾸미", ],
+    wine: ["치즈", "과일", "파스타", "피자", "스테이크","샐러드", "새우" ],
+    beer: ["튀김", "나초", "건어물", "피자" , "편의점", "치킨", "핫윙","멕시칸 타코","소세지","나초와 팝콘"],
   };
 
   const handleRecommendationButtonClick = () => {
@@ -183,4 +183,4 @@ const DrinkRecommendation = () => {
   );
 };
 
-export default DrinkRecommendation;
+export default DrinkRecommendation; 
