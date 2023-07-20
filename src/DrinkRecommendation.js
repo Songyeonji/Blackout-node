@@ -76,20 +76,23 @@ const DrinkRecommendation = () => {
 
   const getDrinkRecommendationByWeather = () => {
     if (!weather || !weather.weather) return "Unknown";
-
-    const weatherDescription = (weather.weather[0]?.description?.toLowerCase() ?? "");
-
-    if (weatherDescription.includes("rain")) {
-      return "Makgeolli";
-    } else if (weatherDescription.includes("hot")) {
+  
+    const temperature = weather?.main?.temp;
+  
+    if (temperature >= 30) {
       return "Beer";
-    } else if (weatherDescription.includes("cool")) {
+    } else if (temperature >= 10 && temperature <= 20) {
       return "Wine";
     } else {
-      return "Soju";
+      const weatherDescription = (weather.weather[0]?.description?.toLowerCase() ?? "");
+  
+      if (weatherDescription.includes("rain")) {
+        return "Makgeolli";
+      } else {
+        return "Soju";
+      }
     }
   };
-
   const foodRecommendations = {
     makgeolli: ["파전", "수제비", "김치전", "도토리묵", "두부김치", "계란찜", "모둠 전","김치찌개", "불고기"],
     soju: ["김치우동", "알탕", "회", "삼겹살", "소고기", "닭발","곱창", "닭도리탕","쭈꾸미", ],
