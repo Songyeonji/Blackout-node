@@ -49,6 +49,16 @@ const DrinkRecommendation = () => {
     setSelectedDrink(drink);
     setFoodRecommendation(null);
   };
+  //이미지 선택
+  const drinkIconStyle = {
+    width: "50px",
+    height: "50px",
+    cursor: "pointer",
+  };
+  
+  const selectedDrinkStyle = {
+    border: "2px solid blue", // Add a border to the selected drink icon
+  };
 
   const drinkRecommendations = [
     { weather: "Clear", temperature: "Sunny", recommendation: "Enjoy a refreshing cocktail or a glass of wine." },
@@ -164,12 +174,16 @@ const DrinkRecommendation = () => {
                   {foodRecommendation}
                 </Typography>
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                  {drinkOptions.map((option) => (
-                    <div key={option.name} onClick={() => handleDrinkSelection(option.name)}>
-                      <img src={option.icon} alt={option.name} style={{ width: "50px", height: "50px", cursor: "pointer" }} />
-                    </div>
-                  ))}
-                </div>
+  {drinkOptions.map((option) => (
+    <div
+      key={option.name}
+      onClick={() => handleDrinkSelection(option.name)}
+      style={selectedDrink === option.name ? { ...drinkIconStyle, ...selectedDrinkStyle } : drinkIconStyle}
+    >
+      <img src={option.icon} alt={option.name} style={{ width: "50px", height: "50px" }} />
+    </div>
+  ))}
+</div>
                 {selectedDrink && (
                   <div style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}>
                     <Button variant="contained" onClick={handleRecommendationButtonClick}>
