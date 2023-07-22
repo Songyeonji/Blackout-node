@@ -48,6 +48,7 @@ const DrinkRecommendation = () => {
   const handleDrinkSelection = (drink) => {
     setSelectedDrink(drink);
     setFoodRecommendation(null);
+    setSelectedDrinkInfo(getDrinkInformation(drink)); // Set the selected drink's information
   };
   //이미지 선택
   const drinkIconStyle = {
@@ -123,6 +124,40 @@ const DrinkRecommendation = () => {
   const weatherDescription = weather?.weather?.[0]?.description;
   const weatherIcon = getWeatherIcon(weatherDescription);
 
+  //술정보 
+  const [selectedDrinkInfo, setSelectedDrinkInfo] = useState(null);
+  const getDrinkInformation = (selectedDrink) => {
+    // Replace these placeholder values with actual information about each drink
+    const drinksInfo = {
+      Wine: {
+        title: "Wine",
+        description: "Wine is an alcoholic beverage made from fermented grapes.",
+        image: wineIcon,
+        // Add other information about wine here...
+      },
+      Soju: {
+        title: "Soju",
+        description: "Soju is a popular Korean alcoholic beverage made from rice, wheat, or barley.",
+        image: sojuIcon,
+        // Add other information about soju here...
+      },
+      Beer: {
+        title: "Beer",
+        description: "Beer is one of the oldest and most widely consumed alcoholic drinks in the world.",
+        image: beerIcon,
+        // Add other information about beer here...
+      },
+      Makgeolli: {
+        title: "Makgeolli",
+        description: "Makgeolli is a traditional Korean rice wine with a milky appearance.",
+        image: makgeolliIcon,
+        // Add other information about makgeolli here...
+      },
+    };
+  
+    return drinksInfo[selectedDrink];
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
@@ -191,6 +226,23 @@ const DrinkRecommendation = () => {
                     </Button>
                   </div>
                 )}
+
+{selectedDrinkInfo && (
+  <Grid item xs={12} sm={6} md={4}>
+    <Card>
+      <CardContent>
+        <Typography variant="h5" component="div" align="center">
+          {selectedDrinkInfo.title}
+        </Typography>
+        <img src={selectedDrinkInfo.image} alt={selectedDrinkInfo.title} style={{ width: "100%", height: "200px", objectFit: "cover" }} />
+        <Typography variant="body1" align="center" style={{ marginTop: "20px" }}>
+          {selectedDrinkInfo.description}
+        </Typography>
+        {/* Add other information about the drink here... */}
+      </CardContent>
+    </Card>
+  </Grid>
+)}
               </CardContent>
             </Card>
           </Grid>
