@@ -48,7 +48,7 @@ const DrinkRecommendation = () => {
   const handleDrinkSelection = (drink) => {
     setSelectedDrink(drink);
     setFoodRecommendation(null);
-    setSelectedDrinkInfo(getDrinkInformation(drink)); // Set the selected drink's information
+
   };
   //이미지 선택
   const drinkIconStyle = {
@@ -158,6 +158,28 @@ const DrinkRecommendation = () => {
     return drinksInfo[selectedDrink];
   };
 
+    // Today's cocktail recipe
+    const todaysCocktail = {
+      title: "Sunset Mojito",
+      description: "A refreshing cocktail with a mix of rum, mint, lime, and grenadine.",
+      image: "url-to-sunset-mojito-image", // Replace this with the URL of the cocktail image
+      ingredients: [
+        "2 oz white rum",
+        "1 oz fresh lime juice",
+        "1 tbsp grenadine",
+        "6-8 fresh mint leaves",
+        "Club soda",
+        "Ice cubes",
+      ],
+      instructions: [
+        "In a shaker, muddle the mint leaves with lime juice and grenadine.",
+        "Add ice cubes and rum to the shaker.",
+        "Shake well and strain into a glass filled with ice.",
+        "Top with club soda and garnish with a mint sprig.",
+        "Enjoy your Sunset Mojito!",
+      ],
+    };
+
   return (
     <ThemeProvider theme={theme}>
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
@@ -227,7 +249,9 @@ const DrinkRecommendation = () => {
                   </div>
                 )}
 
-{selectedDrinkInfo && (
+                
+              </CardContent>
+              {selectedDrinkInfo && (
   <Grid item xs={12} sm={6} md={4}>
     <Card>
       <CardContent>
@@ -243,11 +267,51 @@ const DrinkRecommendation = () => {
     </Card>
   </Grid>
 )}
+
+            </Card>
+          </Grid>
+          
+        </Grid>
+        
+      </div>
+      
+      {/* Today's cocktail recipe card */}
+      {todaysCocktail && (
+        <Grid container spacing={2} justifyContent="center">
+          <Grid item xs={12} sm={6} md={4}>
+            <Card>
+              <CardContent>
+                <Typography variant="h5" component="div" align="center">
+                  Today's Cocktail Recipe
+                </Typography>
+                <Typography variant="h6" align="center">
+                  {todaysCocktail.title}
+                </Typography>
+                <img src={todaysCocktail.image} alt={todaysCocktail.title} style={{ width: "100%", height: "200px", objectFit: "cover" }} />
+                <Typography variant="body1" align="center" style={{ marginTop: "20px" }}>
+                  {todaysCocktail.description}
+                </Typography>
+                <Typography variant="h6" align="center" style={{ marginTop: "20px" }}>
+                  Ingredients:
+                </Typography>
+                <ul>
+                  {todaysCocktail.ingredients.map((ingredient, index) => (
+                    <li key={index}>{ingredient}</li>
+                  ))}
+                </ul>
+                <Typography variant="h6" align="center" style={{ marginTop: "20px" }}>
+                  Instructions:
+                </Typography>
+                <ol>
+                  {todaysCocktail.instructions.map((step, index) => (
+                    <li key={index}>{step}</li>
+                  ))}
+                </ol>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
-      </div>
+      )}
     </ThemeProvider>
   );
 };
