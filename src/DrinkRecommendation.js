@@ -4,6 +4,10 @@ import { AppBar, Toolbar, Card, CardContent, Typography, Grid, createTheme, Them
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloud, faSun, faCloudSun, faCloudRain } from "@fortawesome/free-solid-svg-icons";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // Import the carousel styles
+import { Carousel } from "react-responsive-carousel"; // Import the Carousel component
+
+
 import wineIcon from "./icon/wine-bottle.png";
 import sojuIcon from "./icon/soju.png";
 import beerIcon from "./icon/beer.png";
@@ -159,26 +163,29 @@ const DrinkRecommendation = () => {
   };
 
     // Today's cocktail recipe
-    const todaysCocktail = {
-      title: "Sunset Mojito",
-      description: "A refreshing cocktail with a mix of rum, mint, lime, and grenadine.",
-      image: "url-to-sunset-mojito-image", // Replace this with the URL of the cocktail image
-      ingredients: [
-        "2 oz white rum",
-        "1 oz fresh lime juice",
-        "1 tbsp grenadine",
-        "6-8 fresh mint leaves",
-        "Club soda",
-        "Ice cubes",
-      ],
-      instructions: [
-        "In a shaker, muddle the mint leaves with lime juice and grenadine.",
-        "Add ice cubes and rum to the shaker.",
-        "Shake well and strain into a glass filled with ice.",
-        "Top with club soda and garnish with a mint sprig.",
-        "Enjoy your Sunset Mojito!",
-      ],
-    };
+    const cocktailRecipes = [
+      {
+        title: "Sunset Mojito",
+        description: "A refreshing cocktail with a mix of rum, mint, lime, and grenadine.",
+        image: "url-to-sunset-mojito-image",
+        ingredients: [
+          "2 oz white rum",
+          "1 oz fresh lime juice",
+          "1 tbsp grenadine",
+          "6-8 fresh mint leaves",
+          "Club soda",
+          "Ice cubes",
+        ],
+        instructions: [
+          "In a shaker, muddle the mint leaves with lime juice and grenadine.",
+          "Add ice cubes and rum to the shaker.",
+          "Shake well and strain into a glass filled with ice.",
+          "Top with club soda and garnish with a mint sprig.",
+          "Enjoy your Sunset Mojito!",
+        ],
+      },
+      // Add more cocktail recipes here...
+    ];
 
   return (
     <ThemeProvider theme={theme}>
@@ -275,43 +282,47 @@ const DrinkRecommendation = () => {
         
       </div>
       
-      {/* Today's cocktail recipe card */}
-      {todaysCocktail && (
-        <Grid container spacing={2} justifyContent="center">
-          <Grid item xs={12} sm={6} md={4}>
-            <Card>
-              <CardContent>
-                <Typography variant="h5" component="div" align="center">
-                  Today's Cocktail Recipe
-                </Typography>
-                <Typography variant="h6" align="center">
-                  {todaysCocktail.title}
-                </Typography>
-                <img src={todaysCocktail.image} alt={todaysCocktail.title} style={{ width: "100%", height: "200px", objectFit: "cover" }} />
-                <Typography variant="body1" align="center" style={{ marginTop: "20px" }}>
-                  {todaysCocktail.description}
-                </Typography>
-                <Typography variant="h6" align="center" style={{ marginTop: "20px" }}>
-                  Ingredients:
-                </Typography>
-                <ul>
-                  {todaysCocktail.ingredients.map((ingredient, index) => (
-                    <li key={index}>{ingredient}</li>
-                  ))}
-                </ul>
-                <Typography variant="h6" align="center" style={{ marginTop: "20px" }}>
-                  Instructions:
-                </Typography>
-                <ol>
-                  {todaysCocktail.instructions.map((step, index) => (
-                    <li key={index}>{step}</li>
-                  ))}
-                </ol>
-              </CardContent>
-            </Card>
-          </Grid>
+      {/* Carousel of cocktail recipes */}
+      <Grid container spacing={2} justifyContent="center">
+        <Grid item xs={12} sm={6} md={4}>
+          <Card>
+            <CardContent>
+              <Typography variant="h5" component="div" align="center">
+                Cocktail Recipes
+              </Typography>
+              <Carousel showThumbs={false} showStatus={false} emulateTouch>
+                {cocktailRecipes.map((recipe, index) => (
+                  <div key={index}>
+                    <Typography variant="h6" align="center">
+                      {recipe.title}
+                    </Typography>
+                    <img src={recipe.image} alt={recipe.title} style={{ width: "100%", height: "200px", objectFit: "cover" }} />
+                    <Typography variant="body1" align="center" style={{ marginTop: "20px" }}>
+                      {recipe.description}
+                    </Typography>
+                    <Typography variant="h6" align="center" style={{ marginTop: "20px" }}>
+                      Ingredients:
+                    </Typography>
+                    <ul>
+                      {recipe.ingredients.map((ingredient, index) => (
+                        <li key={index}>{ingredient}</li>
+                      ))}
+                    </ul>
+                    <Typography variant="h6" align="center" style={{ marginTop: "20px" }}>
+                      Instructions:
+                    </Typography>
+                    <ol>
+                      {recipe.instructions.map((step, index) => (
+                        <li key={index}>{step}</li>
+                      ))}
+                    </ol>
+                  </div>
+                ))}
+              </Carousel>
+            </CardContent>
+          </Card>
         </Grid>
-      )}
+      </Grid>
     </ThemeProvider>
   );
 };
