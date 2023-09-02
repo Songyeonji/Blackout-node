@@ -45,6 +45,7 @@ const DiaryEntry = ({
     }
     return text;
   };
+  
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginLeft: "30px", marginTop: "20px" }}>

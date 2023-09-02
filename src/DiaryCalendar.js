@@ -41,6 +41,9 @@ const DiaryCalendar = () => {
 
   // 날씨
   const [weather, setWeather] = useState(null);
+  
+  // 달력의 날짜 색상을 저장할 상태
+  const [dateColors, setDateColors] = useState({});
 
   useEffect(() => {
     const fetchWeatherData = async () => {
@@ -57,17 +60,23 @@ const DiaryCalendar = () => {
     fetchWeatherData();
   }, []);
 
+
   useEffect(() => {
     // Save diary entries to localStorage whenever it changes
     localStorage.setItem("diaryEntries", JSON.stringify(diaryEntries));
   }, [diaryEntries]);
 
-  const handleDateChange = (date) => {
-    if (selectedDate && date.getMonth() !== selectedDate.getMonth()) {
-      setCurrentMonthEntries(diaryEntries[moment(date).format("YYYY-MM")] || {});
+  useEffect(() => {
+    if (selectedDate && currentMonth !== selectedDate.getMonth()) {
+      setCurrentMonthEntries(diaryEntries[moment(selectedDate).format("YYYY-MM")] || {});
+      setCurrentMonth(selectedDate.getMonth());
     }
+  }, [selectedDate, diaryEntries, currentMonth]);
+
+  const handleDateChange = (date) => {
     setSelectedDate(date);
   };
+
 
   const handleDiaryEntry = (event) => {
     const { value } = event.target;
@@ -219,6 +228,11 @@ const DiaryCalendar = () => {
     return drinkIcon;
   };
 
+  const handleColorSelect = (color) => {
+  // 선택한 색상을 dateColors 상태에 저장
+  setDateColors({ ...dateColors, [moment(selectedDate).format("YYYY-MM-DD")]: color });
+};
+
   return (
     <ThemeProvider theme={theme}>
       <div
@@ -241,7 +255,17 @@ const DiaryCalendar = () => {
         <Toolbar />
 
         <div className="calendar-container" style={{ marginTop: "10px" }}>
-          <Calendar onChange={handleDateChange} locale="en" value={selectedDate} tileContent={tileContent} />
+        <Calendar
+  onChange={handleDateChange}
+  locale="en"
+  value={selectedDate}
+  tileContent={tileContent}
+  tileClassName={({ date }) => {
+    // 선택한 날짜의 배경색을 dateColors 상태에서 가져옴
+    const selectedDateColor = dateColors[moment(date).format("YYYY-MM-DD")];
+    return selectedDateColor ? `custom-background-${selectedDateColor}` : null;
+  }}
+/>
 
           {weather && <WeatherInfo weather={weather} />}
         </div>
@@ -278,6 +302,22 @@ const DiaryCalendar = () => {
             setDiaryEntries={setDiaryEntries}
           />
         )}
+
+          {/* 색상 팔레트 */}
+          <div className="color-palette">
+          <div
+            className="color-option"
+            style={{ backgroundColor: "red" }}
+            onClick={() => handleColorSelect("red")}
+          ></div>
+          <div
+            className="color-option"
+            style={{ backgroundColor: "blue" }}
+            onClick={() => handleColorSelect("blue")}
+          ></div>
+          {/* 다른 색상을 추가할 수 있습니다. */}
+        </div>
+
       </div>
     </ThemeProvider>
   );

@@ -156,3 +156,16 @@ abbr[title] {
 .carousel-arrow-right {
   right: 10px;
 }
+
+.color-palette {
+  display: flex;
+  justify-content: space-between; /* 컬러 옵션 간의 간격을 조절합니다. */
+  margin-top: 20px; /* 필요한 여백을 설정하세요. */
+}
+
+.color-option {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%; /* 원 모양으로 만듭니다. */
+  cursor: pointer; /* 클릭 가능한 커서로 변경합니다. */
+}
