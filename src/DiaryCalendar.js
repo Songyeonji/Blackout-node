@@ -5,6 +5,7 @@ import "react-calendar/dist/Calendar.css";
 import { AppBar, Toolbar, createTheme, ThemeProvider, LinearProgress, Snackbar , Alert   } from "@mui/material";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { CompactPicker } from "react-color"; // 컬러 피커를 추가합니다.
 
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
@@ -42,8 +43,10 @@ const DiaryCalendar = () => {
   // 날씨
   const [weather, setWeather] = useState(null);
   
-  // 달력의 날짜 색상을 저장할 상태
-  const [dateColors, setDateColors] = useState({});
+ // 색상 팔레트와 선택된 색상을 관리하기 위한 상태
+ const [dateColors, setDateColors] = useState({});
+ const [colorPalette, setColorPalette] = useState([]);
+ const [selectedColor, setSelectedColor] = useState("#ffffff"); // 기본 색상
 
   useEffect(() => {
     const fetchWeatherData = async () => {
@@ -75,6 +78,18 @@ const DiaryCalendar = () => {
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
+  };
+
+    // 컬러 팔레트에 컬러 추가
+  const handleAddColor = () => {
+    if (!colorPalette.includes(selectedColor)) {
+      setColorPalette([...colorPalette, selectedColor]);
+    }
+  };
+
+  // 선택한 날짜의 배경색을 변경하는 핸들러
+  const handleColorSelect = (date) => {
+    setDateColors({ ...dateColors, [moment(date).format("YYYY-MM-DD")]: selectedColor });
   };
 
 
@@ -228,10 +243,6 @@ const DiaryCalendar = () => {
     return drinkIcon;
   };
 
-  const handleColorSelect = (color) => {
-  // 선택한 색상을 dateColors 상태에 저장
-  setDateColors({ ...dateColors, [moment(selectedDate).format("YYYY-MM-DD")]: color });
-};
 
   return (
     <ThemeProvider theme={theme}>
@@ -302,20 +313,22 @@ const DiaryCalendar = () => {
             setDiaryEntries={setDiaryEntries}
           />
         )}
+       {/* 컬러 팔레트 */}
+        <div className="color-palette">
+          {colorPalette.map((color, index) => (
+            <div
+              key={index}
+              className="color-option"
+              style={{ backgroundColor: color }}
+              onClick={() => setSelectedColor(color)}
+            ></div>
+          ))}
+        </div>
 
-          {/* 색상 팔레트 */}
-          <div className="color-palette">
-          <div
-            className="color-option"
-            style={{ backgroundColor: "red" }}
-            onClick={() => handleColorSelect("red")}
-          ></div>
-          <div
-            className="color-option"
-            style={{ backgroundColor: "blue" }}
-            onClick={() => handleColorSelect("blue")}
-          ></div>
-          {/* 다른 색상을 추가할 수 있습니다. */}
+        {/* 컬러 피커 */}
+        <div className="color-picker">
+          <CompactPicker color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
+          <button onClick={handleAddColor}>Add Color</button>
         </div>
 
       </div>
