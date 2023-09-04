@@ -4,6 +4,7 @@ import { LinearProgress, Rating } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as emptyStar } from "@fortawesome/free-regular-svg-icons";
+import { CompactPicker } from "react-color"; // 컬러 피커를 추가합니다.
 
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
@@ -24,8 +25,17 @@ const DiaryEntry = ({
   renderDrinkIcon,
   handleStarClick,
   calculateDrinkRatio,
-  calculateTotalDrinkRatio
+  calculateTotalDrinkRatio,
+  handleColorSelect, // 컬러 피커 핸들러 추가
+  selectedColor, // 선택된 컬러
+  colorPalette, // Now accessible as a prop
+  setSelectedColor, // Now accessible as a prop
+  handleAddColor, // Now accessible as a prop
 }) => {
+  
+  const selectedEntry = diaryEntries[moment(selectedDate).format("YYYY-MM-DD")];
+  const additionalEntry = diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-additional"];
+  const drinkRating = diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-rating"];
     
   const tileContent = ({ date }) => {
     const entry = diaryEntries[moment(date).format("YYYY-MM-DD")];
@@ -146,6 +156,25 @@ const DiaryEntry = ({
           />
         </div>
       </div>
+
+          {/* 컬러 팔레트 */}
+             <div className="color-palette">
+          {colorPalette.map((color, index) => (
+            <div
+              key={index}
+              className="color-option"
+              style={{ backgroundColor: color }}
+              onClick={() => setSelectedColor(color)}
+            ></div>
+          ))}
+        </div>
+
+        {/* 컬러 피커 */}
+        <div className="color-picker">
+          <CompactPicker color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
+          <button onClick={handleAddColor}>Add Color</button>
+        </div>
+      
       <div style={{ width: "100%", marginTop: "20px" }}>
         <h2>이번달 알콜 수치</h2>
         <AlcoholProgress

@@ -5,13 +5,8 @@ import "react-calendar/dist/Calendar.css";
 import { AppBar, Toolbar, createTheme, ThemeProvider, LinearProgress, Snackbar , Alert   } from "@mui/material";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { CompactPicker } from "react-color"; // 컬러 피커를 추가합니다.
 
-import StarIcon from "@mui/icons-material/Star";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
-import { faStar as emptyStar } from "@fortawesome/free-regular-svg-icons";
+
 
 import wineIcon from "./icon/wine-bottle.png";
 import sojuIcon from "./icon/soju.png";
@@ -86,11 +81,10 @@ const DiaryCalendar = () => {
       setColorPalette([...colorPalette, selectedColor]);
     }
   };
-
-  // 선택한 날짜의 배경색을 변경하는 핸들러
-  const handleColorSelect = (date) => {
-    setDateColors({ ...dateColors, [moment(date).format("YYYY-MM-DD")]: selectedColor });
-  };
+ // 컬러 피커의 컬러 변경 핸들러
+ const handleColorSelect = (color) => {
+  setSelectedColor(color.hex);
+};
 
 
   const handleDiaryEntry = (event) => {
@@ -311,9 +305,15 @@ const DiaryCalendar = () => {
             calculateDrinkRatio={calculateDrinkRatio}
             calculateTotalDrinkRatio={calculateTotalDrinkRatio}
             setDiaryEntries={setDiaryEntries}
+            handleColorSelect={handleColorSelect} // 컬러 피커 핸들러 추가
+            selectedColor={selectedColor} // 선택된 컬러
+            colorPalette={colorPalette} // Pass colorPalette
+            setSelectedColor={setSelectedColor} // Pass setSelectedColor
+            handleAddColor={handleAddColor} // Pass handleAddColor
           />
         )}
-       {/* 컬러 팔레트 */}
+
+        {/* 컬러 팔레트 */}
         <div className="color-palette">
           {colorPalette.map((color, index) => (
             <div
@@ -323,14 +323,7 @@ const DiaryCalendar = () => {
               onClick={() => setSelectedColor(color)}
             ></div>
           ))}
-        </div>
-
-        {/* 컬러 피커 */}
-        <div className="color-picker">
-          <CompactPicker color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
-          <button onClick={handleAddColor}>Add Color</button>
-        </div>
-
+          </div>
       </div>
     </ThemeProvider>
   );
