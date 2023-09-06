@@ -28,14 +28,12 @@ const DiaryEntry = ({
   calculateTotalDrinkRatio,
   handleColorSelect, // 컬러 피커 핸들러 추가
   selectedColor, // 선택된 컬러
-  colorPalette, // Now accessible as a prop
-  setSelectedColor, // Now accessible as a prop
-  handleAddColor, // Now accessible as a prop
+  colorPalette, 
+  setSelectedColor, 
+  handleAddColor, 
 }) => {
-  
-  const selectedEntry = diaryEntries[moment(selectedDate).format("YYYY-MM-DD")];
-  const additionalEntry = diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-additional"];
-  const drinkRating = diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-rating"];
+
+
     
   const tileContent = ({ date }) => {
     const entry = diaryEntries[moment(date).format("YYYY-MM-DD")];

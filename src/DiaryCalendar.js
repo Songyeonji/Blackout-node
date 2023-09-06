@@ -2,19 +2,16 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { AppBar, Toolbar, createTheme, ThemeProvider, LinearProgress, Snackbar , Alert   } from "@mui/material";
+import { AppBar, Toolbar, createTheme, ThemeProvider, Snackbar, Alert } from "@mui/material";
 import { Link } from "react-router-dom";
 import axios from "axios";
-
-
-
 import wineIcon from "./icon/wine-bottle.png";
 import sojuIcon from "./icon/soju.png";
 import beerIcon from "./icon/beer.png";
 import makgeolliIcon from "./icon/rice-wine.png";
-
 import WeatherInfo from "./WeatherInfo";
 import DiaryEntry from "./DiaryEntry";
+import DateColorManager from "./DateColorManager"; // DateColorManager 추가
 import AlcoholProgress from "./AlcoholProgress";
 
 const theme = createTheme({
@@ -37,11 +34,11 @@ const DiaryCalendar = () => {
 
   // 날씨
   const [weather, setWeather] = useState(null);
-  
- // 색상 팔레트와 선택된 색상을 관리하기 위한 상태
- const [dateColors, setDateColors] = useState({});
- const [colorPalette, setColorPalette] = useState([]);
- const [selectedColor, setSelectedColor] = useState("#ffffff"); // 기본 색상
+
+  // 색상 팔레트와 선택된 색상을 관리하기 위한 상태
+  const [dateColors, setDateColors] = useState({});
+  const [colorPalette, setColorPalette] = useState([]);
+  const [selectedColor, setSelectedColor] = useState("#ffffff"); // 기본 색상
 
   useEffect(() => {
     const fetchWeatherData = async () => {
@@ -58,7 +55,6 @@ const DiaryCalendar = () => {
     fetchWeatherData();
   }, []);
 
-
   useEffect(() => {
     // Save diary entries to localStorage whenever it changes
     localStorage.setItem("diaryEntries", JSON.stringify(diaryEntries));
@@ -66,7 +62,9 @@ const DiaryCalendar = () => {
 
   useEffect(() => {
     if (selectedDate && currentMonth !== selectedDate.getMonth()) {
-      setCurrentMonthEntries(diaryEntries[moment(selectedDate).format("YYYY-MM")] || {});
+      setCurrentMonthEntries(
+        diaryEntries[moment(selectedDate).format("YYYY-MM")] || {}
+      );
       setCurrentMonth(selectedDate.getMonth());
     }
   }, [selectedDate, diaryEntries, currentMonth]);
@@ -75,17 +73,17 @@ const DiaryCalendar = () => {
     setSelectedDate(date);
   };
 
-    // 컬러 팔레트에 컬러 추가
+  // 컬러 팔레트에 컬러 추가
   const handleAddColor = () => {
     if (!colorPalette.includes(selectedColor)) {
       setColorPalette([...colorPalette, selectedColor]);
     }
   };
- // 컬러 피커의 컬러 변경 핸들러
- const handleColorSelect = (color) => {
-  setSelectedColor(color.hex);
-};
 
+  // 컬러 피커의 컬러 변경 핸들러
+  const handleColorSelect = (color) => {
+    setSelectedColor(color.hex);
+  };
 
   const handleDiaryEntry = (event) => {
     const { value } = event.target;
@@ -137,7 +135,8 @@ const DiaryCalendar = () => {
       );
     });
 
-    const drinkCount = entriesInMonth.filter(([_, entry]) => entry === drink).length;
+    const drinkCount = entriesInMonth.filter(([_, entry]) => entry === drink)
+      .length;
     const entryCount = moment(selectedDate).daysInMonth();
 
     return (drinkCount / entryCount) * 100;
@@ -151,7 +150,8 @@ const DiaryCalendar = () => {
       );
     });
 
-    const drinkCount = entriesInMonth.filter(([_, entry]) => entry !== "nonAlcohol").length;
+    const drinkCount = entriesInMonth.filter(([_, entry]) => entry !== "nonAlcohol")
+      .length;
     const entryCount = moment(selectedDate).daysInMonth();
     const ratio = (drinkCount / entryCount) * 100;
 
@@ -163,7 +163,7 @@ const DiaryCalendar = () => {
     } else {
       setShowSnackbar(false);
     }
-  
+
     return ratio;
   };
   const handleStarClick = (rating) => {
@@ -237,6 +237,13 @@ const DiaryCalendar = () => {
     return drinkIcon;
   };
 
+  // DateColorManager 컴포넌트에서 호출할 함수
+  const updateDateColor = (date, color) => {
+    setDateColors((prevDateColors) => ({
+      ...prevDateColors,
+      [date]: color,
+    }));
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -251,7 +258,10 @@ const DiaryCalendar = () => {
         <AppBar position="fixed">
           <Toolbar>
             <div className="flex-1"></div>
-            <Link to="/drink-recommendation" style={{ color: "white", textDecoration: "none" }}>
+            <Link
+              to="/drink-recommendation"
+              style={{ color: "white", textDecoration: "none" }}
+            >
               <span className="font-bold">오늘의 술 추천</span>
             </Link>
             <div className="flex-1"></div>
@@ -260,38 +270,40 @@ const DiaryCalendar = () => {
         <Toolbar />
 
         <div className="calendar-container" style={{ marginTop: "10px" }}>
-        <Calendar
-  onChange={handleDateChange}
-  locale="en"
-  value={selectedDate}
-  tileContent={tileContent}
-  tileClassName={({ date }) => {
-    // 선택한 날짜의 배경색을 dateColors 상태에서 가져옴
-    const selectedDateColor = dateColors[moment(date).format("YYYY-MM-DD")];
-    return selectedDateColor ? `custom-background-${selectedDateColor}` : null;
-  }}
-/>
+          <Calendar
+            onChange={handleDateChange}
+            locale="en"
+            value={selectedDate}
+            tileContent={tileContent}
+            tileClassName={({ date }) => {
+              // 선택한 날짜의 배경색을 dateColors 상태에서 가져옴
+              const selectedDateColor = dateColors[moment(date).format("YYYY-MM-DD")];
+              return selectedDateColor
+                ? `custom-background-${selectedDateColor}`
+                : null;
+            }}
+          />
 
           {weather && <WeatherInfo weather={weather} />}
         </div>
         <Snackbar
-  open={showSnackbar}
-  message="당신은 정말 술을 사랑하는군요!"
-  anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
->
-  <Alert
-    onClose={() => setShowSnackbar(false)}
-    severity="info"
-    sx={{
-      backgroundColor: "#6f48eb",
-      color: "#ffffff",
-      fontWeight: "bold",
-      borderRadius: "8px",
-    }}
-  >
-    당신은 정말 술을 사랑하는군요!
-  </Alert>
-</Snackbar>
+          open={showSnackbar}
+          message="당신은 정말 술을 사랑하는군요!"
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        >
+          <Alert
+            onClose={() => setShowSnackbar(false)}
+            severity="info"
+            sx={{
+              backgroundColor: "#6f48eb",
+              color: "#ffffff",
+              fontWeight: "bold",
+              borderRadius: "8px",
+            }}
+          >
+            당신은 정말 술을 사랑하는군요!
+          </Alert>
+        </Snackbar>
 
         {selectedDate && (
           <DiaryEntry
@@ -313,6 +325,10 @@ const DiaryCalendar = () => {
           />
         )}
 
+        <DateColorManager
+          dateColors={dateColors}
+          updateDateColor={updateDateColor} // updateDateColor 함수 전달
+        />
         {/* 컬러 팔레트 */}
         <div className="color-palette">
           {colorPalette.map((color, index) => (
@@ -323,7 +339,7 @@ const DiaryCalendar = () => {
               onClick={() => setSelectedColor(color)}
             ></div>
           ))}
-          </div>
+        </div>
       </div>
     </ThemeProvider>
   );
