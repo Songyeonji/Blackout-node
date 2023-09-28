@@ -68,6 +68,10 @@ const DiaryCalendar = () => {
       setCurrentMonth(selectedDate.getMonth());
     }
   }, [selectedDate, diaryEntries, currentMonth]);
+//칼러 상태관리
+  useEffect(() => {
+    localStorage.setItem("dateColors", JSON.stringify(dateColors));
+  }, [dateColors]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -329,18 +333,8 @@ const DiaryCalendar = () => {
           dateColors={dateColors}
           updateDateColor={updateDateColor} // updateDateColor 함수 전달
         />
-        {/* 컬러 팔레트 */}
-        <div className="color-palette">
-          {colorPalette.map((color, index) => (
-            <div
-              key={index}
-              className="color-option"
-              style={{ backgroundColor: color }}
-              onClick={() => setSelectedColor(color)}
-            ></div>
-          ))}
+
         </div>
-      </div>
     </ThemeProvider>
   );
 };
