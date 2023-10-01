@@ -69,9 +69,13 @@ const DiaryCalendar = () => {
     }
   }, [selectedDate, diaryEntries, currentMonth]);
 //칼러 상태관리
-  useEffect(() => {
-    localStorage.setItem("dateColors", JSON.stringify(dateColors));
-  }, [dateColors]);
+useEffect(() => {
+  // 페이지가 처음 열릴 때 localStorage에서 저장된 색상을 불러옵니다.
+  const storedColor = localStorage.getItem("selectedColor");
+  if (storedColor) {
+    setSelectedColor(storedColor);
+  }
+}, []);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -96,6 +100,7 @@ const DiaryCalendar = () => {
       [moment(selectedDate).format("YYYY-MM-DD")]: value,
     }));
   };
+  
   const handleAdditionalDiaryEntry = (event) => {
     const { value } = event.target;
     setDiaryEntries((prevDiaryEntries) => ({

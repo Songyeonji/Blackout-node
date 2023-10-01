@@ -170,9 +170,9 @@ const DiaryEntry = ({
         {/* 컬러 피커 */}
         <div className="color-picker">
           <CompactPicker color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
-          <button onClick={handleAddColor}>Add Color</button>
+          <button onClick={handleAddColor}>+</button>
         </div>
-      
+
       <div style={{ width: "100%", marginTop: "20px" }}>
         <h2>이번달 알콜 수치</h2>
         <AlcoholProgress
