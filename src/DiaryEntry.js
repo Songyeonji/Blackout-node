@@ -4,21 +4,15 @@ import { LinearProgress, Rating } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as emptyStar } from "@fortawesome/free-regular-svg-icons";
-import { CompactPicker } from "react-color"; // 컬러 피커를 추가합니다.
-
+import { CompactPicker } from "react-color";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
-
-import wineIcon from "./icon/wine-bottle.png";
-import sojuIcon from "./icon/soju.png";
-import beerIcon from "./icon/beer.png";
-import makgeolliIcon from "./icon/rice-wine.png";
 import AlcoholProgress from "./AlcoholProgress";
 
 const DiaryEntry = ({
   selectedDate,
   diaryEntries,
-  setDiaryEntries, // Add setDiaryEntries prop
+  setDiaryEntries,
   handleAdditionalDiaryEntry,
   handleRadioChange,
   getImageByDrink,
@@ -26,25 +20,17 @@ const DiaryEntry = ({
   handleStarClick,
   calculateDrinkRatio,
   calculateTotalDrinkRatio,
-  handleColorSelect, // 컬러 피커 핸들러 추가
-  selectedColor, // 선택된 컬러
-  colorPalette, 
-  setSelectedColor, 
-  handleAddColor, 
+  handleColorSelect,
+  selectedColor,
+  colorPalette,
+  setSelectedColor,
+  handleAddColor,
+  updateDateColor,
+  dateColors, // You might be missing this prop
 }) => {
-
-
-    
-  const tileContent = ({ date }) => {
-    const entry = diaryEntries[moment(date).format("YYYY-MM-DD")];
-    if (entry) {
-      const imageSrc = getImageByDrink(entry);
-      if (imageSrc) {
-        return <img className="dot" src={imageSrc} alt={entry} />;
-      }
-    }
-    return null;
-  };
+  // You should place this code inside your component
+  const selectedDateColor = dateColors[moment(selectedDate).format("YYYY-MM-DD")];
+  const customBackgroundClass = selectedDateColor ? `custom-background-${selectedDateColor}` : '';
 
   const getRadioLabel = (value, text) => {
     const entryValue = diaryEntries[moment(selectedDate).format("YYYY-MM-DD")];
@@ -53,7 +39,6 @@ const DiaryEntry = ({
     }
     return text;
   };
-  
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginLeft: "30px", marginTop: "20px" }}>
@@ -155,23 +140,29 @@ const DiaryEntry = ({
         </div>
       </div>
 
-          {/* 컬러 팔레트 */}
-             <div className="color-palette">
-          {colorPalette.map((color, index) => (
-            <div
-              key={index}
-              className="color-option"
-              style={{ backgroundColor: color }}
-              onClick={() => setSelectedColor(color)}
-            ></div>
+      {/* 컬러 팔레트 컴포넌트 */}
+      <div className="color-palette">
+        {colorPalette.map((color, index) => (
+        <div
+          key={index}
+          className="color-option"
+          style={{
+          backgroundColor: color,
+          border: color === selectedColor ? "2px solid black" : "none",
+          }}
+          onClick={() => handleColorSelect(color)}
+          ></div>
           ))}
         </div>
 
-        {/* 컬러 피커 */}
-        <div className="color-picker">
-          <CompactPicker color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
-          <button onClick={handleAddColor}>+</button>
-        </div>
+      {/* 컬러 피커 컴포넌트 */}
+      <div className="color-picker">
+        <CompactPicker
+          color={selectedColor}
+          onChange={(color) => handleColorSelect(color.hex)}
+        />
+        <button onClick={handleAddColor}>+</button>
+      </div>
 
       <div style={{ width: "100%", marginTop: "20px" }}>
         <h2>이번달 알콜 수치</h2>
