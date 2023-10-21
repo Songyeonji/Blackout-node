@@ -11,7 +11,7 @@ import beerIcon from "./icon/beer.png";
 import makgeolliIcon from "./icon/rice-wine.png";
 import WeatherInfo from "./WeatherInfo";
 import DiaryEntry from "./DiaryEntry";
-import AlcoholProgress from "./AlcoholProgress";
+
 
 const theme = createTheme({
   palette: {
@@ -69,21 +69,25 @@ const DiaryCalendar = () => {
     }
   }, [selectedDate, diaryEntries, currentMonth]);
   
-  // 이전에 선택한 색상을 로컬 스토리지에서 가져옴
+ // 이전에 선택한 색상을 로컬 스토리지에서 가져옴
   useEffect(() => {
     const storedColors = localStorage.getItem("dateColors");
     if (storedColors) {
       setDateColors(JSON.parse(storedColors));
-    }
-  }, []);
+
+    // 컬러 팔레트를 dateColors에서 초기화
+    const colors = Object.values(JSON.parse(storedColors));
+    setColorPalette(colors);
+  }
+}, []);
 
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
 
-  // 날짜가 변경될 때 실행
-  useEffect(() => {
+   // 날짜가 변경될 때 실행
+    useEffect(() => {
     // 새로운 날짜에 맞게 컬러 팔레트 초기화
     const newDate = moment(selectedDate).format("YYYY-MM-DD");
     if (!dateColors[newDate]) {
@@ -97,21 +101,18 @@ const DiaryCalendar = () => {
   // 컬러 팔레트의 컬러 변경 핸들러
   const handleColorSelect = (color) => {
     setSelectedColor(color.hex);
+  };
+
+  // 컬러를 추가하는 함수
+  const handleAddColor = () => {
     const newDateColors = { ...dateColors };
-    newDateColors[currentDate] = color.hex;
+    newDateColors[currentDate] = selectedColor;
     setDateColors(newDateColors);
+    setColorPalette([...colorPalette, selectedColor]);
     localStorage.setItem("dateColors", JSON.stringify(newDateColors));
   };
 
 
-  const handleDiaryEntry = (event) => {
-    const { value } = event.target;
-    setDiaryEntries((prevDiaryEntries) => ({
-      ...prevDiaryEntries,
-      [moment(selectedDate).format("YYYY-MM-DD")]: value,
-    }));
-  };
-  
   const handleAdditionalDiaryEntry = (event) => {
     const { value } = event.target;
     setDiaryEntries((prevDiaryEntries) => ({
@@ -122,6 +123,13 @@ const DiaryCalendar = () => {
 
   const handleRadioChange = (event) => {
     const { value } = event.target;
+    // 이전에 선택했던 컬러 초기화
+    if (diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-color"]) {
+      setSelectedColor(diaryEntries[moment(selectedDate).format("YYYY-MM-DD") + "-color"]);
+    } else {
+      setSelectedColor("#ffffff"); // 기본 색상
+    }
+
     setDiaryEntries((prevDiaryEntries) => ({
       ...prevDiaryEntries,
       [moment(selectedDate).format("YYYY-MM-DD")]: value,
@@ -187,6 +195,7 @@ const DiaryCalendar = () => {
 
     return ratio;
   };
+
   const handleStarClick = (rating) => {
     setDiaryEntries((prevDiaryEntries) => ({
       ...prevDiaryEntries,
@@ -258,13 +267,7 @@ const DiaryCalendar = () => {
     return drinkIcon;
   };
 
-  // DateColorManager 컴포넌트에서 호출할 함수
-  const updateDateColor = (date, color) => {
-    setDateColors((prevDateColors) => ({
-      ...prevDateColors,
-      [date]: color,
-    }));
-  };
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -338,9 +341,11 @@ const DiaryCalendar = () => {
             calculateDrinkRatio={calculateDrinkRatio}
             calculateTotalDrinkRatio={calculateTotalDrinkRatio}
             setDiaryEntries={setDiaryEntries}
-            dateColors={dateColors} // dateColors를 전달
-            updateDateColor={updateDateColor} // updateDateColor를 전달
-        
+            handleColorSelect={handleColorSelect} // 컬러 피커 핸들러 추가
+            selectedColor={selectedColor} // 선택된 컬러
+            colorPalette={colorPalette}
+            setSelectedColor={setSelectedColor}
+            handleAddColor={handleAddColor}
           />
         )}
 

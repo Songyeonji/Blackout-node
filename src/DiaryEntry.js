@@ -1,12 +1,12 @@
 import React from "react";
 import moment from "moment";
-import { LinearProgress, Rating } from "@mui/material";
+import { Rating } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as emptyStar } from "@fortawesome/free-regular-svg-icons";
-import { CompactPicker } from "react-color";
-import StarIcon from "@mui/icons-material/Star";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
+import { CompactPicker } from "react-color"; // 컬러 피커를 추가합니다.
+
+
 import AlcoholProgress from "./AlcoholProgress";
 
 const DiaryEntry = ({
@@ -25,12 +25,9 @@ const DiaryEntry = ({
   colorPalette,
   setSelectedColor,
   handleAddColor,
-  updateDateColor,
-  dateColors, // You might be missing this prop
 }) => {
-  // You should place this code inside your component
-  const selectedDateColor = dateColors[moment(selectedDate).format("YYYY-MM-DD")];
-  const customBackgroundClass = selectedDateColor ? `custom-background-${selectedDateColor}` : '';
+
+
 
   const getRadioLabel = (value, text) => {
     const entryValue = diaryEntries[moment(selectedDate).format("YYYY-MM-DD")];
@@ -39,6 +36,7 @@ const DiaryEntry = ({
     }
     return text;
   };
+  
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginLeft: "30px", marginTop: "20px" }}>
@@ -140,27 +138,20 @@ const DiaryEntry = ({
         </div>
       </div>
 
-      {/* 컬러 팔레트 컴포넌트 */}
+      {/* 컬러 팔레트 */}
       <div className="color-palette">
         {colorPalette.map((color, index) => (
-        <div
-          key={index}
-          className="color-option"
-          style={{
-          backgroundColor: color,
-          border: color === selectedColor ? "2px solid black" : "none",
-          }}
-          onClick={() => handleColorSelect(color)}
+          <div
+            key={index}
+            className="color-option"
+            style={{ backgroundColor: color }}
+            onClick={() => setSelectedColor(color)}
           ></div>
-          ))}
-        </div>
-
-      {/* 컬러 피커 컴포넌트 */}
+        ))}
+      </div>
+      {/* 컬러 피커 */}
       <div className="color-picker">
-        <CompactPicker
-          color={selectedColor}
-          onChange={(color) => handleColorSelect(color.hex)}
-        />
+        <CompactPicker color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
         <button onClick={handleAddColor}>+</button>
       </div>
 
