@@ -144,7 +144,7 @@ const DiaryEntry = ({
             key={index}
             className="color-option"
             style={{ backgroundColor: color }}
-            onClick={() => setSelectedColor(color)}
+            onClick={() => handleColorSelect(color)}
           >
             <span
               className="delete-color"
