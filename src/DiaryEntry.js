@@ -25,6 +25,7 @@ const DiaryEntry = ({
   colorPalette,
   setSelectedColor,
   handleAddColor,
+  handleDeleteColor,
 }) => {
 
 
@@ -137,8 +138,6 @@ const DiaryEntry = ({
           />
         </div>
       </div>
-
-      {/* 컬러 팔레트 */}
       <div className="color-palette">
         {colorPalette.map((color, index) => (
           <div
@@ -146,7 +145,14 @@ const DiaryEntry = ({
             className="color-option"
             style={{ backgroundColor: color }}
             onClick={() => setSelectedColor(color)}
-          ></div>
+          >
+            <span
+              className="delete-color"
+              onClick={() => handleDeleteColor(color)}
+            >
+              X
+            </span>
+          </div>
         ))}
       </div>
       {/* 컬러 피커 */}

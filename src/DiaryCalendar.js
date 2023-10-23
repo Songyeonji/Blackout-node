@@ -61,31 +61,28 @@ const DiaryCalendar = () => {
   }, [diaryEntries]);
 
   useEffect(() => {
-    if (selectedDate && currentMonth !== selectedDate.getMonth()) {
-      setCurrentMonthEntries(
-        diaryEntries[moment(selectedDate).format("YYYY-MM")] || {}
-      );
-      setCurrentMonth(selectedDate.getMonth());
-    }
-  }, [selectedDate, diaryEntries, currentMonth]);
-  
- // 이전에 선택한 색상을 로컬 스토리지에서 가져옴
-  useEffect(() => {
-    const storedColors = localStorage.getItem("dateColors");
-    if (storedColors) {
-      setDateColors(JSON.parse(storedColors));
-
-    // 컬러 팔레트를 dateColors에서 초기화
-    const colors = Object.values(JSON.parse(storedColors));
-    setColorPalette(colors);
-  }
-}, []);
-
+    localStorage.setItem("dateColors", JSON.stringify(dateColors));
+  }, [dateColors]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
 
+  useEffect(() => {
+    // Diary Entries
+    const storedDiaryEntries = localStorage.getItem("diaryEntries");
+    if (storedDiaryEntries) {
+      setDiaryEntries(JSON.parse(storedDiaryEntries));
+    }
+  
+    // Date Colors
+    const storedDateColors = localStorage.getItem("dateColors");
+    if (storedDateColors) {
+      setDateColors(JSON.parse(storedDateColors));
+    }
+  }, []);
+
+  
    // 날짜가 변경될 때 실행
     useEffect(() => {
     // 새로운 날짜에 맞게 컬러 팔레트 초기화
@@ -130,6 +127,7 @@ const DiaryCalendar = () => {
       setSelectedColor("#ffffff"); // 기본 색상
     }
 
+
     setDiaryEntries((prevDiaryEntries) => ({
       ...prevDiaryEntries,
       [moment(selectedDate).format("YYYY-MM-DD")]: value,
@@ -138,6 +136,15 @@ const DiaryCalendar = () => {
 
     return event.target.value;
   };
+  
+  const handleDeleteColor = (colorToDelete) => {
+    const newDateColors = { ...dateColors };
+    delete newDateColors[currentDate];
+
+    setDateColors(newDateColors);
+    localStorage.setItem("dateColors", JSON.stringify(newDateColors));
+  };
+
 
   const getImageByDrink = (drink) => {
     switch (drink) {
@@ -346,6 +353,7 @@ const DiaryCalendar = () => {
             colorPalette={colorPalette}
             setSelectedColor={setSelectedColor}
             handleAddColor={handleAddColor}
+            handleDeleteColor={handleDeleteColor} 
           />
         )}
 
