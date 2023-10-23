@@ -100,14 +100,6 @@ const DiaryCalendar = () => {
     setSelectedColor(color.hex);
   };
 
-  // 컬러를 추가하는 함수
-  const handleAddColor = () => {
-    const newDateColors = { ...dateColors };
-    newDateColors[currentDate] = selectedColor;
-    setDateColors(newDateColors);
-    setColorPalette([...colorPalette, selectedColor]);
-    localStorage.setItem("dateColors", JSON.stringify(newDateColors));
-  };
 
 
   const handleAdditionalDiaryEntry = (event) => {
@@ -137,13 +129,29 @@ const DiaryCalendar = () => {
     return event.target.value;
   };
   
-  const handleDeleteColor = (colorToDelete) => {
-    const newDateColors = { ...dateColors };
-    delete newDateColors[currentDate];
+// 컬러 팔레트에서 컬러를 삭제하는 함수
+const handleDeleteColor = (colorToDelete) => {
+  const newDateColors = { ...dateColors };
+  delete newDateColors[currentDate];
+  setDateColors(newDateColors);
+  setColorPalette((prevPalette) => prevPalette.filter((color) => color !== colorToDelete));
 
+  // 로컬 스토리지에서도 삭제
+  localStorage.setItem("dateColors", JSON.stringify(newDateColors));
+};
+
+  // 컬러를 추가하는 함수
+  const handleAddColor = () => {
+    const newDateColors = { ...dateColors };
+    newDateColors[currentDate] = selectedColor;
     setDateColors(newDateColors);
-    localStorage.setItem("dateColors", JSON.stringify(newDateColors));
-  };
+  
+  // 컬러 팔레트에 새로운 컬러를 추가
+  setColorPalette((prevPalette) => [...prevPalette, selectedColor]);
+
+  // 로컬 스토리지에 저장
+  localStorage.setItem("dateColors", JSON.stringify(newDateColors));
+};
 
 
   const getImageByDrink = (drink) => {
