@@ -39,23 +39,31 @@ const DiaryCalendar = () => {
     const storedColorPalette = localStorage.getItem("colorPalette");
     return storedColorPalette ? JSON.parse(storedColorPalette) : [];
   });
-  const [selectedColor, setSelectedColor] = useState("#ffffff"); // 기본 색상
 
-  const handleColorSelect = (color) => {
-    setSelectedColor(color);
-  };
+ // 선택된 날짜의 컬러
+ const [colorForSelectedDate, setColorForSelectedDate] = useState("#ffffff"); 
 
-  const handleAddColor = () => {
-    const newColorPalette = [...colorPalette, selectedColor];
-    setColorPalette(newColorPalette);
-    localStorage.setItem("colorPalette", JSON.stringify(newColorPalette));
-  };
+ const handleColorSelect = (color) => {
+  setColorForSelectedDate(color);
+};
 
-  const handleDeleteColor = (colorToDelete) => {
-    const newColorPalette = colorPalette.filter((color) => color !== colorToDelete);
-    setColorPalette(newColorPalette);
-    localStorage.setItem("colorPalette", JSON.stringify(newColorPalette));
-  };
+ const handleAddColor = () => {
+   setDiaryEntries((prevDiaryEntries) => ({
+     ...prevDiaryEntries,
+     [moment(selectedDate).format("YYYY-MM-DD") + "-color"]: colorForSelectedDate,
+   }));
+
+   const newColorPalette = [...colorPalette, colorForSelectedDate];
+   setColorPalette(newColorPalette);
+   localStorage.setItem("colorPalette", JSON.stringify(newColorPalette));
+ };
+
+ const handleDeleteColor = (colorToDelete) => {
+   const newColorPalette = colorPalette.filter((color) => color !== colorToDelete);
+   setColorPalette(newColorPalette);
+   localStorage.setItem("colorPalette", JSON.stringify(newColorPalette));
+ };
+
 
   useEffect(() => {
     const fetchWeatherData = async () => {
@@ -72,18 +80,23 @@ const DiaryCalendar = () => {
     fetchWeatherData();
   }, []);
 
+
+  const [selectedColor, setSelectedColor] = useState("#ffffff");
   const [dateColors, setDateColors] = useState(() => {
     const storedDateColors = localStorage.getItem("dateColors");
     return storedDateColors ? JSON.parse(storedDateColors) : {};
   });
+  
   useEffect(() => {
-    // Save diary entries and dateColors to localStorage whenever they change
     localStorage.setItem("diaryEntries", JSON.stringify(diaryEntries));
     localStorage.setItem("colorPalette", JSON.stringify(colorPalette));
-  }, [diaryEntries, colorPalette]);
+    localStorage.setItem("dateColors", JSON.stringify(dateColors));
+  }, [diaryEntries, colorPalette, dateColors]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
+      // 다음 날짜로 이동할 때 이전 날짜의 컬러 초기화
+    setColorForSelectedDate("#ffffff");
   };
 
   useEffect(() => {
@@ -336,7 +349,8 @@ const DiaryCalendar = () => {
             handleColorSelect={handleColorSelect} // 컬러 피커 핸들러 추가
             selectedColor={selectedColor} // 선택된 컬러
             colorPalette={colorPalette}
-            setSelectedColor={setSelectedColor}
+            setSelectedColor={setSelectedColor} // setSelectedColor 함수를 전달
+            colorForSelectedDate={colorForSelectedDate} // colorForSelectedDate 변수를 전달
             handleAddColor={handleAddColor}
             handleDeleteColor={handleDeleteColor} 
           />

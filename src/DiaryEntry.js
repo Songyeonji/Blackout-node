@@ -20,15 +20,26 @@ const DiaryEntry = ({
   handleStarClick,
   calculateDrinkRatio,
   calculateTotalDrinkRatio,
-  handleColorSelect,
-  selectedColor,
-  colorPalette,
   setSelectedColor,
+  handleColorSelect,
+  colorForSelectedDate,
+  colorPalette,
   handleAddColor,
   handleDeleteColor,
 }) => {
 
-
+  const colorOptions = colorPalette.map((color, index) => (
+    <div
+      key={index}
+      className="color-option"
+      style={{ backgroundColor: color }}
+      onClick={() => handleColorSelect(color)}
+    >
+      <span className="delete-color" onClick={() => handleDeleteColor(color)}>
+        X
+      </span>
+    </div>
+  ));
 
   const getRadioLabel = (value, text) => {
     const entryValue = diaryEntries[moment(selectedDate).format("YYYY-MM-DD")];
@@ -138,28 +149,33 @@ const DiaryEntry = ({
           />
         </div>
       </div>
+      
       <div className="color-palette">
-        {colorPalette.map((color, index) => (
-          <div
-            key={index}
-            className="color-option"
-            style={{ backgroundColor: color }}
-            onClick={() => handleColorSelect(color)}
+      {colorPalette.map((color, index) => (
+        <div
+          key={index}
+          className="color-option"
+          style={{ backgroundColor: color }}
+          onClick={() => handleColorSelect(color)}
+        >
+          <span
+            className="delete-color"
+            onClick={() => handleDeleteColor(color)}
           >
-            <span
-              className="delete-color"
-              onClick={() => handleDeleteColor(color)}
-            >
-              X
-            </span>
-          </div>
-        ))}
-      </div>
+            X
+          </span>
+        </div>
+      ))}
+    </div>
+
       {/* 컬러 피커 */}
       <div className="color-picker">
-        <CompactPicker color={selectedColor} onChange={(color) => setSelectedColor(color.hex)} />
-        <button onClick={handleAddColor}>+</button>
-      </div>
+      <CompactPicker
+        color={colorForSelectedDate}
+        onChange={(color) => setSelectedColor(color.hex)}
+      />
+      <button onClick={handleAddColor}>+</button>
+    </div>
 
       <div style={{ width: "100%", marginTop: "20px" }}>
         <h2>이번달 알콜 수치</h2>
