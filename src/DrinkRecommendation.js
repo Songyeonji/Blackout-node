@@ -70,29 +70,20 @@ const DrinkRecommendation = () => {
     border: "2px solid blue",
   };
 
-  const drinkRecommendations = [
-    { weather: "Clear", temperature: "Sunny", recommendation: "Enjoy a refreshing cocktail or a glass of wine." },
-    { weather: "Clouds", temperature: "Cloudy", recommendation: "Indulge in a soothing cup of tea or coffee." },
-    { weather: "Rain", temperature: "Rainy", recommendation: "Savor a warm cup of hot chocolate or a glass of whiskey." },
-  ];
-
-  const getDrinkRecommendation = (weather) => {
-    const recommendation = drinkRecommendations.find((item) => item.weather.toLowerCase() === (weather?.toLowerCase() ?? ""));
-    return recommendation ? recommendation.recommendation : "No recommendation available.";
-  };
-
   const getWeatherIcon = (weather) => {
-    switch ((weather?.toLowerCase() ?? "")) {
-      case "clear":
-        return faSun;
-      case "clouds":
-        return faCloud;
-      case "rain":
-        return faCloudRain;
-      default:
-        return faCloudSun;
+    const lowerCaseWeather = (weather?.toLowerCase() ?? "");
+    
+    if (lowerCaseWeather.includes("clear")) {
+      return faSun;
+    } else if (lowerCaseWeather.includes("clouds")) {
+      return faCloud;
+    } else if (lowerCaseWeather.includes("rain")) {
+      return faCloudRain;
+    } else {
+      return faCloudSun;
     }
   };
+  
 
   const getDrinkRecommendationByWeather = () => {
     if (!weather || !weather.weather) return "Unknown";
@@ -101,7 +92,7 @@ const DrinkRecommendation = () => {
 
     if (temperature >= 30) {
       return "Beer";
-    } else if (temperature >= 10 && temperature <= 20) {
+    } else if (temperature >= 10 && temperature <= 20 && !weatherDescription.includes("rain")) {
       return "Wine";
     } else {
       const weatherDescription = (weather.weather[0]?.description?.toLowerCase() ?? "");

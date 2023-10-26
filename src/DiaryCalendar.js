@@ -40,30 +40,23 @@ const DiaryCalendar = () => {
     return storedColorPalette ? JSON.parse(storedColorPalette) : [];
   });
 
- // 선택된 날짜의 컬러
- const [colorForSelectedDate, setColorForSelectedDate] = useState("#ffffff"); 
+  const [selectedColor, setSelectedColor] = useState("#ffffff"); // 기본 색상
 
- const handleColorSelect = (color) => {
-  setColorForSelectedDate(color);
-};
+  const handleColorSelect = (color) => {
+    setSelectedColor(color);
+  };
 
- const handleAddColor = () => {
-   setDiaryEntries((prevDiaryEntries) => ({
-     ...prevDiaryEntries,
-     [moment(selectedDate).format("YYYY-MM-DD") + "-color"]: colorForSelectedDate,
-   }));
+  const handleAddColor = () => {
+    const newColorPalette = [...colorPalette, selectedColor];
+    setColorPalette(newColorPalette);
+    localStorage.setItem("colorPalette", JSON.stringify(newColorPalette));
+  };
 
-   const newColorPalette = [...colorPalette, colorForSelectedDate];
-   setColorPalette(newColorPalette);
-   localStorage.setItem("colorPalette", JSON.stringify(newColorPalette));
- };
-
- const handleDeleteColor = (colorToDelete) => {
-   const newColorPalette = colorPalette.filter((color) => color !== colorToDelete);
-   setColorPalette(newColorPalette);
-   localStorage.setItem("colorPalette", JSON.stringify(newColorPalette));
- };
-
+  const handleDeleteColor = (colorToDelete) => {
+    const newColorPalette = colorPalette.filter((color) => color !== colorToDelete);
+    setColorPalette(newColorPalette);
+    localStorage.setItem("colorPalette", JSON.stringify(newColorPalette));
+  };
 
   useEffect(() => {
     const fetchWeatherData = async () => {
@@ -80,23 +73,19 @@ const DiaryCalendar = () => {
     fetchWeatherData();
   }, []);
 
-
-  const [selectedColor, setSelectedColor] = useState("#ffffff");
   const [dateColors, setDateColors] = useState(() => {
     const storedDateColors = localStorage.getItem("dateColors");
     return storedDateColors ? JSON.parse(storedDateColors) : {};
   });
-  
+
   useEffect(() => {
+    // Save diary entries and dateColors to localStorage whenever they change
     localStorage.setItem("diaryEntries", JSON.stringify(diaryEntries));
     localStorage.setItem("colorPalette", JSON.stringify(colorPalette));
-    localStorage.setItem("dateColors", JSON.stringify(dateColors));
-  }, [diaryEntries, colorPalette, dateColors]);
+  }, [diaryEntries, colorPalette]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
-      // 다음 날짜로 이동할 때 이전 날짜의 컬러 초기화
-    setColorForSelectedDate("#ffffff");
   };
 
   useEffect(() => {
@@ -349,8 +338,7 @@ const DiaryCalendar = () => {
             handleColorSelect={handleColorSelect} // 컬러 피커 핸들러 추가
             selectedColor={selectedColor} // 선택된 컬러
             colorPalette={colorPalette}
-            setSelectedColor={setSelectedColor} // setSelectedColor 함수를 전달
-            colorForSelectedDate={colorForSelectedDate} // colorForSelectedDate 변수를 전달
+            setSelectedColor={setSelectedColor}
             handleAddColor={handleAddColor}
             handleDeleteColor={handleDeleteColor} 
           />
