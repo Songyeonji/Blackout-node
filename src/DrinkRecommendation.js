@@ -18,6 +18,7 @@ import wineIcon from "./icon/wine-bottle.png";
 import sojuIcon from "./icon/soju.png";
 import beerIcon from "./icon/beer.png";
 import makgeolliIcon from "./icon/rice-wine.png";
+import { useHistory } from 'react-router-dom';
 import RecipeReviewCard from "./RecipeReviewCard"; 
 
 const theme = createTheme({
@@ -126,6 +127,12 @@ const DrinkRecommendation = () => {
   const weatherDescription = weather?.weather?.[0]?.description;
   const weatherIcon = getWeatherIcon(weatherDescription);
 
+//더알아보기
+  const history = useHistory();
+  const handleLearnMoreClick = () => {
+    history.push('/learn-more');
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
@@ -197,16 +204,21 @@ const DrinkRecommendation = () => {
               </CardContent>
             </Card>
           </Grid>
+            {/* 새로운 카드 캐러셀 섹션 */}
+            <Grid container spacing={1} justifyContent="center" style={{ marginTop: "20px" }}>
+            {/* 각각의 카드에 대해 이 블록을 반복합니다. */}
+            <Grid item xs={12} sm={6} md={4}>
+              <RecipeReviewCard />
+            </Grid>
+            {/* 각각의 카드에 대해 이 블록을 반복합니다. */}
+            </Grid>
+            <Button onClick={handleLearnMoreClick} color="primary">
+              더 알아보기
+            </Button>
         </Grid>
+        
 
-             {/* 새로운 카드 캐러셀 섹션 */}
-             <Grid container spacing={2} justifyContent="center" style={{ marginTop: "20px" }}>
-          {/* 각각의 카드에 대해 이 블록을 반복합니다. */}
-          <Grid item xs={12} sm={6} md={4}>
-            <RecipeReviewCard />
-          </Grid>
-          {/* 각각의 카드에 대해 이 블록을 반복합니다. */}
-        </Grid>
+      
 
 
       </div>
