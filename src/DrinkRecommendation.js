@@ -127,11 +127,14 @@ const DrinkRecommendation = () => {
   const weatherDescription = weather?.weather?.[0]?.description;
   const weatherIcon = getWeatherIcon(weatherDescription);
 
+  
 //더알아보기
   const history = useHistory();
   const handleLearnMoreClick = () => {
     history.push('/learn-more');
   };
+
+  
 
   return (
     <ThemeProvider theme={theme}>
