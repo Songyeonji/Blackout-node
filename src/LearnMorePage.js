@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { AppBar, Toolbar, createTheme, ThemeProvider, Box, Tabs, Tab, Typography } from "@mui/material";
+import { AppBar, Toolbar, createTheme, ThemeProvider, Box, Tabs, Tab, Typography, Button } from "@mui/material";
 import PropTypes from 'prop-types';
 
 const theme = createTheme({
@@ -88,6 +88,14 @@ const LearnMorePage = () => {
             Item Three
           </CustomTabPanel>
         </div>
+        
+         {/* 글쓰기 버튼 */}
+        <Link to="/write-page" style={{ textDecoration: "none" }}>
+          <Button variant="contained" color="primary" style={{ marginTop: "16px" }}>
+            글쓰기
+          </Button>
+        </Link>
+
       </div>
     </ThemeProvider>
   );
