@@ -12,6 +12,30 @@ const theme = createTheme({
 
 const LearnMorePage = () => {
   return (
+    <ThemeProvider theme={theme}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      }}
+    >
+      <AppBar position="fixed">
+        <Toolbar>
+          <div className="flex-1"></div>
+          <Link
+            to="/drink-recommendation"
+            style={{ color: "white", textDecoration: "none" }}
+          >
+            <span className="font-bold">오늘의 술 추천</span>
+          </Link>
+          <div className="flex-1"></div>
+        </Toolbar>
+      </AppBar>
+      <Toolbar />
+    </div>
+    
     <div>
       <h2>카드뉴스</h2>
       <ul>
@@ -26,6 +50,7 @@ const LearnMorePage = () => {
         </li>
       </ul>
     </div>
+    </ThemeProvider>
   );
 };
 
