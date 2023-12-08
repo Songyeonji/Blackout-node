@@ -1,6 +1,11 @@
 import React, { useState } from "react";
-import { AppBar, Toolbar, createTheme, ThemeProvider, Box, Tabs, Tab, Typography, Button } from "@mui/material";
-import { Link, useHistory } from "react-router-dom"; // useHistory 추가
+import { AppBar, Toolbar, createTheme, ThemeProvider } from "@mui/material";
+import { Link, useHistory } from "react-router-dom";
+import { Editor, EditorState, convertToRaw, ContentState } from "draft-js";
+import { Editor as WysiwygEditor } from "react-draft-wysiwyg";
+import draftjsToHtml from "draftjs-to-html";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import "draft-js/dist/Draft.css";
 
 const theme = createTheme({
   palette: {
@@ -13,16 +18,18 @@ const theme = createTheme({
 const WritePage = () => {
   const [boardId, setBoardId] = useState(1);
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const history = useHistory(); // useHistory로 history 객체 가져오기
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const history = useHistory();
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    // 글쓰기 로직을 추가할 부분
+    const contentState = editorState.getCurrentContent();
+    const contentRaw = convertToRaw(contentState);
+    const content = JSON.stringify(contentRaw);
+
     console.log("Submitted:", { boardId, title, content });
 
-    // 예시로 뒤로가기
     history.goBack();
   };
 
@@ -43,44 +50,18 @@ const WritePage = () => {
         </AppBar>
         <Toolbar />
 
-        <section className="mt-8 text-xl">
-          <div className="container mx-auto px-3">
+        <section className="text-xl mt-20">
+          <div className="container mx-auto px-3 text-center">
             <form onSubmit={handleSubmit}>
               <input type="hidden" name="body" />
-              <div className="table-box-type">
-                <table className="table table-lg">
+              <div className="table-box-type text-center"> {/* text-center 클래스 추가 */}
+                <table className="table table-lg" style={{ margin: "0 auto" }}>
                   <tbody>
                     <tr>
                       <th>게시판</th>
                       <td>
                         <div className="flex">
-                          <div>
-                            <label className="flex items-center">
-                              <input
-                                className="radio radio-primary radio-sm"
-                                name="boardId"
-                                type="radio"
-                                value="1"
-                                checked={boardId === 1}
-                                onChange={() => setBoardId(1)}
-                              />
-                              &nbsp;&nbsp;&nbsp;공지사항
-                            </label>
-                          </div>
-                          <div className="w-20"></div>
-                          <div>
-                            <label className="flex items-center">
-                              <input
-                                className="radio radio-primary radio-sm"
-                                name="boardId"
-                                type="radio"
-                                value="2"
-                                checked={boardId === 2}
-                                onChange={() => setBoardId(2)}
-                              />
-                              &nbsp;&nbsp;&nbsp;자유
-                            </label>
-                          </div>
+                          {/* ... (이전 코드 생략) */}
                         </div>
                       </td>
                     </tr>
@@ -100,13 +81,17 @@ const WritePage = () => {
                     <tr>
                       <th>내용</th>
                       <td>
-                        <div className="toast-ui-editor">
-                          {/* Toast UI Editor 컴포넌트를 여기에 추가 */}
-                        </div>
+                        <WysiwygEditor
+                          editorState={editorState}
+                          onEditorStateChange={(newEditorState) => setEditorState(newEditorState)}
+                          wrapperClassName="editor-wrapper"
+                          editorClassName="editor-main"
+                          toolbarClassName="editor-toolbar"
+                        />
                       </td>
                     </tr>
                     <tr>
-                      <td className="text-center" colSpan="2">
+                      <td colSpan="2">
                         <button className="btn-text-color btn btn-wide btn-outline">
                           작성
                         </button>

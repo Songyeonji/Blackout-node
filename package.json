@@ -20,6 +20,7 @@
     "axios": "^1.4.0",
     "classnames": "^2.3.2",
     "draft-js": "^0.11.7",
+    "draftjs-to-html": "^0.9.1",
     "immer": "^10.0.2",
     "moment": "^2.29.4",
     "react": "^18.2.0",

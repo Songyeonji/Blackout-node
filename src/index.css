@@ -169,3 +169,10 @@ abbr[title] {
   border-radius: 50%; /* 원 모양으로 만듭니다. */
   cursor: pointer; /* 클릭 가능한 커서로 변경합니다. */
 }
+.editor-wrapper {
+  height: 400px; /* 원하는 높이 설정 */
+}
+
+.editor-main {
+  height: 300px; /* 원하는 높이 설정 */
+}
