@@ -104,7 +104,7 @@ const WritePage = () => {
 
             <div className="btns mt-2">
               <button className="btn-text-color btn btn-outline btn-sm" onClick={() => history.goBack()}>
-                뒤로가기
+                뒤로가기 
               </button>
             </div>
           </div>
