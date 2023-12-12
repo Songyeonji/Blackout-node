@@ -3,7 +3,7 @@ import { AppBar, Toolbar, createTheme, ThemeProvider } from "@mui/material";
 import { Link, useHistory } from "react-router-dom";
 import { Editor, EditorState, convertToRaw, ContentState } from "draft-js";
 import { Editor as WysiwygEditor } from "react-draft-wysiwyg";
-import draftjsToHtml from "draftjs-to-html";
+import { AtomicBlockUtils } from "draft-js";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "draft-js/dist/Draft.css";
 
@@ -31,6 +31,21 @@ const WritePage = () => {
     console.log("Submitted:", { boardId, title, content });
 
     history.goBack();
+  };
+
+  
+  const handleImageUpload = (file) => {
+    // 이미지를 업로드하는 로직을 추가해야 합니다.
+    // 예: 서버로 이미지를 업로드하고, 업로드된 이미지의 URL을 받아옵니다.
+    const imageUrl = "https://example.com/uploaded-image.jpg";
+
+    // 업로드된 이미지를 에디터에 삽입합니다.
+    const contentState = editorState.getCurrentContent();
+    const contentStateWithEntity = contentState.createEntity("IMAGE", "IMMUTABLE", { src: imageUrl });
+    const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+    const newEditorState = AtomicBlockUtils.insertAtomicBlock(editorState, entityKey, " ");
+
+    setEditorState(newEditorState);
   };
 
   return (
@@ -87,6 +102,9 @@ const WritePage = () => {
                           wrapperClassName="editor-wrapper"
                           editorClassName="editor-main"
                           toolbarClassName="editor-toolbar"
+                          toolbar={{
+                            image: { uploadCallback: handleImageUpload, alt: { present: true, mandatory: true } },
+                          }}
                         />
                       </td>
                     </tr>
