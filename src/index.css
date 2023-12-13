@@ -15,6 +15,7 @@ html,
 body,
 #root {
   height: 100%;
+  
 }
 /* 지마켓산스 폰트 적용 */
 html > body,
@@ -31,13 +32,23 @@ html > body button {
 html,
 body,
 #root {
-  height: 100%;
   background-color: #f5f7ff;
 }
 
 #root {
   display: flex;
   flex-direction: column;
+}
+
+.login{
+  background: url('./pages/member/ryan-hutton-Jztmx9yqjBw-unsplash.jpg') no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.diaryentry{
+  height: 100%;
+  background-color: #f5f7ff;
 }
 
 .react-calendar {

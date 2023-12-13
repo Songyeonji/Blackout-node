@@ -12,8 +12,9 @@ const theme = createTheme({
   },
 });
 
-const LoginForm = () => {
+const Loginpage = () => {
     return (
+        <div className="login">
         <ThemeProvider theme={theme}>
         <div
           style={{
@@ -64,7 +65,8 @@ const LoginForm = () => {
         </div>
         </div>
         </ThemeProvider>
+        </div>
     );
 };
 
-export default LoginForm;
+export default Loginpage;

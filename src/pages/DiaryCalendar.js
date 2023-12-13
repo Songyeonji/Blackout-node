@@ -325,7 +325,7 @@ const DiaryCalendar = () => {
         </Snackbar>
 
         {selectedDate && (
-          <DiaryEntry
+          <DiaryEntry className = "diaryEntry"
             selectedDate={selectedDate}
             diaryEntries={diaryEntries}
             handleAdditionalDiaryEntry={handleAdditionalDiaryEntry}
