@@ -4,6 +4,7 @@ import DiaryCalendar from "./DiaryCalendar";
 import DrinkRecommendation from "./DrinkRecommendation";
 import LearnMorePage from "./LearnMorePage"
 import WritePage from "./WritePage"
+import DetailPage from "./DetailPage";
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
         <Route path="/drink-recommendation" component={DrinkRecommendation} />
         <Route path="/learn-more" component={LearnMorePage} />
         <Route path="/write-page" component={WritePage} />
+        <Route path="/detail/:index" component={DetailPage} />
         <Redirect to="/diary-calendar" />
       </Switch>
     </Router>
