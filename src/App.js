@@ -6,6 +6,7 @@ import LearnMorePage from "./pages/article/LearnMorePage"
 import WritePage from "./pages/article/WritePage"
 import DetailPage from "./pages/article/DetailPage";
 import LoginPage from "./pages/member/Loginpage"; 
+import RegisterPage from "./pages/member/RegisterPage";
 
 const App = () => {
   return (
@@ -17,7 +18,8 @@ const App = () => {
         <Route path="/write-page" component={WritePage} />
         <Route path="/detail/:index" component={DetailPage} />
         <Route path="/login" component={LoginPage} />
-      
+        <Route path="/register" component={RegisterPage} /> 
+        
         <Redirect to="/diary-calendar" />
       </Switch>
     </Router>

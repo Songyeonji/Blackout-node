@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FaUser, FaUserCheck, FaLock, FaEnvelope } from "react-icons/fa";
 import './Login.css';
-import { FaUser, FaLock } from "react-icons/fa";
 import { AppBar, Toolbar, createTheme, ThemeProvider } from "@mui/material";
 
 const theme = createTheme({
@@ -12,7 +12,7 @@ const theme = createTheme({
   },
 });
 
-const Loginpage = () => {
+const RegisterPage = () => {
     return (
         <div className="member">
         <ThemeProvider theme={theme}>
@@ -38,25 +38,32 @@ const Loginpage = () => {
               </Link>
             </Toolbar>
           </AppBar>
-
         <div className='wrapper'>
             <form action="">
-                <h1>Login</h1>
+                <h1>Register</h1>
                 <div className="input-box">
-                    <input type="text" placeholder='Login Id' required />
+                    <input type="text" placeholder='name' name='name' required />
                     <FaUser className='icon' />
                 </div>
                 <div className="input-box">
-                    <input type="password" placeholder='Password' required />
+                    <input type="text" placeholder='Login Id' name='loginId' required />
+                    <FaUserCheck className='icon' />
+                </div>
+                <div className="input-box">
+                    <input type="password" placeholder='Password' name='loginPw' required />
                     <FaLock className='icon' />
                 </div>
+                <div className="input-box">
+                    <input type="text" placeholder='Email' name='email' required />
+                    <FaEnvelope className='icon' />
+                </div>
 
-                
 
-                <button type="submit">Login</button>
+
+                <button type="submit">Register</button>
 
                 <div className="register-link">
-                    <p>Don't have an account? <Link to="/register">Register</Link></p>
+                    <p>Already have an account? <Link to="/login">Login</Link></p>
                 </div>
             </form>
         </div>
@@ -66,4 +73,4 @@ const Loginpage = () => {
     );
 };
 
-export default Loginpage;
+export default RegisterPage;
