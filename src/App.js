@@ -1,10 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
-import DiaryCalendar from "./DiaryCalendar";
-import DrinkRecommendation from "./DrinkRecommendation";
-import LearnMorePage from "./LearnMorePage"
-import WritePage from "./WritePage"
-import DetailPage from "./DetailPage";
+import DiaryCalendar from "./pages/DiaryCalendar";
+import DrinkRecommendation from "./pages/DrinkRecommendation";
+import LearnMorePage from "./pages/article/LearnMorePage"
+import WritePage from "./pages/article/WritePage"
+import DetailPage from "./pages/article/DetailPage";
 
 const App = () => {
   return (

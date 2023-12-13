@@ -9,8 +9,8 @@ import wineIcon from "./icon/wine-bottle.png";
 import sojuIcon from "./icon/soju.png";
 import beerIcon from "./icon/beer.png";
 import makgeolliIcon from "./icon/rice-wine.png";
-import WeatherInfo from "./WeatherInfo";
-import DiaryEntry from "./DiaryEntry";
+import WeatherInfo from "../components/WeatherInfo";
+import DiaryEntry from "../components/DiaryEntry";
 
 
 const theme = createTheme({

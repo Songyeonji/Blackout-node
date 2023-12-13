@@ -19,7 +19,7 @@ import sojuIcon from "./icon/soju.png";
 import beerIcon from "./icon/beer.png";
 import makgeolliIcon from "./icon/rice-wine.png";
 import { useHistory } from 'react-router-dom';
-import RecipeReviewCard from "./RecipeReviewCard"; 
+import RecipeReviewCard from "../components/RecipeReviewCard"; 
 
 const theme = createTheme({
   palette: {
