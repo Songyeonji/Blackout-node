@@ -274,18 +274,19 @@ const DiaryCalendar = () => {
         }}
       >
         <AppBar position="fixed">
-          <Toolbar>
-            <div className="flex-1"></div>
+          <Toolbar style={{ justifyContent: "space-between" }}>
             <Link
               to="/drink-recommendation"
               style={{ color: "white", textDecoration: "none" }}
             >
               <span className="font-bold">오늘의 술 추천</span>
             </Link>
-            <div className="flex-1"></div>
+            {/* 로그인 버튼 및 이동 */}
+            <Link to="/login" style={{ color: "white", textDecoration: "none" }}>
+              <span className="font-bold">Login</span>
+            </Link>
           </Toolbar>
         </AppBar>
-        <Toolbar />
 
         <div className="calendar-container" style={{ marginTop: "10px" }}>
           <Calendar

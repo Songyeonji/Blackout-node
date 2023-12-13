@@ -69,6 +69,8 @@ body,
 abbr[title] {
   text-decoration: none;
 }
+
+
 .react-calendar__tile{
   height: 80px;
   display: flex;

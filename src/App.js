@@ -5,6 +5,7 @@ import DrinkRecommendation from "./pages/DrinkRecommendation";
 import LearnMorePage from "./pages/article/LearnMorePage"
 import WritePage from "./pages/article/WritePage"
 import DetailPage from "./pages/article/DetailPage";
+import LoginPage from "./pages/member/Loginpage"; 
 
 const App = () => {
   return (
@@ -15,6 +16,8 @@ const App = () => {
         <Route path="/learn-more" component={LearnMorePage} />
         <Route path="/write-page" component={WritePage} />
         <Route path="/detail/:index" component={DetailPage} />
+        <Route path="/login" component={LoginPage} />
+      
         <Redirect to="/diary-calendar" />
       </Switch>
     </Router>
