@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useHistory } from "react-router-dom";
+import { FaMapMarkedAlt, FaWineBottle, FaUtensils } from 'react-icons/fa';
 import {
   AppBar,
   Toolbar,
@@ -87,10 +88,10 @@ const LearnMorePage = () => {
           <Toolbar>
             <div className="flex-1"></div>
             <Link
-              to="/drink-recommendation"
+              to="/drink-calendar"
               style={{ color: "white", textDecoration: "none" }}
             >
-              <span className="font-bold">오늘의 술 추천</span>
+              <span className="font-bold">달력</span>
             </Link>
             <div className="flex-1"></div>
           </Toolbar>
@@ -100,9 +101,9 @@ const LearnMorePage = () => {
         {/* 여기서부터 탭 바 */}
         <Box sx={{ width: '100%', backgroundColor: theme.palette.background.paper }}>
           <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-            <Tab label="맛집" {...a11yProps(0)} />
-            <Tab label="술" {...a11yProps(1)} />
-            <Tab label="안주" {...a11yProps(2)} />
+            <Tab icon={<FaMapMarkedAlt />} label="맛집" {...a11yProps(0)} />
+            <Tab icon={<FaWineBottle />} label="술" {...a11yProps(1)} />
+            <Tab icon={<FaUtensils />} label="안주" {...a11yProps(2)} />
           </Tabs>
         </Box>
 

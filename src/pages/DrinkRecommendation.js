@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCloud, faSun, faCloudSun, faCloudRain } from "@fortawesome/free-solid-svg-icons";
+import { faSun, faCloud, faCloudRain, faCloudSun, faSnowflake } from '@fortawesome/free-solid-svg-icons';
 import wineIcon from "./icon/wine-bottle.png";
 import sojuIcon from "./icon/soju.png";
 import beerIcon from "./icon/beer.png";
@@ -81,6 +81,8 @@ const DrinkRecommendation = () => {
       return faCloud;
     } else if (lowerCaseWeather.includes("rain")) {
       return faCloudRain;
+    } else if (lowerCaseWeather.includes("snow")) {
+      return faSnowflake;
     } else {
       return faCloudSun;
     }

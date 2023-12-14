@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaUser, FaUserCheck, FaLock, FaEnvelope } from "react-icons/fa";
+import { FaUser, FaUserCheck, FaLock, FaEnvelope, FaCheckSquare, FaRegCheckSquare } from "react-icons/fa";
 import './Login.css';
 import { AppBar, Toolbar, createTheme, ThemeProvider } from "@mui/material";
 
@@ -13,6 +13,18 @@ const theme = createTheme({
 });
 
 const RegisterPage = () => {
+    const [password, setPassword] = useState('');
+    const [passwordCheck, setPasswordCheck] = useState('');
+  
+    const handlePasswordChange = (event) => {
+      setPassword(event.target.value);
+    };
+  
+    const handlePasswordCheckChange = (event) => {
+      setPasswordCheck(event.target.value);
+    };
+  
+
     return (
         <div className="member">
         <ThemeProvider theme={theme}>
@@ -38,6 +50,7 @@ const RegisterPage = () => {
               </Link>
             </Toolbar>
           </AppBar>
+
         <div className='wrapper'>
             <form action="">
                 <h1>Register</h1>
@@ -50,9 +63,14 @@ const RegisterPage = () => {
                     <FaUserCheck className='icon' />
                 </div>
                 <div className="input-box">
-                    <input type="password" placeholder='Password' name='loginPw' required />
+                    <input type="password" placeholder='Password' name='loginPw' value={password} onChange={handlePasswordChange} required />
                     <FaLock className='icon' />
                 </div>
+
+                <div className="input-box">
+                    <input type="password" placeholder='PasswordCheck' name='loginPwchk' value={passwordCheck} onChange={handlePasswordCheckChange} required />
+                    {password === passwordCheck ? <FaCheckSquare className='icon' /> : <FaRegCheckSquare className='icon' />}
+                </div>                
                 <div className="input-box">
                     <input type="text" placeholder='Email' name='email' required />
                     <FaEnvelope className='icon' />
