@@ -105,24 +105,22 @@ const WritePage = () => {
                           toolbar={{
                             image: { uploadCallback: handleImageUpload, alt: { present: true, mandatory: true } },
                           }}
+                           // 에디터 창 배경색 설정
+                          editorStyle={{ backgroundColor: "white" }}
                         />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colSpan="2">
-                        <button className="btn-text-color btn btn-wide btn-outline">
-                          작성
-                        </button>
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </form>
-
-            <div className="btns mt-2">
-              <button className="btn-text-color btn btn-outline btn-sm" onClick={() => history.goBack()}>
-                뒤로가기 
+            
+            <div className="btns mt-4">
+              <button className="btn btn-primary" type="submit">
+                작성
+              </button>
+              <button className="btn btn-outline btn-sm ml-4" onClick={() => history.goBack()}>
+                뒤로가기
               </button>
             </div>
           </div>
