@@ -4,6 +4,7 @@ import { Link, useHistory } from "react-router-dom";
 import { Editor, EditorState, convertToRaw, ContentState } from "draft-js";
 import { Editor as WysiwygEditor } from "react-draft-wysiwyg";
 import { AtomicBlockUtils } from "draft-js";
+import axios from 'axios'; // Axios 라이브러리 추가
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "draft-js/dist/Draft.css";
 
@@ -21,31 +22,29 @@ const WritePage = () => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const history = useHistory();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const contentState = editorState.getCurrentContent();
     const contentRaw = convertToRaw(contentState);
     const content = JSON.stringify(contentRaw);
 
-    console.log("Submitted:", { boardId, title, content });
+    try {
+      // Spring Boot API 호출
+      const response = await axios.post('http://localhost:8080/usr/article/doWrite', {
+        title: title,
+        body: content
+      });
 
-    history.goBack();
+      console.log("Submitted:", response.data);
+      history.goBack();
+    } catch (error) {
+      console.error('Error submitting:', error);
+    }
   };
 
-  
   const handleImageUpload = (file) => {
-    // 이미지를 업로드하는 로직을 추가해야 합니다.
-    // 예: 서버로 이미지를 업로드하고, 업로드된 이미지의 URL을 받아옵니다.
-    const imageUrl = "https://example.com/uploaded-image.jpg";
-
-    // 업로드된 이미지를 에디터에 삽입합니다.
-    const contentState = editorState.getCurrentContent();
-    const contentStateWithEntity = contentState.createEntity("IMAGE", "IMMUTABLE", { src: imageUrl });
-    const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
-    const newEditorState = AtomicBlockUtils.insertAtomicBlock(editorState, entityKey, " ");
-
-    setEditorState(newEditorState);
+    // 이미지 업로드 로직 생략
   };
 
   return (
@@ -69,7 +68,7 @@ const WritePage = () => {
           <div className="container mx-auto px-3 text-center">
             <form onSubmit={handleSubmit}>
               <input type="hidden" name="body" />
-              <div className="table-box-type text-center"> {/* text-center 클래스 추가 */}
+              <div className="table-box-type text-center">
                 <table className="table table-lg" style={{ margin: "0 auto" }}>
                   <tbody>
                     <tr>
@@ -105,7 +104,6 @@ const WritePage = () => {
                           toolbar={{
                             image: { uploadCallback: handleImageUpload, alt: { present: true, mandatory: true } },
                           }}
-                           // 에디터 창 배경색 설정
                           editorStyle={{ backgroundColor: "white" }}
                         />
                       </td>

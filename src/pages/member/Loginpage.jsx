@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Login.css';
 import { FaUser, FaLock } from "react-icons/fa";
@@ -13,6 +13,11 @@ const theme = createTheme({
 });
 
 const Loginpage = () => {
+    const [password, setPassword] = useState('');
+    const handlePasswordChange = (event) => {
+        setPassword(event.target.value);
+      };
+
     return (
         <div className="member">
         <ThemeProvider theme={theme}>
@@ -47,7 +52,7 @@ const Loginpage = () => {
                     <FaUser className='icon' />
                 </div>
                 <div className="input-box">
-                    <input type="password" placeholder='Password' required />
+                    <input type="password" placeholder='Password' value={password} onChange={handlePasswordChange} required />
                     <FaLock className='icon' />
                 </div>
 
