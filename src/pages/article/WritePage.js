@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { AppBar, Toolbar, createTheme, ThemeProvider } from "@mui/material";
 import { Link, useHistory } from "react-router-dom";
-import { Editor, EditorState, convertToRaw, ContentState } from "draft-js";
+import { Editor, EditorState, convertToRaw } from "draft-js";
 import { Editor as WysiwygEditor } from "react-draft-wysiwyg";
-import { AtomicBlockUtils } from "draft-js";
-import axios from 'axios'; // Axios 라이브러리 추가
+import axios from 'axios';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "draft-js/dist/Draft.css";
 
@@ -16,8 +15,10 @@ const theme = createTheme({
   },
 });
 
+
 const WritePage = () => {
   const [boardId, setBoardId] = useState(1);
+  const [body, setBody] = useState("");
   const [title, setTitle] = useState("");
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const history = useHistory();
@@ -33,7 +34,8 @@ const WritePage = () => {
       // Spring Boot API 호출
       const response = await axios.post('http://localhost:8080/usr/article/doWrite', {
         title: title,
-        body: content
+        body: body,
+        boardId: boardId,  // boardId 추가
       });
 
       console.log("Submitted:", response.data);
@@ -75,7 +77,12 @@ const WritePage = () => {
                       <th>게시판</th>
                       <td>
                         <div className="flex">
-                          {/* ... (이전 코드 생략) */}
+                          <input
+                            type="text"
+                            name="boardId"
+                            value={boardId}
+                            onChange={(e) => setBoardId(e.target.value)}
+                          />
                         </div>
                       </td>
                     </tr>
@@ -111,16 +118,17 @@ const WritePage = () => {
                   </tbody>
                 </table>
               </div>
-            </form>
+            
             
             <div className="btns mt-4">
               <button className="btn btn-primary" type="submit">
                 작성
               </button>
-              <button className="btn btn-outline btn-sm ml-4" onClick={() => history.goBack()}>
+              <button type="button" className="btn btn-outline btn-sm ml-4" onClick={() => history.goBack()}>
                 뒤로가기
               </button>
             </div>
+            </form>
           </div>
         </section>
       </div>
