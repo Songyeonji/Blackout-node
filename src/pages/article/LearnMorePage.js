@@ -88,16 +88,17 @@ const LearnMorePage = () => {
     setValue(newValue);
   };
 
-   // 디테일 페이지로 이동하는 함수
-  const handleDetailClick = (index) => {
-    history.push(`/detail/${index}`);
-  };
+
   // boardId에 따라 게시글을 필터링하는 함수
   const filterArticlesByBoardId = (boardId) => {
     const filtered = articles.filter((article) => parseInt(article.boardId) === boardId);
     console.log(`Articles for boardId ${boardId}:`, filtered); // 필터링 결과 확인
     return filtered;
   };
+
+  //이미지 기본 
+  const defaultImageUrl = "https://images.unsplash.com/photo-1590189182193-1fd44f2b4048?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+
   return (
     <ThemeProvider theme={theme}>
       <div>
@@ -131,11 +132,11 @@ const LearnMorePage = () => {
                 <Grid item xs={12} sm={6} key={index}>
                   <Card sx={{ display: 'flex', flexDirection: 'row', maxWidth: 600, height: 250 }}>
                     <CardMedia
-                      component="img"
-                      height="194"
-                      image={article.imgUrl || "https://via.placeholder.com/194"}
-                      alt="Article Image"
-                      sx={{ width: '50%', objectFit: 'cover' }}
+                        component="img"
+                        height="194"
+                        image={article.imgUrl || defaultImageUrl}
+                        alt="Article Image"
+                        sx={{ width: '50%', objectFit: 'cover' }}
                     />
                     <CardContent sx={{ flex: '1', overflow: 'hidden' }}>
                       <CardHeader
@@ -171,7 +172,7 @@ const LearnMorePage = () => {
                     <CardMedia
                       component="img"
                       height="194"
-                      image={article.imgUrl || "https://via.placeholder.com/194"}
+                      image={article.imgUrl || defaultImageUrl}
                       alt="Article Image"
                       sx={{ width: '50%', objectFit: 'cover' }}
                     />
@@ -208,7 +209,7 @@ const LearnMorePage = () => {
                     <CardMedia
                       component="img"
                       height="194"
-                      image={article.imgUrl || "https://via.placeholder.com/194"}
+                      image={article.imgUrl || defaultImageUrl}
                       alt="Article Image"
                       sx={{ width: '50%', objectFit: 'cover' }}
                     />
