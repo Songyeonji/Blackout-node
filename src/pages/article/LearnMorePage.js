@@ -17,6 +17,7 @@ import {
   CardHeader,
   CardActions,
   IconButton,
+  Grid
 } from "@mui/material";
 import PropTypes from 'prop-types';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -45,17 +46,12 @@ function CustomTabPanel(props) {
       {value === index && (
         <Box sx={{ p: 3 }}>
           <Typography>{children}</Typography>
-          {/* 자세히 보기 버튼 추가 */}
-          <Link to={`/detail/${index}`} style={{ textDecoration: "none" }}>
-            <Button variant="contained" color="primary" style={{ marginTop: "16px" }}>
-              자세히 보기
-            </Button>
-          </Link>
         </Box>
       )}
     </div>
   );
 }
+
 
 CustomTabPanel.propTypes = {
   children: PropTypes.node,
@@ -77,7 +73,6 @@ const LearnMorePage = () => {
 
   useEffect(() => {
     // 서버로부터 게시글 데이터를 가져오는 로직
-    // 예시로 가상의 데이터를 사용합니다.
     const fetchArticles = async () => {
       try {
         const response = await axios.get('http://localhost:8080/usr/article/showList');
@@ -94,7 +89,7 @@ const LearnMorePage = () => {
   };
 
    // 디테일 페이지로 이동하는 함수
-   const handleDetailClick = (index) => {
+  const handleDetailClick = (index) => {
     history.push(`/detail/${index}`);
   };
   // boardId에 따라 게시글을 필터링하는 함수
@@ -131,87 +126,116 @@ const LearnMorePage = () => {
 
         <div>
         <CustomTabPanel value={value} index={0}>
-            {/* 게시글을 카드 형식으로 표시 */}
-            {filterArticlesByBoardId(1).map((article, index) => (
-              <Card key={index} sx={{ display: 'flex', flexDirection: 'row', maxWidth: 600, mb: 2 }}>
-                <CardMedia
-                  component="img"
-                  height="194"
-                  image={article.imgUrl || "https://via.placeholder.com/194"} // 이미지 URL이 없을 경우 기본 이미지 사용
-                  alt="Article Image"
-                  sx={{ width: '50%', objectFit: 'cover' }}
-                />
-                <CardContent sx={{ flex: '1' }}>
-                  <CardHeader
-                    title={article.title}
-                    subheader={new Date(article.regDate).toLocaleDateString()}
-                  />
-                  <Typography variant="body2" color="text.secondary">
-                    {article.body}
-                  </Typography>
-                  <CardActions disableSpacing>
-                    <IconButton aria-label="add to favorites">
-                      <FavoriteIcon />
-                    </IconButton>
-                  </CardActions>
-                </CardContent>
-              </Card>
-            ))}
+            <Grid container spacing={2}>
+              {filterArticlesByBoardId(1).map((article, index) => (
+                <Grid item xs={12} sm={6} key={index}>
+                  <Card sx={{ display: 'flex', flexDirection: 'row', maxWidth: 600, height: 250 }}>
+                    <CardMedia
+                      component="img"
+                      height="194"
+                      image={article.imgUrl || "https://via.placeholder.com/194"}
+                      alt="Article Image"
+                      sx={{ width: '50%', objectFit: 'cover' }}
+                    />
+                    <CardContent sx={{ flex: '1', overflow: 'hidden' }}>
+                      <CardHeader
+                        title={article.title}
+                        subheader={new Date(article.regDate).toLocaleDateString()}
+                        titleTypographyProps={{ noWrap: true }}
+                      />
+                      <Typography variant="body2" color="text.secondary" noWrap>
+                        {article.body}
+                      </Typography>
+                      <CardActions disableSpacing>
+                        <IconButton aria-label="add to favorites">
+                          <FavoriteIcon />
+                        </IconButton>
+                      </CardActions>
+                    </CardContent>
+                  </Card>
+                  <Link to={`/detail/${article.id}`} style={{ textDecoration: "none" }}>
+                    <Button variant="contained" color="primary" style={{ marginTop: "16px" }}>
+                      자세히 보기
+                    </Button>
+                  </Link>
+                </Grid>
+              ))}
+            </Grid>
           </CustomTabPanel>
         
-        <CustomTabPanel value={value} index={1}>
-            {filterArticlesByBoardId(2).map((article, index) => (
-              <Card key={index} sx={{ display: 'flex', flexDirection: 'row', maxWidth: 600, mb: 2 }}>
-                <CardMedia
-                  component="img"
-                  height="194"
-                  image={article.imgUrl || "https://via.placeholder.com/194"} // 이미지 URL이 없을 경우 기본 이미지 사용
-                  alt="Article Image"
-                  sx={{ width: '50%', objectFit: 'cover' }}
-                />
-                <CardContent sx={{ flex: '1' }}>
-                  <CardHeader
-                    title={article.title}
-                    subheader={new Date(article.regDate).toLocaleDateString()}
-                  />
-                  <Typography variant="body2" color="text.secondary">
-                    {article.body}
-                  </Typography>
-                  <CardActions disableSpacing>
-                    <IconButton aria-label="add to favorites">
-                      <FavoriteIcon />
-                    </IconButton>
-                  </CardActions>
-                </CardContent>
-              </Card>
-            ))}
+          <CustomTabPanel value={value} index={1}>
+            <Grid container spacing={2}>
+              {filterArticlesByBoardId(2).map((article, index) => (
+                <Grid item xs={12} sm={6} key={index}>
+                  <Card sx={{ display: 'flex', flexDirection: 'row', maxWidth: 600, height: 250 }}>
+                    <CardMedia
+                      component="img"
+                      height="194"
+                      image={article.imgUrl || "https://via.placeholder.com/194"}
+                      alt="Article Image"
+                      sx={{ width: '50%', objectFit: 'cover' }}
+                    />
+                    <CardContent sx={{ flex: '1', overflow: 'hidden' }}>
+                      <CardHeader
+                        title={article.title}
+                        subheader={new Date(article.regDate).toLocaleDateString()}
+                        titleTypographyProps={{ noWrap: true }}
+                      />
+                      <Typography variant="body2" color="text.secondary" noWrap>
+                        {article.body}
+                      </Typography>
+                      <CardActions disableSpacing>
+                        <IconButton aria-label="add to favorites">
+                          <FavoriteIcon />
+                        </IconButton>
+                      </CardActions>
+                    </CardContent>
+                  </Card>
+                  <Link to={`/detail/${article.id}`} style={{ textDecoration: "none" }}>
+                    <Button variant="contained" color="primary" style={{ marginTop: "16px" }}>
+                      자세히 보기
+                    </Button>
+                  </Link>
+                </Grid>
+              ))}
+            </Grid>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
-          {filterArticlesByBoardId(3).map((article, index) => (
-              <Card key={index} sx={{ display: 'flex', flexDirection: 'row', maxWidth: 600, mb: 2 }}>
-                <CardMedia
-                  component="img"
-                  height="194"
-                  image={article.imgUrl || "https://via.placeholder.com/194"} // 이미지 URL이 없을 경우 기본 이미지 사용
-                  alt="Article Image"
-                  sx={{ width: '50%', objectFit: 'cover' }}
-                />
-                <CardContent sx={{ flex: '1' }}>
-                  <CardHeader
-                    title={article.title}
-                    subheader={new Date(article.regDate).toLocaleDateString()}
-                  />
-                  <Typography variant="body2" color="text.secondary">
-                    {article.body}
-                  </Typography>
-                  <CardActions disableSpacing>
-                    <IconButton aria-label="add to favorites">
-                      <FavoriteIcon />
-                    </IconButton>
-                  </CardActions>
-                </CardContent>
-              </Card>
-            ))}
+            <Grid container spacing={2}>
+              {filterArticlesByBoardId(3).map((article, index) => (
+                <Grid item xs={12} sm={6} key={index}>
+                  <Card sx={{ display: 'flex', flexDirection: 'row', maxWidth: 600, height: 250 }}>
+                    <CardMedia
+                      component="img"
+                      height="194"
+                      image={article.imgUrl || "https://via.placeholder.com/194"}
+                      alt="Article Image"
+                      sx={{ width: '50%', objectFit: 'cover' }}
+                    />
+                    <CardContent sx={{ flex: '1', overflow: 'hidden' }}>
+                      <CardHeader
+                        title={article.title}
+                        subheader={new Date(article.regDate).toLocaleDateString()}
+                        titleTypographyProps={{ noWrap: true }}
+                      />
+                      <Typography variant="body2" color="text.secondary" noWrap>
+                        {article.body}
+                      </Typography>
+                      <CardActions disableSpacing>
+                        <IconButton aria-label="add to favorites">
+                          <FavoriteIcon />
+                        </IconButton>
+                      </CardActions>
+                    </CardContent>
+                  </Card>
+                  <Link to={`/detail/${article.id}`} style={{ textDecoration: "none" }}>
+                    <Button variant="contained" color="primary" style={{ marginTop: "16px" }}>
+                      자세히 보기
+                    </Button>
+                  </Link>
+                </Grid>
+              ))}
+            </Grid>
           </CustomTabPanel>
         </div>
         
