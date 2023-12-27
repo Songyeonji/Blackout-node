@@ -7,6 +7,7 @@ import WritePage from "./pages/article/WritePage"
 import DetailPage from "./pages/article/DetailPage";
 import LoginPage from "./pages/member/Loginpage"; 
 import RegisterPage from "./pages/member/RegisterPage";
+import EditPage from "./pages/article/EditPage";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/learn-more" component={LearnMorePage} />
         <Route path="/write-page" component={WritePage} />
         <Route path="/detail/:id" component={DetailPage} />
+        <Route path="/edit/:id" component={EditPage} />
         <Route path="/login" component={LoginPage} />
         <Route path="/register" component={RegisterPage} /> 
         
