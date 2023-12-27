@@ -23,12 +23,17 @@ const DetailPage = (props) => {
   const [article, setArticle] = useState({});
   const [replies, setReplies] = useState([]);
 
+  // 게시글 정보 가져오기
   useEffect(() => {
     const fetchArticle = async () => {
+      
       try {
-        const response = await axios.get(`/api/articles/${id}`);
-        setArticle(response.data.article);
-        setReplies(response.data.replies);
+        
+        // 스프링 백엔드의 엔드포인트로 변경
+        const response = await axios.get(`http://localhost:8080/usr/article/getArticle?id=${id}`);
+        
+        
+        setArticle(response.data);
       } catch (error) {
         console.error('Error fetching article:', error);
       }
@@ -36,6 +41,23 @@ const DetailPage = (props) => {
 
     fetchArticle();
   }, [id]);
+
+
+  
+  const handleDelete = async () => {
+    if (window.confirm('게시글을 삭제하시겠습니까?') && article.id) {
+      try {
+        await axios.delete(`http://localhost:8080/usr/article/doDelete?id=${article.id}`);
+        history.push('/');
+      } catch (error) {
+        console.error('Error deleting article:', error);
+      }
+    }
+  };
+    // 게시글 수정 (수정 페이지로 이동하는 로직 추가 필요)
+    const handleEdit = () => {
+      history.push(`/edit/${article.id}`);
+    };
 
   const handleRecommend = async () => {
     try {
@@ -110,28 +132,34 @@ const DetailPage = (props) => {
                   padding: "20px", // 간격을 위한 패딩 추가
                 }}
               >
-                <h1>{index}에 대한 상세페이지</h1>
-                <div className="mt-8 text-xl">
-      <section>
-        <div className="container mx-auto px-3 pb-8 border-bottom-line">
-          <div className="table-box-type">
-            <table className="table table-lg">
-              <tr>
-                <th>번호</th>
-                <td>{article.id}</td>
-              </tr>
-              <tr>
-                <th>작성일</th>
-                <td>{article.regDate && article.regDate.substring(2, 16)}</td>
-              </tr>
-              {/* ... (더 많은 테이블 행 추가) */}
-              <tr>
-                <th>추천</th>
-                <td>
-                  {/* {rq.getLoginedMemberId() === 0 ? (
-                    <span>{article.point}</span>
-                  ) : ( */}
-                    <>
+              <h1>{article.title}</h1> {/* 게시글 제목 */}
+              <div className="mt-8 text-xl">
+                <section>
+                  <div className="container mx-auto px-3 pb-8 border-bottom-line">
+                    <div className="table-box-type">
+                      <table className="table table-lg">
+                        {/* 게시글 상세 정보 */}
+                        <tr>
+                          <th>번호</th>
+                          <td>{article.id}</td>
+                        </tr>
+                        <tr>
+                          <th>작성일</th>
+                          <td>{article.regDate && new Date(article.regDate).toLocaleDateString()}</td>
+                        </tr>
+                        <tr>
+                          <th>내용</th>
+                          <td>{article.body}</td> {/* 게시글 내용 */}
+                        </tr>
+
+                        {/* ... (더 많은 테이블 행 추가) */}
+                        <tr>
+                          <th>추천</th>
+                          <td>
+                            {/* {rq.getLoginedMemberId() === 0 ? (
+                              <span>{article.point}</span>
+                            ) : ( */}
+                              <>
                       <button
                         id="recommendBtn"
                         className={`mr-8 btn-text-color btn btn-outline btn-xs ${
@@ -150,6 +178,12 @@ const DetailPage = (props) => {
             </table>
           </div>
           <div className="btns mt-2">
+            <button className="btn-text-color btn btn-outline btn-sm" onClick={handleDelete}>
+              삭제
+            </button>
+            <button className="btn-text-color btn btn-outline btn-sm" onClick={handleEdit}>
+              수정
+            </button>
             <button className="btn-text-color btn btn-outline btn-sm" onClick={() => history.goBack()}>
               뒤로가기
             </button>
