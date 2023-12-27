@@ -97,7 +97,12 @@ const LearnMorePage = () => {
    const handleDetailClick = (index) => {
     history.push(`/detail/${index}`);
   };
-
+  // boardId에 따라 게시글을 필터링하는 함수
+  const filterArticlesByBoardId = (boardId) => {
+    const filtered = articles.filter((article) => parseInt(article.boardId) === boardId);
+    console.log(`Articles for boardId ${boardId}:`, filtered); // 필터링 결과 확인
+    return filtered;
+  };
   return (
     <ThemeProvider theme={theme}>
       <div>
@@ -127,7 +132,7 @@ const LearnMorePage = () => {
         <div>
         <CustomTabPanel value={value} index={0}>
             {/* 게시글을 카드 형식으로 표시 */}
-            {articles.map((article, index) => (
+            {filterArticlesByBoardId(1).map((article, index) => (
               <Card key={index} sx={{ display: 'flex', flexDirection: 'row', maxWidth: 600, mb: 2 }}>
                 <CardMedia
                   component="img"
@@ -155,10 +160,58 @@ const LearnMorePage = () => {
           </CustomTabPanel>
         
         <CustomTabPanel value={value} index={1}>
-            Item Two
+            {filterArticlesByBoardId(2).map((article, index) => (
+              <Card key={index} sx={{ display: 'flex', flexDirection: 'row', maxWidth: 600, mb: 2 }}>
+                <CardMedia
+                  component="img"
+                  height="194"
+                  image={article.imgUrl || "https://via.placeholder.com/194"} // 이미지 URL이 없을 경우 기본 이미지 사용
+                  alt="Article Image"
+                  sx={{ width: '50%', objectFit: 'cover' }}
+                />
+                <CardContent sx={{ flex: '1' }}>
+                  <CardHeader
+                    title={article.title}
+                    subheader={new Date(article.regDate).toLocaleDateString()}
+                  />
+                  <Typography variant="body2" color="text.secondary">
+                    {article.body}
+                  </Typography>
+                  <CardActions disableSpacing>
+                    <IconButton aria-label="add to favorites">
+                      <FavoriteIcon />
+                    </IconButton>
+                  </CardActions>
+                </CardContent>
+              </Card>
+            ))}
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
-            Item Three
+          {filterArticlesByBoardId(3).map((article, index) => (
+              <Card key={index} sx={{ display: 'flex', flexDirection: 'row', maxWidth: 600, mb: 2 }}>
+                <CardMedia
+                  component="img"
+                  height="194"
+                  image={article.imgUrl || "https://via.placeholder.com/194"} // 이미지 URL이 없을 경우 기본 이미지 사용
+                  alt="Article Image"
+                  sx={{ width: '50%', objectFit: 'cover' }}
+                />
+                <CardContent sx={{ flex: '1' }}>
+                  <CardHeader
+                    title={article.title}
+                    subheader={new Date(article.regDate).toLocaleDateString()}
+                  />
+                  <Typography variant="body2" color="text.secondary">
+                    {article.body}
+                  </Typography>
+                  <CardActions disableSpacing>
+                    <IconButton aria-label="add to favorites">
+                      <FavoriteIcon />
+                    </IconButton>
+                  </CardActions>
+                </CardContent>
+              </Card>
+            ))}
           </CustomTabPanel>
         </div>
         
