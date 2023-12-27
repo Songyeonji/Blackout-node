@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { FaMapMarkedAlt, FaWineBottle, FaUtensils } from 'react-icons/fa';
 import {
@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import PropTypes from 'prop-types';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import axios from 'axios';
 
 const theme = createTheme({
   palette: {
@@ -32,6 +33,7 @@ const theme = createTheme({
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
+  
   return (
     <div
       role="tabpanel"
@@ -69,8 +71,23 @@ function a11yProps(index) {
 }
 
 const LearnMorePage = () => {
-  const [value, setValue] = React.useState(0);
-  const history = useHistory(); 
+  const [value, setValue] = useState(0);
+  const [articles, setArticles] = useState([]); // 게시글 데이터 상태
+  const history = useHistory();
+
+  useEffect(() => {
+    // 서버로부터 게시글 데이터를 가져오는 로직
+    // 예시로 가상의 데이터를 사용합니다.
+    const fetchArticles = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/usr/article/showList');
+        setArticles(response.data);
+      } catch (error) {
+        console.error('Error fetching articles:', error);
+      }
+    };
+    fetchArticles();
+  }, []);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -109,31 +126,33 @@ const LearnMorePage = () => {
 
         <div>
         <CustomTabPanel value={value} index={0}>
-          Item One
-          <Card sx={{ display: 'flex', flexDirection: 'row', maxWidth: 600 }}>
-            <CardMedia
-              component="img"
-              height="194"
-              image="https://images.unsplash.com/photo-1608270586620-248524c67de9?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8YmVlcnxlbnwwfHwwfHx8MA%3D%3D"
-              alt="Paella dish"
-              sx={{ width: '50%', objectFit: 'cover' }}
-            />
-            <CardContent sx={{ flex: '1' }}>
-              <CardHeader
-                title="Shrimp and Chorizo Paella"
-                subheader="September 14, 2023"
-              />
-              <Typography variant="body2" color="text.secondary">
-                This impressive paella is a perfect party dish and a fun meal to cook
-              </Typography>
-              <CardActions disableSpacing>
-                <IconButton aria-label="add to favorites">
-                  <FavoriteIcon />
-                </IconButton>
-              </CardActions>
-            </CardContent>
-          </Card>
-        </CustomTabPanel>
+            {/* 게시글을 카드 형식으로 표시 */}
+            {articles.map((article, index) => (
+              <Card key={index} sx={{ display: 'flex', flexDirection: 'row', maxWidth: 600, mb: 2 }}>
+                <CardMedia
+                  component="img"
+                  height="194"
+                  image={article.imgUrl || "https://via.placeholder.com/194"} // 이미지 URL이 없을 경우 기본 이미지 사용
+                  alt="Article Image"
+                  sx={{ width: '50%', objectFit: 'cover' }}
+                />
+                <CardContent sx={{ flex: '1' }}>
+                  <CardHeader
+                    title={article.title}
+                    subheader={new Date(article.regDate).toLocaleDateString()}
+                  />
+                  <Typography variant="body2" color="text.secondary">
+                    {article.body}
+                  </Typography>
+                  <CardActions disableSpacing>
+                    <IconButton aria-label="add to favorites">
+                      <FavoriteIcon />
+                    </IconButton>
+                  </CardActions>
+                </CardContent>
+              </Card>
+            ))}
+          </CustomTabPanel>
         
         <CustomTabPanel value={value} index={1}>
             Item Two

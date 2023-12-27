@@ -18,7 +18,6 @@ const theme = createTheme({
 
 const WritePage = () => {
   const [boardId, setBoardId] = useState(1);
-  const [body, setBody] = useState("");
   const [title, setTitle] = useState("");
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const history = useHistory();
@@ -27,28 +26,29 @@ const WritePage = () => {
     event.preventDefault();
 
     const contentState = editorState.getCurrentContent();
-    const contentRaw = convertToRaw(contentState);
-    const content = JSON.stringify(contentRaw);
+    const body = JSON.stringify(convertToRaw(contentState)); 
+    const memberId = 1; // 멤버 ID를 1로 설정
 
     try {
       // Spring Boot API 호출
       const response = await axios.post('http://localhost:8080/usr/article/doWrite', {
-        title: title,
-        body: body,
-        boardId: boardId,  // boardId 추가
+        title,
+        body,
+        boardId,
+        memberId, // 요청에 멤버 ID 추가
       });
+  
 
       console.log("Submitted:", response.data);
       history.goBack();
     } catch (error) {
       console.error('Error submitting:', error);
-    }
+    };
   };
-
   const handleImageUpload = (file) => {
     // 이미지 업로드 로직 생략
   };
-
+  
   return (
     <ThemeProvider theme={theme}>
       <div>
