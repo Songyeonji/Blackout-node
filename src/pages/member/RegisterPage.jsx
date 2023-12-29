@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { Link, useHistory } from 'react-router-dom';
 import { FaUser, FaUserCheck, FaLock, FaEnvelope, FaCheckSquare, FaRegCheckSquare } from "react-icons/fa";
 import './Login.css';
 import { AppBar, Toolbar, createTheme, ThemeProvider } from "@mui/material";
@@ -13,8 +14,36 @@ const theme = createTheme({
 });
 
 const RegisterPage = () => {
-    const [password, setPassword] = useState('');
-    const [passwordCheck, setPasswordCheck] = useState('');
+  const [name, setName] = useState('');
+  const [loginId, setLoginId] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordCheck, setPasswordCheck] = useState('');
+  const [email, setEmail] = useState('');
+  const history = useHistory();
+
+  const handleRegister = async (event) => {
+    event.preventDefault();
+
+    if (password !== passwordCheck) {
+        alert("비밀번호가 일치하지 않습니다.");
+        return;
+    }
+
+    try {
+        const response = await axios.post('http://localhost:8080/usr/member/doJoin', {
+            name,
+            loginId,
+            loginPw: password,
+            email
+        });
+        alert(`${name}님, 환영합니다!`);
+        history.push('/login'); // 로그인 페이지로 이동
+    } catch (error) {
+        console.error('Registration failed:', error);
+        alert('회원가입 실패');
+    }
+};
+
   
     const handlePasswordChange = (event) => {
       setPassword(event.target.value);
@@ -52,38 +81,33 @@ const RegisterPage = () => {
           </AppBar>
 
         <div className='wrapper'>
-            <form action="">
-                <h1>Register</h1>
-                <div className="input-box">
-                    <input type="text" placeholder='name' name='name' required />
-                    <FaUser className='icon' />
-                </div>
-                <div className="input-box">
-                    <input type="text" placeholder='Login Id' name='loginId' required />
-                    <FaUserCheck className='icon' />
-                </div>
-                <div className="input-box">
-                    <input type="password" placeholder='Password' name='loginPw' value={password} onChange={handlePasswordChange} required />
-                    <FaLock className='icon' />
-                </div>
-
-                <div className="input-box">
-                    <input type="password" placeholder='PasswordCheck' name='loginPwchk' value={passwordCheck} onChange={handlePasswordCheckChange} required />
-                    {password === passwordCheck ? <FaCheckSquare className='icon' /> : <FaRegCheckSquare className='icon' />}
-                </div>                
-                <div className="input-box">
-                    <input type="text" placeholder='Email' name='email' required />
-                    <FaEnvelope className='icon' />
-                </div>
-
-
-
-                <button type="submit">Register</button>
-
-                <div className="register-link">
-                    <p>Already have an account? <Link to="/login">Login</Link></p>
-                </div>
-            </form>
+        <form onSubmit={handleRegister}>
+            <h1>Register</h1>
+            <div className="input-box">
+              <input type="text" placeholder='Name' value={name} onChange={(e) => setName(e.target.value)} required />
+              <FaUser className='icon' />
+            </div>
+            <div className="input-box">
+              <input type="text" placeholder='Login Id' value={loginId} onChange={(e) => setLoginId(e.target.value)} required />
+              <FaUserCheck className='icon' />
+            </div>
+            <div className="input-box">
+              <input type="password" placeholder='Password' value={password} onChange={handlePasswordChange} required />
+              <FaLock className='icon' />
+            </div>
+            <div className="input-box">
+              <input type="password" placeholder='Password Check' value={passwordCheck} onChange={handlePasswordCheckChange} required />
+              {password === passwordCheck ? <FaCheckSquare className='icon' /> : <FaRegCheckSquare className='icon' />}
+            </div>
+            <div className="input-box">
+              <input type="text" placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <FaEnvelope className='icon' />
+            </div>
+            <button type="submit">Register</button>
+            <div className="register-link">
+              <p>Already have an account? <Link to="/login">Login</Link></p>
+            </div>
+          </form>
         </div>
         </div>
         </ThemeProvider>
