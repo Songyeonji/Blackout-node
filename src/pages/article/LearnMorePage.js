@@ -22,6 +22,7 @@ import {
 import PropTypes from 'prop-types';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import axios from 'axios';
+import NavigationBar from "../../components/NavigationBar";
 
 const theme = createTheme({
   palette: {
@@ -101,20 +102,8 @@ const LearnMorePage = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div>
-        <AppBar position="fixed">
-          <Toolbar>
-            <div className="flex-1"></div>
-            <Link
-              to="/drink-calendar"
-              style={{ color: "white", textDecoration: "none" }}
-            >
-              <span className="font-bold">달력</span>
-            </Link>
-            <div className="flex-1"></div>
-          </Toolbar>
-        </AppBar>
-        <Toolbar />
+      <div style={{ marginTop: "64px" }}>
+        <NavigationBar /> 
         
         {/* 여기서부터 탭 바 */}
         <Box sx={{ width: '100%', backgroundColor: theme.palette.background.paper }}>

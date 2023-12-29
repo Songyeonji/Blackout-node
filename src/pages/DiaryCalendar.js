@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { AuthContext } from '../AuthContext';
 import moment from "moment";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { AppBar, Toolbar, createTheme, ThemeProvider, Snackbar, Alert } from "@mui/material";
+import { createTheme, ThemeProvider, Snackbar, Alert } from "@mui/material";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import wineIcon from "./icon/wine-bottle.png";
@@ -11,7 +12,7 @@ import beerIcon from "./icon/beer.png";
 import makgeolliIcon from "./icon/rice-wine.png";
 import WeatherInfo from "../components/WeatherInfo";
 import DiaryEntry from "../components/DiaryEntry";
-
+import NavigationBar from "../components/NavigationBar"; 
 
 const theme = createTheme({
   palette: {
@@ -21,12 +22,21 @@ const theme = createTheme({
   },
 });
 
+
+
 const DiaryCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [diaryEntries, setDiaryEntries] = useState(() => {
     const storedDiaryEntries = localStorage.getItem("diaryEntries");
     return storedDiaryEntries ? JSON.parse(storedDiaryEntries) : {};
   });
+
+  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+
+  // 로그아웃 핸들러
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
 
   
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -273,20 +283,7 @@ const DiaryCalendar = () => {
           height: "100vh",
         }}
       >
-        <AppBar position="fixed">
-          <Toolbar style={{ justifyContent: "space-between" }}>
-            <Link
-              to="/drink-recommendation"
-              style={{ color: "white", textDecoration: "none" }}
-            >
-              <span className="font-bold">오늘의 술 추천</span>
-            </Link>
-            {/* 로그인 버튼 및 이동 */}
-            <Link to="/login" style={{ color: "white", textDecoration: "none" }}>
-              <span className="font-bold">Login</span>
-            </Link>
-          </Toolbar>
-        </AppBar>
+        <NavigationBar /> 
 
         <div className="calendar-container" style={{ marginTop: "10px" }}>
           <Calendar

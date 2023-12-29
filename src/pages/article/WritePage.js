@@ -6,6 +6,7 @@ import { Editor as WysiwygEditor } from "react-draft-wysiwyg";
 import axios from 'axios';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "draft-js/dist/Draft.css";
+import NavigationBar from "../../components/NavigationBar";
 
 const theme = createTheme({
   palette: {
@@ -52,19 +53,7 @@ const WritePage = () => {
   return (
     <ThemeProvider theme={theme}>
       <div>
-        <AppBar position="fixed">
-          <Toolbar>
-            <div className="flex-1"></div>
-            <Link
-              to="/drink-recommendation"
-              style={{ color: "white", textDecoration: "none" }}
-            >
-              <span className="font-bold">오늘의 술 추천</span>
-            </Link>
-            <div className="flex-1"></div>
-          </Toolbar>
-        </AppBar>
-        <Toolbar />
+        <NavigationBar /> 
 
         <section className="text-xl mt-20">
           <div className="container mx-auto px-3 text-center">

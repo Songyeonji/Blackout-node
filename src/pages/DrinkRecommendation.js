@@ -20,6 +20,7 @@ import beerIcon from "./icon/beer.png";
 import makgeolliIcon from "./icon/rice-wine.png";
 import { useHistory } from 'react-router-dom';
 import RecipeReviewCard from "../components/RecipeReviewCard"; 
+import NavigationBar from "../components/NavigationBar"; 
 
 const theme = createTheme({
   palette: {
@@ -141,16 +142,8 @@ const DrinkRecommendation = () => {
   return (
     <ThemeProvider theme={theme}>
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-        <AppBar position="fixed">
-          <Toolbar>
-            <div className="flex-1"></div>
-            <Link to="/" style={{ color: "white", textDecoration: "none" }}>
-              <span className="font-bold">달력</span>
-            </Link>
-            <div className="flex-1"></div>
-          </Toolbar>
-        </AppBar>
-        <Toolbar />
+        <NavigationBar /> 
+
 
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={12} sm={6} md={4}>

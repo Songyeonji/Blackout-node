@@ -3,7 +3,7 @@ import { ThemeProvider, CssBaseline, createTheme } from "@mui/material";
 import { RecoilRoot } from "recoil";
 import { HashRouter } from "react-router-dom";
 
-import App from "./App";
+import App from "./base/App";
 
 const muiThemePaletteKeys = [
   "background",
