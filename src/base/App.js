@@ -19,6 +19,7 @@ const AppContent = () => {
   const handleLogout = () => {
     setIsLoggedIn(false);
   };
+  
   return (
     <AuthProvider>
       <AppBar position="fixed">

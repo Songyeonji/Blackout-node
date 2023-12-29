@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect, useContext} from 'react';
 import { Link , useHistory} from 'react-router-dom';
 import axios from 'axios'; 
 import './Login.css';
 import { FaUser, FaLock } from "react-icons/fa";
-import { AppBar, Toolbar, createTheme, ThemeProvider } from "@mui/material";
+import { AppBar, Toolbar, createTheme, ThemeProvider, Snackbar ,Alert } from "@mui/material";
+import { AuthContext } from '../../AuthContext';
+
 
 const theme = createTheme({
   palette: {
@@ -16,21 +18,41 @@ const theme = createTheme({
 
 const Loginpage = () => {
   const history = useHistory();
+  const { setIsLoggedIn } = useContext(AuthContext);
   const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [loginMemberName, setLoginMemberName] = useState('');
+
+  useEffect(() => {
+    const storedLoginStatus = sessionStorage.getItem('isLoggedIn') === 'true';
+    const storedLoginMemberName = sessionStorage.getItem('loginMemberName');
+    if (storedLoginStatus) {
+      setIsLoggedIn(true);
+      setLoginMemberName(storedLoginMemberName);
+    }
+  }, [setIsLoggedIn]);
+
 
   const handleLogin = async (event) => {
-      event.preventDefault();
-      try {
-          const response = await axios.post('http://localhost:8080/usr/member/doLogin', {
-              loginId,
-              loginPw: password
-          });
-          console.log('Logged in user:', response.data);
-          history.push('/'); // 로그인 성공 후 리다이렉트
-      } catch (error) {
-          console.error('Login failed:', error);
-      }
+    event.preventDefault();
+    try {
+        const response = await axios.post('http://localhost:8080/usr/member/doLogin', {
+            loginId,
+            loginPw: password
+        });
+        if (response.data) {
+          setIsLoggedIn(true);
+          sessionStorage.setItem('isLoggedIn', true);
+          sessionStorage.setItem('loginMemberName', response.data.name);
+          setLoginMemberName(response.data.name); // 로그인한 사용자의 이름 설정
+          setOpenSnackbar(true); // Snackbar 표시
+          history.push('/'); // 리다이렉트
+        }
+    } catch (error) {
+        console.error('Login failed:', error);
+    }
+
   };
     return (
         <div className="member">
@@ -57,6 +79,13 @@ const Loginpage = () => {
               </Link>
             </Toolbar>
           </AppBar>
+
+          <Snackbar
+            open={openSnackbar}
+            autoHideDuration={5000}
+            onClose={() => setOpenSnackbar(false)}
+            message={`${loginMemberName}님이 로그인 하였습니다!`}
+          />
 
         <div className='wrapper'>
         <form onSubmit={handleLogin}>

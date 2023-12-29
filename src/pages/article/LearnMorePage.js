@@ -102,7 +102,7 @@ const LearnMorePage = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div style={{ marginTop: "64px" }}>
+      <div>
         <NavigationBar /> 
         
         {/* 여기서부터 탭 바 */}

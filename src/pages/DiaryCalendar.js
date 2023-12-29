@@ -4,7 +4,6 @@ import moment from "moment";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { createTheme, ThemeProvider, Snackbar, Alert } from "@mui/material";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import wineIcon from "./icon/wine-bottle.png";
 import sojuIcon from "./icon/soju.png";
@@ -30,13 +29,6 @@ const DiaryCalendar = () => {
     const storedDiaryEntries = localStorage.getItem("diaryEntries");
     return storedDiaryEntries ? JSON.parse(storedDiaryEntries) : {};
   });
-
-  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
-
-  // 로그아웃 핸들러
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-  };
 
   
   const [showSnackbar, setShowSnackbar] = useState(false);
