@@ -21,8 +21,7 @@ const Loginpage = () => {
   const { setIsLoggedIn } = useContext(AuthContext);
   const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [loginMemberName, setLoginMemberName] = useState('');
+  const [loginMemberName, setLoginMemberName] = useState(''); 
 
   useEffect(() => {
     const storedLoginStatus = sessionStorage.getItem('isLoggedIn') === 'true';
@@ -37,23 +36,23 @@ const Loginpage = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-        const response = await axios.post('http://localhost:8080/usr/member/doLogin', {
-            loginId,
-            loginPw: password
-        });
-        if (response.data) {
-          setIsLoggedIn(true);
-          sessionStorage.setItem('isLoggedIn', true);
-          sessionStorage.setItem('loginMemberName', response.data.name);
-          setLoginMemberName(response.data.name); // 로그인한 사용자의 이름 설정
-          setOpenSnackbar(true); // Snackbar 표시
-          history.push('/'); // 리다이렉트
-        }
+      const response = await axios.post('http://localhost:8080/usr/member/doLogin', {
+        loginId,
+        loginPw: password
+      });
+      if (response.data) {
+        setIsLoggedIn(true);
+        sessionStorage.setItem('isLoggedIn', true);
+        sessionStorage.setItem('loginMemberName', response.data.name);
+        alert(`${response.data.name}님이 로그인 하셨습니다!`);
+        history.push('/'); // 홈페이지 또는 대시보드로 리다이렉트
+      }
     } catch (error) {
-        console.error('Login failed:', error);
+      console.error('Login failed:', error);
+      alert('로그인 실패');
     }
-
   };
+
     return (
         <div className="member">
         <ThemeProvider theme={theme}>
@@ -79,13 +78,6 @@ const Loginpage = () => {
               </Link>
             </Toolbar>
           </AppBar>
-
-          <Snackbar
-            open={openSnackbar}
-            autoHideDuration={5000}
-            onClose={() => setOpenSnackbar(false)}
-            message={`${loginMemberName}님이 로그인 하였습니다!`}
-          />
 
         <div className='wrapper'>
         <form onSubmit={handleLogin}>
