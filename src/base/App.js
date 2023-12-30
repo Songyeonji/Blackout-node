@@ -11,6 +11,7 @@ import DetailPage from "../pages/article/DetailPage";
 import LoginPage from "../pages/member/Loginpage"; 
 import RegisterPage from "../pages/member/RegisterPage";
 import EditPage from "../pages/article/EditPage";
+import MyPage from "../pages/member/MyPage"
 
 const AppContent = () => {
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
@@ -48,6 +49,7 @@ const AppContent = () => {
           <Route path="/edit/:id" component={EditPage} />
           <Route path="/login" component={LoginPage} />
           <Route path="/register" component={RegisterPage} /> 
+          <Route path="/mypage" component={MyPage} /> 
           
           <Redirect to="/diary-calendar" />
         </Switch>

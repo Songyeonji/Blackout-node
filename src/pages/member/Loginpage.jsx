@@ -17,21 +17,10 @@ const theme = createTheme({
 
 
 const Loginpage = () => {
-  const history = useHistory();
-  const { setIsLoggedIn } = useContext(AuthContext);
   const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
-  const [loginMemberName, setLoginMemberName] = useState(''); 
-
-  useEffect(() => {
-    const storedLoginStatus = sessionStorage.getItem('isLoggedIn') === 'true';
-    const storedLoginMemberName = sessionStorage.getItem('loginMemberName');
-    if (storedLoginStatus) {
-      setIsLoggedIn(true);
-      setLoginMemberName(storedLoginMemberName);
-    }
-  }, [setIsLoggedIn]);
-
+  const { setIsLoggedIn } = useContext(AuthContext);
+  const history = useHistory();
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -39,14 +28,10 @@ const Loginpage = () => {
       const response = await axios.post('http://localhost:8080/usr/member/doLogin', {
         loginId,
         loginPw: password
-      });
-      if (response.data) {
-        setIsLoggedIn(true);
-        sessionStorage.setItem('isLoggedIn', true);
-        sessionStorage.setItem('loginMemberName', response.data.name);
-        alert(`${response.data.name}님이 로그인 하셨습니다!`);
-        history.push('/'); // 홈페이지 또는 대시보드로 리다이렉트
-      }
+      }, { withCredentials: true });
+      setIsLoggedIn(true);
+      sessionStorage.setItem('isLoggedIn', true);
+      history.push('/mypage');
     } catch (error) {
       console.error('Login failed:', error);
       alert('로그인 실패');
