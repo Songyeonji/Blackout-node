@@ -7,7 +7,7 @@ import './Login.css'; // 'Login.css'를 사용
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#6f48eb", // 보라색
+      main: "#6f48eb",  //보라색
     },
   },
 });
@@ -23,7 +23,9 @@ const MyPage = () => {
   useEffect(() => {
     const fetchMemberInfo = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/usr/member/myPage', { withCredentials: true });
+        const response = await axios.get('http://localhost:8080/usr/member/myPage', {
+          withCredentials: true 
+        });
         setMember(response.data);
       } catch (error) {
         console.error('Error fetching member info:', error);
@@ -31,6 +33,7 @@ const MyPage = () => {
     };
     fetchMemberInfo();
   }, []);
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
