@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useHistory } from 'react-router-dom';
 import { FaUser, FaUserCheck, FaLock, FaEnvelope, FaCheckSquare, FaRegCheckSquare } from "react-icons/fa";
@@ -19,10 +19,43 @@ const RegisterPage = () => {
   const [password, setPassword] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
   const [email, setEmail] = useState('');
+  const [isLoginIdAvailable, setIsLoginIdAvailable] = useState(true);
+  const [loginIdError, setLoginIdError] = useState('');
   const history = useHistory();
+
+
+  const checkLoginIdAvailability = async (loginId) => {
+    if (!loginId) {
+      setLoginIdError('아이디는 필수 입력 정보입니다.');
+      setIsLoginIdAvailable(false);
+      return;
+    }
+    try {
+      const response = await axios.get(`http://localhost:8080/usr/member/isLoginIdAvailable`, {
+        params: { loginId },
+        withCredentials: true
+      });
+      setIsLoginIdAvailable(response.data);
+      setLoginIdError(response.data ? '' : '이미 사용 중인 아이디입니다.');
+    } catch (error) {
+      console.error('Error checking login ID availability:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (loginId.length > 0) {
+      checkLoginIdAvailability(loginId);
+    }
+  }, [loginId]);
 
   const handleRegister = async (event) => {
     event.preventDefault();
+
+    if (!isLoginIdAvailable) {
+      alert(`${loginId}은(는) 사용할 수 없는 아이디입니다.`);
+      setLoginId('');
+      return;
+    }
 
     if (password !== passwordCheck) {
         alert("비밀번호가 일치하지 않습니다.");
@@ -88,9 +121,10 @@ const RegisterPage = () => {
               <FaUser className='icon' />
             </div>
             <div className="input-box">
-              <input type="text" placeholder='Login Id' value={loginId} onChange={(e) => setLoginId(e.target.value)} required />
-              <FaUserCheck className='icon' />
-            </div>
+                <input type="text" placeholder='Login Id' value={loginId} onChange={(e) => setLoginId(e.target.value)} onBlur={() => checkLoginIdAvailability(loginId)} required />
+                {isLoginIdAvailable ? <FaUserCheck className='icon' /> : <FaRegCheckSquare className='icon' />}
+                <div className="text-sm text-red-500">{loginIdError}</div>
+              </div>
             <div className="input-box">
               <input type="password" placeholder='Password' value={password} onChange={handlePasswordChange} required />
               <FaLock className='icon' />
