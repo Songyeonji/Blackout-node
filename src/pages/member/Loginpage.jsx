@@ -29,9 +29,14 @@ const Loginpage = () => {
         loginId,
         loginPw: password
       }, { withCredentials: true });
-      setIsLoggedIn(true);
-      sessionStorage.setItem('isLoggedIn', true);
-      history.push('/mypage');
+      
+      if (response.data) {
+        const memberName = response.data.name; // 서버 응답에서 사용자 이름 추출
+        setIsLoggedIn(true);
+        sessionStorage.setItem('isLoggedIn', true);
+        alert(`${memberName}님이 로그인 하셨습니다!`);
+        history.push('/mypage');
+      }
     } catch (error) {
       console.error('Login failed:', error);
       alert('로그인 실패');

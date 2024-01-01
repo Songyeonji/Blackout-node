@@ -18,7 +18,7 @@ const theme = createTheme({
 });
 
 const DetailPage = (props) => {
-  const { index, id } = useParams();
+  const { id } = useParams();
 
   const history = useHistory();
 
@@ -33,8 +33,6 @@ const DetailPage = (props) => {
         
         // 스프링 백엔드의 엔드포인트로 변경
         const response = await axios.get(`http://localhost:8080/usr/article/getArticle?id=${id}`);
-        
-        
         setArticle(response.data);
       } catch (error) {
         console.error('Error fetching article:', error);
@@ -50,7 +48,7 @@ const DetailPage = (props) => {
     if (window.confirm('게시글을 삭제하시겠습니까?') && article.id) {
       try {
         await axios.delete(`http://localhost:8080/usr/article/doDelete?id=${article.id}`);
-        history.push('/');
+        history.push('/learn-more');
       } catch (error) {
         console.error('Error deleting article:', error);
       }
@@ -133,16 +131,20 @@ const DetailPage = (props) => {
                       <table className="table table-lg">
                         {/* 게시글 상세 정보 */}
                         <tr>
-                          <th>번호</th>
-                          <td>{article.id}</td>
+                          <th style={{ padding: "10px" }}>번호</th>
+                          <td style={{ padding: "10px" }}>{article.id}</td>
                         </tr>
                         <tr>
-                          <th>작성일</th>
-                          <td>{article.regDate && new Date(article.regDate).toLocaleDateString()}</td>
+                          <th style={{ padding: "10px" }}>작성일</th>
+                          <td style={{ padding: "10px" }}>{article.regDate && new Date(article.regDate).toLocaleDateString()}</td>
                         </tr>
                         <tr>
-                          <th>내용</th>
-                          <td>{article.body}</td> {/* 게시글 내용 */}
+                          <th style={{ padding: "10px" }}>최종 수정일</th>
+                          <td style={{ padding: "10px" }}>{article.updateDate && new Date(article.updateDate).toLocaleString('ko-KR', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+                        </tr>
+                        <tr>
+                          <th style={{ padding: "10px" }}>내용</th>
+                          <td style={{ padding: "10px" }}>{article.body}</td> {/* 게시글 내용 */}
                         </tr>
 
                         {/* ... (더 많은 테이블 행 추가) */}

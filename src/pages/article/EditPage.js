@@ -1,13 +1,14 @@
 // EditPage.js
 import React, { useState, useEffect } from 'react';
-import { AppBar, Toolbar, createTheme, ThemeProvider } from "@mui/material";
+import { createTheme, ThemeProvider , Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from "@mui/material";
 import { Link, useHistory, useParams } from "react-router-dom";
-import { Editor, EditorState, convertToRaw, convertFromRaw } from "draft-js";
+import { Editor, EditorState, ContentState , convertFromRaw } from "draft-js";
 import { Editor as WysiwygEditor } from "react-draft-wysiwyg";
 import axios from 'axios';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "draft-js/dist/Draft.css";
 import NavigationBar from '../../components/NavigationBar';
+import { FaMapMarkedAlt, FaWineBottle, FaUtensils } from "react-icons/fa";
 
 
 const theme = createTheme({
@@ -19,46 +20,55 @@ const theme = createTheme({
   });
 
 
-const EditPage = () => {
-  const { id } = useParams();
-  const [boardId, setBoardId] = useState(1);
-  const [title, setTitle] = useState("");
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const history = useHistory();
+  const EditPage = () => {
+    const { id } = useParams();
+    const [boardId, setBoardId] = useState(1);
+    const [title, setTitle] = useState("");
+    const [editorState, setEditorState] = useState(EditorState.createEmpty());
+    const history = useHistory();
+  
+    useEffect(() => {
+      axios.get(`http://localhost:8080/usr/article/getArticle?id=${id}`)
+        .then(response => {
+          const articleData = response.data;
+          setTitle(articleData.title);
+          setBoardId(articleData.boardId);
+          const content = EditorState.createWithContent(ContentState.createFromText(articleData.body));
+          setEditorState(content);
+        })
+        .catch(error => console.error('Error fetching article:', error));
+    }, [id]);
+    
+    const handleSubmit = async (event) => {
+      event.preventDefault();
+    
+      
+      const bodyText = editorState.getCurrentContent().getPlainText();
+      try {
+        await axios.put(`http://localhost:8080/usr/article/doModify?id=${id}`, {
+          title,
+          body: bodyText, // JSON 대신 순수 텍스트 전송
+          boardId,
+        });
+    
+    
+        console.log("Updated:", id);
+        history.goBack();
+      } catch (error) {
+        console.error('Error updating article:', error);
+      }
+    };
 
-  useEffect(() => {
-    // 기존 게시글 데이터 로드
-    axios.get(`http://localhost:8080/usr/article/getArticle?id=${id}`)
-      .then(response => {
-        const articleData = response.data;
-        setTitle(articleData.title);
-        setBoardId(articleData.boardId);
-        setEditorState(EditorState.createWithContent(convertFromRaw(JSON.parse(articleData.body))));
-      })
-      .catch(error => console.error('Error fetching article:', error));
-  }, [id]);
-  
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-  
-    const contentState = editorState.getCurrentContent();
-    const body = JSON.stringify(convertToRaw(contentState));
+  const handleImageUpload = async (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
     try {
-      await axios.put(`http://localhost:8080/usr/article/doModify?id=${id}`, {
-        title,
-        body,
-        boardId,
-      });
-  
-      console.log("Updated:", id);
-      history.goBack();
+      const response = await axios.post('http://localhost:8080/usr/article/uploadImage', formData);
+      return { data: { link: response.data.imageUrl } };
     } catch (error) {
-      console.error('Error updating article:', error);
+      console.error('Error uploading image:', error);
+      return { data: { link: null } };
     }
-  };
-  
-  const handleImageUpload = (file) => {
-    // 이미지 업로드 로직 생략
   };
 
 
@@ -75,21 +85,22 @@ const EditPage = () => {
                 <table className="table table-lg" style={{ margin: "0 auto" }}>
                   <tbody>
                     <tr>
-                      <th>게시판</th>
-                      <td>
+                      <th style={{ padding: "10px" }}>게시판</th>
+                      <td style={{ padding: "10px" }}>
                         <div className="flex">
-                          <input
-                            type="text"
-                            name="boardId"
-                            value={boardId}
-                            onChange={(e) => setBoardId(e.target.value)}
-                          />
+                        <FormControl>
+                            <RadioGroup row value={boardId} onChange={(e) => setBoardId(e.target.value)}>
+                              <FormControlLabel value="1" control={<Radio />} label={<><FaMapMarkedAlt /> 맛집</>} />
+                              <FormControlLabel value="2" control={<Radio />} label={<><FaWineBottle /> 술</>} />
+                              <FormControlLabel value="3" control={<Radio />} label={<><FaUtensils /> 안주</>} />
+                            </RadioGroup>
+                          </FormControl>
                         </div>
                       </td>
                     </tr>
                     <tr>
-                      <th>제목</th>
-                      <td>
+                      <th style={{ padding: "10px" }}>제목</th>
+                      <td style={{ padding: "10px" }}>
                         <input
                           className="input input-bordered input-primary w-9/12"
                           name="title"
@@ -101,8 +112,8 @@ const EditPage = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th>내용</th>
-                      <td>
+                      <th style={{ padding: "10px" }}>내용</th>
+                      <td style={{ padding: "10px" }}>
                         <WysiwygEditor
                           editorState={editorState}
                           onEditorStateChange={setEditorState}
@@ -112,15 +123,15 @@ const EditPage = () => {
                           toolbar={{
                             image: { uploadCallback: handleImageUpload, alt: { present: true, mandatory: true } },
                           }}
-                          editorStyle={{ backgroundColor: "white" }}
-                        />
+                          editorStyle={{ backgroundColor: "white", height: "300px" }}
+                          />
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
-              <div className="btns mt-4">
+              <div className="btns mt-4" style={{ display: "flex", justifyContent: "center", gap: "10px"}}>
                 <button className="btn btn-primary" type="submit">
                   수정
                 </button>
