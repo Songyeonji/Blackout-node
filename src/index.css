@@ -145,7 +145,32 @@ abbr[title] {
 .dot.makgeolli {
   background-color: brown;
 } */
+.carousel-root {
+  overflow-x: hidden; /* 가로 스크롤을 숨깁니다. */
+  width: 100%; /* 전체 너비를 차지하도록 설정합니다. */
+}
 
+.carousel-slide {
+  width: 100%; /* 카드를 가로로 확장합니다. */
+  /* 높이 설정 (필요에 따라 조정) */
+  height: auto; /* 높이를 자동으로 조절하거나 필요한 높이로 설정합니다. */
+}
+@media (max-width: 768px) {
+  .carousel-container {
+    width: 100%;
+  }
+}
+
+@media (min-width: 769px) {
+  .carousel-container {
+    width: 80%;
+  }
+}
+
+.carousel-slide {
+  flex: 1;
+  min-height: 0;
+}
 .carousel-arrow {
   position: absolute;
   top: 50%;

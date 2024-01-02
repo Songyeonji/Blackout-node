@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext  } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import {
   AppBar,
@@ -10,18 +10,25 @@ import {
   createTheme,
   ThemeProvider,
   Button,
+  CardMedia,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import Carousel from "react-material-ui-carousel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSun, faCloud, faCloudRain, faCloudSun, faSnowflake } from '@fortawesome/free-solid-svg-icons';
+import {
+  faSun,
+  faCloud,
+  faCloudRain,
+  faCloudSun,
+  faSnowflake,
+} from "@fortawesome/free-solid-svg-icons";
 import wineIcon from "./icon/wine-bottle.png";
 import sojuIcon from "./icon/soju.png";
 import beerIcon from "./icon/beer.png";
 import makgeolliIcon from "./icon/rice-wine.png";
-import { useHistory } from 'react-router-dom';
-import RecipeReviewCard from "../components/RecipeReviewCard"; 
-import NavigationBar from "../components/NavigationBar"; 
-import { AuthContext } from '../AuthContext'; 
+import { useHistory } from "react-router-dom";
+import RecipeReviewCard from "../components/RecipeReviewCard";
+import NavigationBar from "../components/NavigationBar";
+import { AuthContext } from "../AuthContext";
 
 const theme = createTheme({
   palette: {
@@ -33,13 +40,13 @@ const theme = createTheme({
 
 const DrinkRecommendation = () => {
   const [weather, setWeather] = useState(null);
+  const [articles, setArticles] = useState([]);
   const [recommendationType, setRecommendationType] = useState("drink");
   const [selectedDrink, setSelectedDrink] = useState(null);
   const [foodRecommendation, setFoodRecommendation] = useState(null);
   const { isLoggedIn } = useContext(AuthContext); // 로그인 상태 접근
   const history = useHistory();
 
-  
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
@@ -78,8 +85,8 @@ const DrinkRecommendation = () => {
   };
 
   const getWeatherIcon = (weather) => {
-    const lowerCaseWeather = (weather?.toLowerCase() ?? "");
-    
+    const lowerCaseWeather = weather?.toLowerCase() ?? "";
+
     if (lowerCaseWeather.includes("clear")) {
       return faSun;
     } else if (lowerCaseWeather.includes("clouds")) {
@@ -92,7 +99,6 @@ const DrinkRecommendation = () => {
       return faCloudSun;
     }
   };
-  
 
   const getDrinkRecommendationByWeather = () => {
     if (!weather || !weather.weather) return "Unknown";
@@ -101,10 +107,14 @@ const DrinkRecommendation = () => {
 
     if (temperature >= 30) {
       return "Beer";
-    } else if (temperature >= 10 && temperature <= 20 && !weatherDescription.includes("rain")) {
+    } else if (
+      temperature >= 10 &&
+      temperature <= 20 &&
+      !weatherDescription.includes("rain")
+    ) {
       return "Wine";
     } else {
-      const weatherDescription = (weather.weather[0]?.description?.toLowerCase() ?? "");
+      const weatherDescription = weather.weather[0]?.description?.toLowerCase() ?? "";
 
       if (weatherDescription.includes("rain")) {
         return "Makgeolli";
@@ -119,7 +129,7 @@ const DrinkRecommendation = () => {
     soju: ["김치우동", "알탕", "회", "삼겹살", "소고기", "닭발", "곱창", "닭도리탕", "쭈꾸미"],
     wine: ["치즈", "과일", "파스타", "피자", "스테이크", "샐러드", "새우"],
     beer: ["튀김", "나초", "건어물", "피자", "편의점", "치킨", "핫윙", "멕시칸 타코", "소세지", "나초와 팝콘","치킨위드라이스"],
-  };  
+  };
 
   const handleRecommendationButtonClick = () => {
     if (selectedDrink) {
@@ -134,9 +144,19 @@ const DrinkRecommendation = () => {
   const weatherDescription = weather?.weather?.[0]?.description;
   const weatherIcon = getWeatherIcon(weatherDescription);
 
-  
-//더알아보기
- 
+  useEffect(() => {
+    const fetchTopRecommendedArticles = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/usr/article/top-recommended');
+        setArticles(response.data);
+      } catch (error) {
+        console.error('Error fetching top recommended articles:', error);
+      }
+    };
+
+    fetchTopRecommendedArticles();
+  }, []);
+
   // "더 알아보기" 버튼 클릭 핸들러
   const handleLearnMoreClick = () => {
     if (!isLoggedIn) {
@@ -154,8 +174,6 @@ const DrinkRecommendation = () => {
     <ThemeProvider theme={theme}>
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
         <NavigationBar /> 
-
-
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={12} sm={6} md={4}>
             <Card>
@@ -213,23 +231,31 @@ const DrinkRecommendation = () => {
               </CardContent>
             </Card>
           </Grid>
-            {/* 새로운 카드 캐러셀 섹션 */}
-            <Grid container spacing={1} justifyContent="center" style={{ marginTop: "20px" }}>
-            {/* 각각의 카드에 대해 이 블록을 반복합니다. */}
-            <Grid item xs={12} sm={6} md={4}>
-              <RecipeReviewCard />
+
+
+          <Grid container spacing={1} justifyContent="center" style={{ marginTop: "20px" }}>
+            <Grid item xs={12} sm={6} md={4} style={{ display: "flex", justifyContent: "center" }}>
+              <Carousel
+                autoPlay
+                animation="slide"
+                interval={3000}
+                navButtonsAlwaysVisible={true}
+                className="carousel-container"
+              >
+                {articles.map((article, index) => (
+                  <div key={index} style={{ height: "100%", width: "100%" }}>
+                    <RecipeReviewCard article={article} />
+                  </div>
+                ))}
+              </Carousel>
             </Grid>
-            {/* 각각의 카드에 대해 이 블록을 반복합니다. */}
-            </Grid>
-            <Button onClick={handleLearnMoreClick} color="primary">
-              더 알아보기
-            </Button>
+          </Grid>
+
+          <Button onClick={handleLearnMoreClick} color="primary">
+            더 알아보기
+          </Button>
         </Grid>
         
-
-      
-
-
       </div>
     </ThemeProvider>
   );
