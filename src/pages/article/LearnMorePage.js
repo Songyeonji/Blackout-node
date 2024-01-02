@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { FaMapMarkedAlt, FaWineBottle, FaUtensils } from 'react-icons/fa';
 import {
@@ -23,6 +23,9 @@ import PropTypes from 'prop-types';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import axios from 'axios';
 import NavigationBar from "../../components/NavigationBar";
+import { AuthContext } from '../../AuthContext';
+
+
 
 const theme = createTheme({
   palette: {
@@ -71,24 +74,61 @@ const LearnMorePage = () => {
   const [value, setValue] = useState(0);
   const [articles, setArticles] = useState([]); // 게시글 데이터 상태
   const history = useHistory();
+  const { userId, isLoggedIn } = useContext(AuthContext);
 
   useEffect(() => {
-    // 서버로부터 게시글 데이터를 가져오는 로직
     const fetchArticles = async () => {
       try {
         const response = await axios.get('http://localhost:8080/usr/article/showList');
-        setArticles(response.data);
+        setArticles(response.data.map(article => ({
+          ...article,
+          isLiked: article.recommendPointUsers && article.recommendPointUsers.includes(userId)
+        })));
       } catch (error) {
         console.error('Error fetching articles:', error);
       }
     };
     fetchArticles();
-  }, []);
+  }, [userId]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+  const handleLike = async (articleId) => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+  
+    try {
+      const authToken = sessionStorage.getItem('authToken');
+      if (!authToken) {
+        console.error('Auth token not found');
+        return;
+      }
+      await axios.post(`http://localhost:8080/usr/recommendPoint/toggleRecommend/article/${articleId}`, {}, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+
+      // 게시글 상태 업데이트 로직
+      setArticles(articles.map(article => {
+        if (article.id === articleId) {
+          return {
+            ...article,
+            isLiked: !article.isLiked,
+            point: article.isLiked ? article.point - 1 : article.point + 1
+          };
+        }
+        return article;
+      }));
+
+    } catch (error) {
+      console.error('Error handling like:', error);
+    }
+  };
 
   // boardId에 따라 게시글을 필터링하는 함수
   const filterArticlesByBoardId = (boardId) => {
@@ -137,9 +177,13 @@ const LearnMorePage = () => {
                         {article.body}
                       </Typography>
                       <CardActions disableSpacing>
-                        <IconButton aria-label="add to favorites">
-                          <FavoriteIcon />
-                        </IconButton>
+                      <IconButton 
+                        onClick={() => handleLike(article.id)}
+                        color={article.isLiked ? "secondary" : "default"}
+                        aria-label="add to favorites">
+                        <FavoriteIcon />
+                      </IconButton>
+                      <Typography>{article.point || 0}</Typography>
                       </CardActions>
                     </CardContent>
                   </Card>
@@ -175,9 +219,13 @@ const LearnMorePage = () => {
                         {article.body}
                       </Typography>
                       <CardActions disableSpacing>
-                        <IconButton aria-label="add to favorites">
-                          <FavoriteIcon />
-                        </IconButton>
+                      <IconButton 
+                        onClick={() => handleLike(article.id)}
+                        color={article.isLiked ? "secondary" : "default"}
+                        aria-label="add to favorites">
+                        <FavoriteIcon />
+                      </IconButton>
+                      <Typography>{article.point || 0}</Typography> {/* 좋아요 수 */}
                       </CardActions>
                     </CardContent>
                   </Card>
@@ -212,9 +260,13 @@ const LearnMorePage = () => {
                         {article.body}
                       </Typography>
                       <CardActions disableSpacing>
-                        <IconButton aria-label="add to favorites">
-                          <FavoriteIcon />
-                        </IconButton>
+                      <IconButton 
+                        onClick={() => handleLike(article.id)}
+                        color={article.isLiked ? "secondary" : "default"}
+                        aria-label="add to favorites">
+                        <FavoriteIcon />
+                      </IconButton>
+                      <Typography>{article.point || 0}</Typography>
                       </CardActions>
                     </CardContent>
                   </Card>

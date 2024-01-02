@@ -31,19 +31,23 @@ const Loginpage = () => {
         loginPw: password
       }, { withCredentials: true });
       
-      if (response.data) {
-        setIsLoggedIn(true);
-        setUserId(response.data.id); // 사용자 ID 설정
-        sessionStorage.setItem('isLoggedIn', 'true');
-        sessionStorage.setItem('userId', response.data.id.toString()); // 숫자를 문자열로 변환하여 저장
-        alert(`${response.data.name}님이 로그인 하셨습니다!`);
-        history.push('/mypage');
-      }
-    } catch (error) {
-      console.error('Login failed:', error);
-      alert('로그인 실패');
+   if (response.data) {
+      const { id, name, authToken } = response.data; // 서버에서 authToken을 반환한다고 가정
+
+      setIsLoggedIn(true);
+      setUserId(id); // 사용자 ID 설정
+      sessionStorage.setItem('isLoggedIn', 'true');
+      sessionStorage.setItem('userId', id.toString()); // 숫자를 문자열로 변환하여 저장
+      sessionStorage.setItem('authToken', authToken); // authToken 저장
+
+      alert(`${name}님이 로그인 하셨습니다!`);
+      history.push('/mypage');
     }
-  };
+  } catch (error) {
+    console.error('Login failed:', error);
+    alert('로그인 실패');
+  }
+};
   
     return (
         <div className="member">

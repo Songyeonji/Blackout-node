@@ -42,7 +42,7 @@ const DetailPage = (props) => {
     };
   
     fetchArticle();
-  }, [id]);
+  }, [id, userId]);
 
   
   const handleDelete = async () => {
@@ -60,26 +60,19 @@ const DetailPage = (props) => {
       history.push(`/edit/${article.id}`);
     };
 
-  const handleRecommend = async () => {
-    try {
-      const response = await axios.get(`/api/recommendPoint/doRecommendPoint`, {
-        params: {
+    const handleRecommend = async () => {
+      try {
+        const response = await axios.post(`http://localhost:8080/api/recommendPoint/toggleRecommend`, {
           relTypeCode: 'article',
           relId: article.id,
           recommendBtn: article.point > 0,
-        },
-      });
-      if (response.data.success) {
-        setArticle((prevArticle) => ({
-          ...prevArticle,
-          point: response.data.point,
-        }));
+        });
+        // 나머지 로직
+      } catch (error) {
+        console.error('Error handling recommendation:', error);
       }
-    } catch (error) {
-      console.error('Error handling recommendation:', error);
-    }
-  };
-
+    };
+    
   // const handleReplyModify = async (replyId, index) => {
   //   try {
   //     const response = await axios.get(`/api/reply/getReplyContent?id=${replyId}`);
@@ -151,25 +144,19 @@ const DetailPage = (props) => {
                         {/* ... (더 많은 테이블 행 추가) */}
                         <tr>
                           <th>추천</th>
-                          <td>
-                            {/* {rq.getLoginedMemberId() === 0 ? (
-                              <span>{article.point}</span>
-                            ) : ( */}
-                              <>
-                      <button
-                        id="recommendBtn"
-                        className={`mr-8 btn-text-color btn btn-outline btn-xs ${
-                          article.point > 0 ? 'btn-active' : ''
-                        }`}
-                        onClick={handleRecommend}
-                      >
-                        좋아요👍
-                      </button>
-                      <span>좋아요 : {article.point}개</span>
-                    </>
-                  {/* )} */}
-                </td>
-              </tr>
+                            <td>
+                            <button
+                                  id="recommendBtn"
+                                  className={`mr-8 btn-text-color btn btn-outline btn-xs ${
+                                    article.point > 0 ? 'btn-active' : ''
+                                  }`}
+                                  onClick={handleRecommend}
+                                >
+                                  좋아요👍
+                                </button>
+                                <span>좋아요 : {article.point}개</span>
+                              </td>
+                        </tr>
               {/* ... (더 많은 테이블 행 추가) */}
             </table>
           </div>
