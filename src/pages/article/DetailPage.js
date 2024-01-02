@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState , useContext} from 'react';
 import { useParams, useHistory, Link} from 'react-router-dom';
 import axios from 'axios';
 
 import { AppBar, Toolbar, createTheme, ThemeProvider } from '@mui/material';
 import NavigationBar from '../../components/NavigationBar';
+import { AuthContext } from '../../AuthContext';
 
 
 
@@ -24,24 +25,24 @@ const DetailPage = (props) => {
 
   const [article, setArticle] = useState({});
   const [replies, setReplies] = useState([]);
-
+  const { userId } = useContext(AuthContext); 
   // 게시글 정보 가져오기
   useEffect(() => {
     const fetchArticle = async () => {
-      
       try {
-        
-        // 스프링 백엔드의 엔드포인트로 변경
         const response = await axios.get(`http://localhost:8080/usr/article/getArticle?id=${id}`);
-        setArticle(response.data);
+        console.log(response.data); // 서버 응답 확인
+        setArticle({
+          ...response.data,
+          memberId: Number(response.data.memberId) // memberId를 숫자로 변환
+        });
       } catch (error) {
         console.error('Error fetching article:', error);
       }
     };
-
+  
     fetchArticle();
   }, [id]);
-
 
   
   const handleDelete = async () => {
@@ -173,16 +174,20 @@ const DetailPage = (props) => {
             </table>
           </div>
           <div className="btns mt-2">
-            <button className="btn-text-color btn btn-outline btn-sm" onClick={handleDelete}>
-              삭제
-            </button>
-            <button className="btn-text-color btn btn-outline btn-sm" onClick={handleEdit}>
-              수정
-            </button>
+          {console.log('User ID:', userId, 'Article Member ID:', article.memberId)}
+          {userId === article.memberId && (
+              <>
+                <button className="btn-text-color btn btn-outline btn-sm" onClick={handleDelete}>
+                  삭제
+                </button>
+                <button className="btn-text-color btn btn-outline btn-sm" onClick={handleEdit}>
+                  수정
+                </button>
+              </>
+            )}
             <button className="btn-text-color btn btn-outline btn-sm" onClick={() => history.goBack()}>
               뒤로가기
             </button>
-            {/* ... (더 많은 버튼 및 UI 추가) */}
           </div>
         </div>
       </section>

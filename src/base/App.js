@@ -12,34 +12,13 @@ import LoginPage from "../pages/member/Loginpage";
 import RegisterPage from "../pages/member/RegisterPage";
 import EditPage from "../pages/article/EditPage";
 import MyPage from "../pages/member/MyPage"
+import NavigationBar from '../components/NavigationBar';
 
-const AppContent = () => {
-  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
-
-  // 로그아웃 핸들러
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-  };
-  
+const App = () => {
   return (
     <AuthProvider>
-      <AppBar position="fixed">
-        <Toolbar>
-          <Link to={window.location.pathname.includes('drink-recommendation') ? "/diary-calendar" : "/drink-recommendation"}>
-            {window.location.pathname.includes('drink-recommendation') ? "달력" : "오늘의 술 추천"}
-          </Link>
-          {isLoggedIn ? (
-            <>
-              <Link to="/mypage">MyPage</Link>
-              <button onClick={handleLogout}>Logout</button>
-            </>
-          ) : (
-            <Link to="/login">Login</Link>
-          )}
-        </Toolbar>
-      </AppBar>
-  
       <Router>
+        <NavigationBar />
         <Switch>
           <Route exact path="/diary-calendar" component={DiaryCalendar} />
           <Route path="/drink-recommendation" component={DrinkRecommendation} />
@@ -48,25 +27,13 @@ const AppContent = () => {
           <Route path="/detail/:id" component={DetailPage} />
           <Route path="/edit/:id" component={EditPage} />
           <Route path="/login" component={LoginPage} />
-          <Route path="/register" component={RegisterPage} /> 
-          <Route path="/mypage" component={MyPage} /> 
-          
-          <Redirect to="/diary-calendar" />
+          <Route path="/register" component={RegisterPage} />
+          <Route path="/mypage" component={MyPage} />
+          {/* 기타 필요한 라우트 */}
         </Switch>
       </Router>
-     </AuthProvider>
-    );
-  };
-
-  const App = () => {
-    return (
-      <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
     </AuthProvider>
-    );
-  };
-  
+  );
+};
 
 export default App;

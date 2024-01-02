@@ -16,10 +16,11 @@ const theme = createTheme({
 });
 
 
+
 const Loginpage = () => {
   const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
-  const { setIsLoggedIn } = useContext(AuthContext);
+  const { setIsLoggedIn, setUserId } = useContext(AuthContext); // setUserId 추가
   const history = useHistory();
 
   const handleLogin = async (event) => {
@@ -31,10 +32,11 @@ const Loginpage = () => {
       }, { withCredentials: true });
       
       if (response.data) {
-        const memberName = response.data.name; // 서버 응답에서 사용자 이름 추출
         setIsLoggedIn(true);
-        sessionStorage.setItem('isLoggedIn', true);
-        alert(`${memberName}님이 로그인 하셨습니다!`);
+        setUserId(response.data.id); // 사용자 ID 설정
+        sessionStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('userId', response.data.id.toString()); // 숫자를 문자열로 변환하여 저장
+        alert(`${response.data.name}님이 로그인 하셨습니다!`);
         history.push('/mypage');
       }
     } catch (error) {
@@ -42,7 +44,7 @@ const Loginpage = () => {
       alert('로그인 실패');
     }
   };
-
+  
     return (
         <div className="member">
         <ThemeProvider theme={theme}>

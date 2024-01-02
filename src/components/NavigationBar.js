@@ -16,7 +16,7 @@ const NavigationBar = () => {
   };
 
   return (
-    <div style={{ marginTop: "64px" }}>
+    <div style={{ marginTop: "32px" }}>
       <AppBar position="fixed">
         <Toolbar style={{ justifyContent: "space-between" }}>
           {location.pathname.includes('/drink-recommendation') ? (

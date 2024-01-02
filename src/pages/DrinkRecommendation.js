@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext  } from "react";
 import axios from "axios";
 import {
   AppBar,
@@ -21,6 +21,7 @@ import makgeolliIcon from "./icon/rice-wine.png";
 import { useHistory } from 'react-router-dom';
 import RecipeReviewCard from "../components/RecipeReviewCard"; 
 import NavigationBar from "../components/NavigationBar"; 
+import { AuthContext } from '../AuthContext'; 
 
 const theme = createTheme({
   palette: {
@@ -35,7 +36,10 @@ const DrinkRecommendation = () => {
   const [recommendationType, setRecommendationType] = useState("drink");
   const [selectedDrink, setSelectedDrink] = useState(null);
   const [foodRecommendation, setFoodRecommendation] = useState(null);
+  const { isLoggedIn } = useContext(AuthContext); // 로그인 상태 접근
+  const history = useHistory();
 
+  
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
@@ -132,12 +136,19 @@ const DrinkRecommendation = () => {
 
   
 //더알아보기
-  const history = useHistory();
+ 
+  // "더 알아보기" 버튼 클릭 핸들러
   const handleLearnMoreClick = () => {
-    history.push('/learn-more');
+    if (!isLoggedIn) {
+      // 로그인하지 않은 경우 경고 메시지 표시
+      alert('로그인 후 이용해주십시오');
+      // 로그인 페이지로 리다이렉션
+      history.push('/login');
+    } else {
+      // 로그인한 경우 LearnMorePage로 이동
+      history.push('/learn-more');
+    }
   };
-
-  
 
   return (
     <ThemeProvider theme={theme}>
