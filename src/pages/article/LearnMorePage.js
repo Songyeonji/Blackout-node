@@ -71,13 +71,44 @@ function a11yProps(index) {
   };
 }
 
-const LearnMorePage = () => {
+function LearnMorePage() {
   const [value, setValue] = useState(0);
   const [articles, setArticles] = useState([]); // 게시글 데이터 상태
-  const history = useHistory();
   const { userId, isLoggedIn } = useContext(AuthContext);
 
+  // handleLike 함수 정의
+  const handleLike = async (articleId) => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    
+  try {
+    const url = `http://localhost:8080/usr/recommendPoint/toggleRecommend/article/${articleId}`;
+    await axios.post(url, {}, {
+      params: {
+        memberId: userId // 클라이언트에서는 userId를 사용하지만, 백엔드에는 memberId로 전송
+      }
+    });
+      // 추천 상태 업데이트 로직
+      setArticles(articles.map(article => {
+        if (article.id === articleId) {
+          return {
+            ...article,
+            isLiked: !article.isLiked,
+            point: article.isLiked ? article.point - 1 : article.point + 1
+          };
+        }
+        return article;
+      }));
+    } catch (error) {
+      console.error('Error handling like:', error);
+    }
+  };
+
   useEffect(() => {
+    // 게시글 데이터 가져오기
     const fetchArticles = async () => {
       try {
         const response = await axios.get('http://localhost:8080/usr/article/showList');
@@ -96,40 +127,7 @@ const LearnMorePage = () => {
     setValue(newValue);
   };
 
-  const handleLike = async (articleId) => {
-    if (!isLoggedIn) {
-      alert("로그인이 필요합니다.");
-      return;
-    }
-  
-    try {
-      const authToken = sessionStorage.getItem('authToken');
-      if (!authToken) {
-        console.error('Auth token not found');
-        return;
-      }
-      await axios.post(`http://localhost:8080/usr/recommendPoint/toggleRecommend/article/${articleId}`, {}, {
-        headers: {
-          'Authorization': `Bearer ${authToken}`
-        }
-      });
 
-      // 게시글 상태 업데이트 로직
-      setArticles(articles.map(article => {
-        if (article.id === articleId) {
-          return {
-            ...article,
-            isLiked: !article.isLiked,
-            point: article.isLiked ? article.point - 1 : article.point + 1
-          };
-        }
-        return article;
-      }));
-
-    } catch (error) {
-      console.error('Error handling like:', error);
-    }
-  };
 
   // boardId에 따라 게시글을 필터링하는 함수
   const filterArticlesByBoardId = (boardId) => {
@@ -174,7 +172,7 @@ const LearnMorePage = () => {
             <Grid container spacing={2}>
               {filterArticlesByBoardId(2).map((article, index) => (
                 <Grid item xs={12} sm={6} key={index}>
-                   <RecipeReviewCard article={article} handleLike={handleLike} />
+                    <RecipeReviewCard article={article} handleLike={handleLike} />
                   <Link to={`/detail/${article.id}`} style={{ textDecoration: "none" }}>
                     <Button variant="contained" color="primary" style={{ marginTop: "16px" }}>
                       자세히 보기
@@ -188,7 +186,7 @@ const LearnMorePage = () => {
             <Grid container spacing={2}>
               {filterArticlesByBoardId(3).map((article, index) => (
                 <Grid item xs={12} sm={6} key={index}>
-                  <RecipeReviewCard article={article} handleLike={handleLike} />
+                   <RecipeReviewCard article={article} handleLike={handleLike} />
                   <Link to={`/detail/${article.id}`} style={{ textDecoration: "none" }}>
                     <Button variant="contained" color="primary" style={{ marginTop: "16px" }}>
                       자세히 보기

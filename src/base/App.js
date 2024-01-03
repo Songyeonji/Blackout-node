@@ -1,8 +1,6 @@
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect, Link } from 'react-router-dom';
 import { AuthProvider, AuthContext } from '../AuthContext';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
 import DiaryCalendar from "../pages/DiaryCalendar";
 import DrinkRecommendation from "../pages/DrinkRecommendation";
 import LearnMorePage from "../pages/article/LearnMorePage"

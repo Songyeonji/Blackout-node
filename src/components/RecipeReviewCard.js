@@ -10,6 +10,8 @@ import {
 } from "@mui/material";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
+
+
 const RecipeReviewCard = ({ article, handleLike }) => {
   return (
     <Card sx={{ display: 'flex', flexDirection: 'row', maxWidth: 600, height: 250 }}>
@@ -30,10 +32,17 @@ const RecipeReviewCard = ({ article, handleLike }) => {
           {article.body}
         </Typography>
         <CardActions disableSpacing>
-          <IconButton 
-            onClick={() => handleLike(article.id)}
+        <IconButton
+            onClick={() => {
+              if (typeof handleLike === 'function') {
+                handleLike(article.id);
+              } else {
+                console.error('handleLike is not a function');
+              }
+            }}
             color={article.isLiked ? "secondary" : "default"}
-            aria-label="add to favorites">
+            aria-label="add to favorites"
+          >
             <FavoriteIcon />
           </IconButton>
           <Typography>{article.point || 0}</Typography>

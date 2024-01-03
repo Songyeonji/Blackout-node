@@ -40,10 +40,12 @@ body,
   flex-direction: column;
 }
 
-.member{
+.member {
   background: url('./pages/member/ryan-hutton-Jztmx9yqjBw-unsplash.jpg') no-repeat;
-  background-size: cover;
+  background-size: 100% 100%; /* 화면에 꽉 채우기 */
   background-position: center;
+  height: 100vh;
+  overflow: hidden; /* 스크롤바 숨기기 */
 }
 
 .diaryentry{

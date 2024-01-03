@@ -169,6 +169,29 @@ const DrinkRecommendation = () => {
       history.push('/learn-more');
     }
   };
+    // handleLike 함수 정의
+    const handleLike = async (articleId) => {
+      if (!isLoggedIn) {
+        alert("로그인이 필요합니다.");
+        return;
+      }
+  
+      try {
+        await axios.post(`http://localhost:8080/usr/recommendPoint/toggleRecommend/article/${articleId}`);
+        setArticles(articles.map(article => {
+          if (article.id === articleId) {
+            return {
+              ...article,
+              isLiked: !article.isLiked,
+              point: article.isLiked ? article.point - 1 : article.point + 1
+            };
+          }
+          return article;
+        }));
+      } catch (error) {
+        console.error('Error handling like:', error);
+      }
+    };
 
   return (
     <ThemeProvider theme={theme}>
@@ -244,7 +267,7 @@ const DrinkRecommendation = () => {
               >
                 {articles.map((article, index) => (
                   <div key={index} style={{ height: "100%", width: "100%" }}>
-                    <RecipeReviewCard article={article} />
+                    <RecipeReviewCard article={article} handleLike={handleLike} />
                   </div>
                 ))}
               </Carousel>
