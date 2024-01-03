@@ -76,7 +76,7 @@ const Loginpage = () => {
           </AppBar>
 
         <div className='wrapper'>
-        <form onSubmit={handleLogin}>
+            <form onSubmit={handleLogin}>
                             <h1>Login</h1>
                             <div className="input-box">
                                 <input type="text" placeholder='Login Id' value={loginId} onChange={(e) => setLoginId(e.target.value)} required />

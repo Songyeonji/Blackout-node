@@ -11,12 +11,6 @@ import {
   Tab,
   Typography,
   Button,
-  Card,
-  CardContent,
-  CardMedia,
-  CardHeader,
-  CardActions,
-  IconButton,
   Grid
 } from "@mui/material";
 import PropTypes from 'prop-types';
@@ -107,11 +101,12 @@ function LearnMorePage() {
     }
   };
 
+
   useEffect(() => {
     // 게시글 데이터 가져오기
     const fetchArticles = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/usr/article/showList');
+        const response = await axios.get('http://localhost:8080/usr/article/showListWithRecommendCount');
         setArticles(response.data.map(article => ({
           ...article,
           isLiked: article.recommendPointUsers && article.recommendPointUsers.includes(userId)
@@ -122,6 +117,7 @@ function LearnMorePage() {
     };
     fetchArticles();
   }, [userId]);
+
 
   const handleChange = (event, newValue) => {
     setValue(newValue);

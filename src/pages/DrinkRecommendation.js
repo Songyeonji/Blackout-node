@@ -44,8 +44,38 @@ const DrinkRecommendation = () => {
   const [recommendationType, setRecommendationType] = useState("drink");
   const [selectedDrink, setSelectedDrink] = useState(null);
   const [foodRecommendation, setFoodRecommendation] = useState(null);
-  const { isLoggedIn } = useContext(AuthContext); // 로그인 상태 접근
   const history = useHistory();
+  const { userId, isLoggedIn } = useContext(AuthContext);
+
+  const handleLike = async (articleId) => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    
+  try {
+    const url = `http://localhost:8080/usr/recommendPoint/toggleRecommend/article/${articleId}`;
+    await axios.post(url, {}, {
+      params: {
+        memberId: userId // 클라이언트에서는 userId를 사용하지만, 백엔드에는 memberId로 전송
+      }
+    });
+      // 추천 상태 업데이트 로직
+      setArticles(articles.map(article => {
+        if (article.id === articleId) {
+          return {
+            ...article,
+            isLiked: !article.isLiked,
+            point: article.isLiked ? article.point - 1 : article.point + 1
+          };
+        }
+        return article;
+      }));
+    } catch (error) {
+      console.error('Error handling like:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchWeatherData = async () => {
@@ -169,29 +199,6 @@ const DrinkRecommendation = () => {
       history.push('/learn-more');
     }
   };
-    // handleLike 함수 정의
-    const handleLike = async (articleId) => {
-      if (!isLoggedIn) {
-        alert("로그인이 필요합니다.");
-        return;
-      }
-  
-      try {
-        await axios.post(`http://localhost:8080/usr/recommendPoint/toggleRecommend/article/${articleId}`);
-        setArticles(articles.map(article => {
-          if (article.id === articleId) {
-            return {
-              ...article,
-              isLiked: !article.isLiked,
-              point: article.isLiked ? article.point - 1 : article.point + 1
-            };
-          }
-          return article;
-        }));
-      } catch (error) {
-        console.error('Error handling like:', error);
-      }
-    };
 
   return (
     <ThemeProvider theme={theme}>
@@ -267,7 +274,7 @@ const DrinkRecommendation = () => {
               >
                 {articles.map((article, index) => (
                   <div key={index} style={{ height: "100%", width: "100%" }}>
-                    <RecipeReviewCard article={article} handleLike={handleLike} />
+                     <RecipeReviewCard article={article} handleLike={handleLike} />
                   </div>
                 ))}
               </Carousel>
