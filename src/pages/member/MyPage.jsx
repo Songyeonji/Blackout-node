@@ -23,7 +23,7 @@ const MyPage = () => {
   useEffect(() => {
     const fetchMemberInfo = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/usr/member/myPage', {
+        const response = await axios.get('http://localhost:8081/usr/member/myPage', {
           withCredentials: true 
         });
         setMember(response.data);
@@ -38,7 +38,7 @@ const MyPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await axios.post('http://localhost:8080/usr/member/doModify', member, { withCredentials: true });
+      await axios.post('http://localhost:8081/usr/member/doModify', member, { withCredentials: true });
       alert('회원 정보가 업데이트되었습니다.');
     } catch (error) {
       console.error('Error updating member info:', error);

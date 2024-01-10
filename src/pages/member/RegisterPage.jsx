@@ -31,7 +31,7 @@ const RegisterPage = () => {
       return;
     }
     try {
-      const response = await axios.get(`http://localhost:8080/usr/member/isLoginIdAvailable`, {
+      const response = await axios.get(`http://localhost:8081/usr/member/isLoginIdAvailable`, {
         params: { loginId },
         withCredentials: true
       });
@@ -63,7 +63,7 @@ const RegisterPage = () => {
     }
 
     try {
-        const response = await axios.post('http://localhost:8080/usr/member/doJoin', {
+        const response = await axios.post('http://localhost:8081/usr/member/doJoin', {
             name,
             loginId,
             loginPw: password,

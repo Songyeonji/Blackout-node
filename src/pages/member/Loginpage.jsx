@@ -26,7 +26,7 @@ const Loginpage = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8080/usr/member/doLogin', {
+      const response = await axios.post('http://localhost:8081/usr/member/doLogin', {
         loginId,
         loginPw: password
       }, { withCredentials: true });
