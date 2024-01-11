@@ -30,20 +30,44 @@ db.connect(err => {
 });
 
 // 회원가입 라우트
-app.post('/usr/member/doJoin', async (req, res) => {
+app.post('/usr/member/doJoin', (req, res) => {
   const { name, loginId, loginPw, email } = req.body;
-  try {
-    const query = 'INSERT INTO member (name, loginId, password, email) VALUES (?, ?, ?, ?)';    
-    db.query(query, [name, loginId, loginPw, email], (err, result) => {
-      if (err) throw err;
-      res.send('회원가입 성공');
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('서버 에러');
+
+  if (!(name && loginId && loginPw && email)) {
+    return res.status(400).send('All fields are required');
   }
+
+  const query = 'INSERT INTO member (name, loginId, loginPw, email) VALUES (?, ?, ?, ?)';
+  db.query(query, [name, loginId, loginPw, email], (err, result) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).send('Server error');
+    }
+    res.send('Registration successful');
+  });
 });
 
+// 아이디 중복 확인 라우트
+app.get('/usr/member/isLoginIdAvailable', (req, res) => {
+  const { loginId } = req.query;
+
+  if (!loginId) {
+    return res.status(400).send('loginId is required');
+  }
+
+  const query = 'SELECT id FROM member WHERE loginId = ?';
+  db.query(query, [loginId], (err, results) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).send('Server error');
+    }
+
+    res.send(results.length === 0);
+  });
+});
+
+
+// 로그인 라우트
 app.post('/usr/member/doLogin', (req, res) => {
   const { loginId, loginPw } = req.body;
 

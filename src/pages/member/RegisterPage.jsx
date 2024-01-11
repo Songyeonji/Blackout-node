@@ -16,7 +16,7 @@ const theme = createTheme({
 const RegisterPage = () => {
   const [name, setName] = useState('');
   const [loginId, setLoginId] = useState('');
-  const [password, setPassword] = useState('');
+  const [loginPw, setPassword] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
   const [email, setEmail] = useState('');
   const [isLoginIdAvailable, setIsLoginIdAvailable] = useState(true);
@@ -57,7 +57,7 @@ const RegisterPage = () => {
       return;
     }
 
-    if (password !== passwordCheck) {
+    if (loginPw !== passwordCheck) {
         alert("비밀번호가 일치하지 않습니다.");
         return;
     }
@@ -66,7 +66,7 @@ const RegisterPage = () => {
         const response = await axios.post('http://localhost:8081/usr/member/doJoin', {
             name,
             loginId,
-            loginPw: password,
+            loginPw,
             email
         });
         alert(`${name}님, 환영합니다!`);
@@ -126,12 +126,12 @@ const RegisterPage = () => {
                 <div className="text-sm text-red-500">{loginIdError}</div>
               </div>
             <div className="input-box">
-              <input type="password" placeholder='Password' value={password} onChange={handlePasswordChange} required />
+              <input type="password" placeholder='Password' value={loginPw} onChange={handlePasswordChange} required />
               <FaLock className='icon' />
             </div>
             <div className="input-box">
               <input type="password" placeholder='Password Check' value={passwordCheck} onChange={handlePasswordCheckChange} required />
-              {password === passwordCheck ? <FaCheckSquare className='icon' /> : <FaRegCheckSquare className='icon' />}
+              {loginPw === passwordCheck ? <FaCheckSquare className='icon' /> : <FaRegCheckSquare className='icon' />}
             </div>
             <div className="input-box">
               <input type="text" placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} required />
