@@ -19,7 +19,7 @@ const theme = createTheme({
 
 const Loginpage = () => {
   const [loginId, setLoginId] = useState('');
-  const [password, setPassword] = useState('');
+  const [loginPw, setPassword] = useState('');
   const { setIsLoggedIn, setUserId } = useContext(AuthContext); // setUserId 추가
   const history = useHistory();
 
@@ -28,10 +28,10 @@ const Loginpage = () => {
     try {
       const response = await axios.post('http://localhost:8081/usr/member/doLogin', {
         loginId,
-        loginPw: password
+        loginPw,
       }, { withCredentials: true });
       
-   if (response.data) {
+  if (response.data) {
       const { id, name, authToken } = response.data; // 서버에서 authToken을 반환한다고 가정
 
       setIsLoggedIn(true);
@@ -83,7 +83,7 @@ const Loginpage = () => {
                                 <FaUser className='icon' />
                             </div>
                             <div className="input-box">
-                                <input type="password" placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} required />
+                                <input type="password" placeholder='Password' value={loginPw} onChange={(e) => setPassword(e.target.value)} required />
                                 <FaLock className='icon' />
                             </div>
 

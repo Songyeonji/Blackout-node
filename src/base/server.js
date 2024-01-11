@@ -44,19 +44,33 @@ app.post('/usr/member/doJoin', async (req, res) => {
   }
 });
 
-// 로그인 라우트
 app.post('/usr/member/doLogin', (req, res) => {
   const { loginId, loginPw } = req.body;
-  const query = 'SELECT * FROM member WHERE loginId = ?';
+
+  console.log(`Login Request: loginId=${loginId}, loginPw=${loginPw}`);
+
+  const query = 'SELECT \* FROM `member` WHERE loginId = ?';
   db.query(query, [loginId], (err, results) => {
-    if (err) throw err;
-    if (results.length === 0 || results[0].password !== loginPw) {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).send('서버 에러');
+    }
+
+    console.log(`Results Length: ${results.length}`);
+    if (results.length > 0) {
+      console.log(`User's Password from DB: ${results[0].loginPw}`);
+    }
+
+    if (results.length === 0 || results[0].loginPw !== loginPw) {
+      console.log('Login failed: User not found or password incorrect');
       return res.status(400).send('사용자를 찾을 수 없거나 비밀번호가 잘못되었습니다.');
     }
-    // 로그인 성공
+
+    console.log('Login successful');
     res.json({ id: results[0].id, name: results[0].name, authToken: 'your-auth-token' });
   });
 });
+
 // 서버 실행
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
