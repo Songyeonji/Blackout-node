@@ -11,6 +11,7 @@ import RegisterPage from "../pages/member/RegisterPage";
 import EditPage from "../pages/article/EditPage";
 import MyPage from "../pages/member/MyPage"
 import NavigationBar from '../components/NavigationBar';
+import LogoPage from '../pages/Logo'; // Logo 컴포넌트 임포트              
 
 const App = () => {
   return (
@@ -27,7 +28,7 @@ const App = () => {
           <Route path="/login" component={LoginPage} />
           <Route path="/register" component={RegisterPage} />
           <Route path="/mypage" component={MyPage} />
-          {/* 기타 필요한 라우트 */}
+          <Route path="/logo" component={LogoPage} />
         </Switch>
       </Router>
     </AuthProvider>

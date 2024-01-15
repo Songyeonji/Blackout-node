@@ -3,6 +3,7 @@ import { Link, useLocation, useHistory } from 'react-router-dom';
 import { AppBar, Toolbar } from '@mui/material';
 import { AuthContext } from '../AuthContext';
 
+
 const NavigationBar = () => {
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
   const location = useLocation();
@@ -19,6 +20,11 @@ const NavigationBar = () => {
     <div style={{ marginTop: "32px" }}>
       <AppBar position="fixed">
         <Toolbar style={{ justifyContent: "space-between" }}>
+          
+        <Link to="/Logo" style={{ color: "white", textDecoration: "none" }}>
+              <span className="font-bold">Blackout</span>
+            </Link>
+          
           {location.pathname.includes('/drink-recommendation') ? (
             <Link to="/diary-calendar" style={{ color: "white", textDecoration: "none" }}>
               <span className="font-bold">달력</span>
