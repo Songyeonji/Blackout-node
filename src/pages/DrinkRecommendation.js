@@ -52,22 +52,20 @@ const DrinkRecommendation = () => {
       alert("로그인이 필요합니다.");
       return;
     }
-
-    
-  try {
-    const url = `http://localhost:8080/usr/recommendPoint/toggleRecommend/article/${articleId}`;
-    await axios.post(url, {}, {
-      params: {
-        memberId: userId // 클라이언트에서는 userId를 사용하지만, 백엔드에는 memberId로 전송
-      }
-    });
-      // 추천 상태 업데이트 로직
+  
+    try {
+      const url = `http://localhost:8081/usr/recommendPoint/toggleRecommend/article/${articleId}`;
+      const response = await axios.post(url, {}, {
+        withCredentials: true
+      });
+      const newRecommendCount = response.data.recommendCount;
+  
       setArticles(articles.map(article => {
         if (article.id === articleId) {
           return {
             ...article,
             isLiked: !article.isLiked,
-            point: article.isLiked ? article.point - 1 : article.point + 1
+            recommendCount: newRecommendCount
           };
         }
         return article;
@@ -76,7 +74,6 @@ const DrinkRecommendation = () => {
       console.error('Error handling like:', error);
     }
   };
-
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
@@ -177,7 +174,7 @@ const DrinkRecommendation = () => {
   useEffect(() => {
     const fetchTopRecommendedArticles = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/usr/article/top-recommended');
+        const response = await axios.get('http://localhost:8081/usr/article/top-recommended');
         setArticles(response.data);
       } catch (error) {
         console.error('Error fetching top recommended articles:', error);

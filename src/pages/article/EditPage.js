@@ -28,7 +28,7 @@ const theme = createTheme({
     const history = useHistory();
   
     useEffect(() => {
-      axios.get(`http://localhost:8080/usr/article/getArticle?id=${id}`)
+      axios.get(`http://localhost:8081/usr/article/getArticle?id=${id}`)
         .then(response => {
           const articleData = response.data;
           setTitle(articleData.title);
@@ -45,7 +45,7 @@ const theme = createTheme({
       
       const bodyText = editorState.getCurrentContent().getPlainText();
       try {
-        await axios.put(`http://localhost:8080/usr/article/doModify?id=${id}`, {
+        await axios.put(`http://localhost:8081/usr/article/doModify?id=${id}`, {
           title,
           body: bodyText, // JSON 대신 순수 텍스트 전송
           boardId,

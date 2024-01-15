@@ -76,22 +76,21 @@ function LearnMorePage() {
       alert("로그인이 필요합니다.");
       return;
     }
-
-    
-  try {
-    const url = `http://localhost:8080/usr/recommendPoint/toggleRecommend/article/${articleId}`;
-    await axios.post(url, {}, {
-      params: {
-        memberId: userId // 클라이언트에서는 userId를 사용하지만, 백엔드에는 memberId로 전송
-      }
-    });
-      // 추천 상태 업데이트 로직
+  
+    try {
+      const url = `http://localhost:8081/usr/recommendPoint/toggleRecommend/article/${articleId}`;
+      const response = await axios.post(url, {}, {
+        withCredentials: true,
+        params: { memberId: userId }
+      });
+      const newRecommendCount = response.data.recommendCount;
+  
       setArticles(articles.map(article => {
         if (article.id === articleId) {
           return {
             ...article,
             isLiked: !article.isLiked,
-            point: article.isLiked ? article.point - 1 : article.point + 1
+            recommendCount: newRecommendCount
           };
         }
         return article;
@@ -101,12 +100,11 @@ function LearnMorePage() {
     }
   };
 
-
   useEffect(() => {
     // 게시글 데이터 가져오기
     const fetchArticles = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/usr/article/showListWithRecommendCount');
+        const response = await axios.get('http://localhost:8081/usr/article/showListWithRecommendCount');
         setArticles(response.data.map(article => ({
           ...article,
           isLiked: article.recommendPointUsers && article.recommendPointUsers.includes(userId)

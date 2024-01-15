@@ -30,7 +30,7 @@ const DetailPage = (props) => {
   useEffect(() => {
     const fetchArticle = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/usr/article/getArticle?id=${id}`);
+        const response = await axios.get(`http://localhost:8081/usr/article/getArticle?id=${id}`);
         console.log(response.data); // 서버 응답 확인
         setArticle({
           ...response.data,
@@ -48,7 +48,7 @@ const DetailPage = (props) => {
   const handleDelete = async () => {
     if (window.confirm('게시글을 삭제하시겠습니까?') && article.id) {
       try {
-        await axios.delete(`http://localhost:8080/usr/article/doDelete?id=${article.id}`);
+        await axios.delete(`http://localhost:8081/usr/article/doDelete?id=${article.id}`);
         history.push('/learn-more');
       } catch (error) {
         console.error('Error deleting article:', error);
@@ -62,7 +62,7 @@ const DetailPage = (props) => {
 
     const handleRecommend = async () => {
       try {
-        const response = await axios.post(`http://localhost:8080/api/recommendPoint/toggleRecommend`, {
+        const response = await axios.post(`http://localhost:8081/api/recommendPoint/toggleRecommend`, {
           relTypeCode: 'article',
           relId: article.id,
           recommendBtn: article.point > 0,

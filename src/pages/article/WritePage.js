@@ -48,7 +48,7 @@ const WritePage = () => {
       .map(block => block.data.src);
 
     try {
-      await axios.post('http://localhost:8080/usr/article/doWrite', {
+      await axios.post('http://localhost:8081/usr/article/doWrite', {
         title,
         body: bodyText,
         imageUrls,

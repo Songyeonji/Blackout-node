@@ -33,6 +33,7 @@
     "immer": "^10.0.2",
     "moment": "^2.29.4",
     "mysql": "^2.18.1",
+    "mysql2": "^3.7.0",
     "react": "^18.2.0",
     "react-calendar": "^4.2.1",
     "react-color": "^2.19.3",
