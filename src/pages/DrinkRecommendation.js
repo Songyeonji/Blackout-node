@@ -74,19 +74,35 @@ const DrinkRecommendation = () => {
       console.error('Error handling like:', error);
     }
   };
+
   useEffect(() => {
-    const fetchWeatherData = async () => {
+    const fetchWeatherData = async (latitude, longitude) => {
       try {
-        const response = await axios.get(
-          `https://api.openweathermap.org/data/2.5/weather?q=Daejeon,kr&appid=af984965d76ffbb83dbfda6c8e3faae3&units=metric`
-        );
+        const apiKey = 'af984965d76ffbb83dbfda6c8e3faae3';
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
+        const response = await axios.get(url);
         setWeather(response.data);
       } catch (error) {
         console.log("Error fetching weather data:", error);
       }
     };
 
-    fetchWeatherData();
+    const getLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            fetchWeatherData(position.coords.latitude, position.coords.longitude);
+          },
+          (error) => {
+            console.error("Error getting location:", error);
+          }
+        );
+      } else {
+        console.log("Geolocation is not supported by this browser.");
+      }
+    };
+
+    getLocation();
   }, []);
 
   const drinkOptions = [

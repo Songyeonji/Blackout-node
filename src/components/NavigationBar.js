@@ -17,10 +17,10 @@ const NavigationBar = () => {
   };
 
   return (
-    <div style={{ marginTop: "32px" }}>
+    <div style={{ marginTop: "64px" }}>
       <AppBar position="fixed">
         <Toolbar style={{ justifyContent: "space-between" }}>
-          
+
         <Link to="/Logo" style={{ color: "white", textDecoration: "none" }}>
               <span className="font-bold">Blackout</span>
             </Link>

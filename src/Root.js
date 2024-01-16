@@ -13,7 +13,7 @@ export default function Root() {
 
   return (
     <>
-   
+
         <CssBaseline />
         <RecoilRoot>
           <HashRouter>

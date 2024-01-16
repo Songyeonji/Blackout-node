@@ -1,16 +1,20 @@
 .logo-body {
+  font-size: 8vw;
   background: #212121;
-  width: 100vw;
-  height: 100vh;
+  color: black;
+  text-transform: uppercase;
+  letter-spacing: .15em;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100vw;
+  height: 100vh;
 }
 
 .logo-link {
   font-weight: bold;
   text-transform: uppercase;
-  color: #6f48eb; 
+  color: black;
   font-size: 8vw;
   letter-spacing: .15em;
   text-decoration: none;
@@ -20,10 +24,21 @@
   }
 }
 
+
+.logo-container {
+  cursor: pointer;
+  transition: transform 0.5s ease, font-size 0.5s ease;
+  transform-origin: top left;
+}
+
+.logo-container.small {
+  transform: translate(-50%, -50%) scale(0.5);
+}
+
+
 .logo-span {
   position: relative;
   display: inline-block; // span을 한 줄로 표시하기 위해 추가
-
 
   .logo-i {
     color: transparent;
@@ -35,10 +50,8 @@
     top: 0;
     font-style: normal;
     animation: 3s infinite alternate shift ease-in-out;
-    will-change: transform;
   }
 }
-
 // SCSS @for 루프를 사용하여 반복 스타일 규칙 생성
 @for $i from 1 through 10 {
   .logo-span:nth-child(#{$i}) {

@@ -1,25 +1,34 @@
 import React, { useEffect, useState } from 'react';
+import MenuBoxes from './MenuBoxes';
 import './Logo.scss';
 
 const Logo = () => {
-  const [logoText, setLogoText] = useState("Blackout");
+  const [transformedLogo, setTransformedLogo] = useState(null);
+  const [showBoxes, setShowBoxes] = useState(false);
 
   useEffect(() => {
-    // 로고 텍스트를 span과 i 태그로 변환
+    const logoText = "Blackout";
     const transformedText = logoText.split('').map((char, index) => (
       <span className="logo-span" key={index}>
         {char}
         {[...Array(7)].map((_, i) => <i className="logo-i" key={i}>{char}</i>)}
       </span>
     ));
-    setLogoText(transformedText);
+    setTransformedLogo(transformedText);
   }, []);
 
+  const handleLogoClick = () => {
+    setShowBoxes(!showBoxes);
+  };
+
   return (
-    <div className="logo-body">
-      <a href="#" target="_blank" className="logo-link">
-        {logoText}
-      </a>
+    <div className="app-container">
+      <div className={`logo-container ${showBoxes ? 'small' : ''}`} onClick={handleLogoClick}>
+        <div className='logo-link'>
+          <div className="logo-body">{transformedLogo}</div>
+        </div>
+      </div>
+      {showBoxes && <MenuBoxes />}
     </div>
   );
 };
