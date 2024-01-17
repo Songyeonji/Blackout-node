@@ -23,6 +23,7 @@ app.use(cors({
 }));
 app.options('*', cors()); // 모든 OPTIONS 요청에 대해 CORS 허용
 
+
 // MySQL 데이터베이스 설정
 const db = mysql.createConnection({
   host: 'localhost',
@@ -302,6 +303,7 @@ app.get('/usr/article/getArticle', async (req, res) => {
     res.status(500).send('Server error');
 }
 });
+
 // 서버 실행
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

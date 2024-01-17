@@ -10,7 +10,7 @@ import {
   createTheme,
   ThemeProvider,
   Button,
-  CardMedia,
+  TextField, 
 } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -46,6 +46,33 @@ const DrinkRecommendation = () => {
   const [foodRecommendation, setFoodRecommendation] = useState(null);
   const history = useHistory();
   const { userId, isLoggedIn } = useContext(AuthContext);
+  //chatgpt api
+  const [userQuery, setUserQuery] = useState('');
+  const [gptResponse, setGptResponse] = useState('');
+
+
+  const handleQueryChange = (event) => {
+    setUserQuery(event.target.value);
+  };
+
+  const handleAskButtonClick = async () => {
+    try {
+      const response = await axios.post('https://api.openai.com/v1/engines/davinci-codex/completions', {
+        prompt: `User: ${userQuery}\nChatGPT: `,
+        max_tokens: 100
+      }, {
+        headers: {
+          'Authorization': `Bearer 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`,
+          'Content-Type': 'application/json'
+        }
+      });
+      setGptResponse(response.data.choices[0].text);
+    } catch (error) {
+      console.error('Error calling ChatGPT API:', error);
+      setGptResponse('Sorry, there was an error processing your request.');
+    }
+  };
+
 
   const handleLike = async (articleId) => {
     if (!isLoggedIn) {
@@ -275,6 +302,22 @@ const DrinkRecommendation = () => {
             </Card>
           </Grid>
 
+          <Grid item xs={8}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <TextField
+                label="Ask a question about drinks"
+                variant="outlined"
+                fullWidth
+                value={userQuery}
+                onChange={handleQueryChange}
+                style={{ marginBottom: "10px" }} // 텍스트 필드와 버튼 사이의 간격
+              />
+              <Button variant="contained" color="primary" onClick={handleAskButtonClick}>
+                Ask
+              </Button>
+              {gptResponse && <div style={{ marginTop: "10px" }}>{gptResponse}</div>}
+            </div>
+          </Grid>
 
           <Grid container spacing={1} justifyContent="center" style={{ marginTop: "20px" }}>
             <Grid item xs={12} sm={6} md={4} style={{ display: "flex", justifyContent: "center" }}>
