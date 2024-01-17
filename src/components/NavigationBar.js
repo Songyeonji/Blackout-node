@@ -9,6 +9,7 @@ const NavigationBar = () => {
   const location = useLocation();
   const history = useHistory();
 
+  
   const handleLogout = () => {
     setIsLoggedIn(false);
     sessionStorage.removeItem('isLoggedIn');
@@ -22,8 +23,9 @@ const NavigationBar = () => {
         <Toolbar style={{ justifyContent: "space-between" }}>
 
         <Link to="/Logo" style={{ color: "white", textDecoration: "none" }}>
-              <span className="font-bold">Blackout</span>
-            </Link>
+            <span className="font-bold">Blackout</span>
+          </Link>
+
           
           {location.pathname.includes('/drink-recommendation') ? (
             <Link to="/diary-calendar" style={{ color: "white", textDecoration: "none" }}>

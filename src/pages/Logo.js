@@ -23,9 +23,9 @@ const Logo = () => {
 
   return (
     <div className="app-container">
-      <div className={`logo-container ${showBoxes ? 'small' : ''}`} onClick={handleLogoClick}>
-        <div className='logo-link'>
-          <div className="logo-body">{transformedLogo}</div>
+      <div className="logo-container" onClick={handleLogoClick}>
+        <div className={`logo-body ${showBoxes ? 'small' : ''} logo-link`}>
+          {transformedLogo}
         </div>
       </div>
       {showBoxes && <MenuBoxes />}

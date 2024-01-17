@@ -1,15 +1,4 @@
-.logo-body {
-  font-size: 8vw;
-  background: #212121;
-  color: black;
-  text-transform: uppercase;
-  letter-spacing: .15em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-}
+
 
 .logo-link {
   font-weight: bold;
@@ -25,14 +14,33 @@
 }
 
 
-.logo-container {
-  cursor: pointer;
-  transition: transform 0.5s ease, font-size 0.5s ease;
-  transform-origin: top left;
+.app-container {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.logo-container.small {
-  transform: translate(-50%, -50%) scale(0.5);
+.logo-container {
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+
+.logo-body {
+  font-size: 8vw;
+  background: #212121;
+  color: black;
+  text-transform: uppercase;
+  letter-spacing: .15em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.5s ease, font-size 0.5s ease;
+}
+
+.logo-container.small .logo-body {
+  transform: translateX(-100%);
+  font-size: 4vw;
 }
 
 
