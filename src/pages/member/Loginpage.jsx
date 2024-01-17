@@ -5,6 +5,7 @@ import './Login.css';
 import { FaUser, FaLock } from "react-icons/fa";
 import { AppBar, Toolbar, createTheme, ThemeProvider, Snackbar ,Alert } from "@mui/material";
 import { AuthContext } from '../../AuthContext';
+import NavigationBar from '../../components/NavigationBar';
 
 
 const theme = createTheme({
@@ -52,28 +53,7 @@ const Loginpage = () => {
     return (
         <div className="member">
         <ThemeProvider theme={theme}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh",
-          }}
-        >
-          <AppBar position="fixed">
-            <Toolbar style={{ justifyContent: "space-between" }}>
-              <Link
-                to="/diary-calendar"
-                style={{ color: "white", textDecoration: "none" }}
-              >
-                <span className="font-bold">달력</span>
-              </Link>
-              {/* 로그인 버튼 및 이동 */}
-              <Link to="/drink-recommendation" style={{ color: "white", textDecoration: "none" }}>
-                <span className="font-bold">오늘의 술 추천</span>
-              </Link>
-            </Toolbar>
-          </AppBar>
+          <NavigationBar/>
 
         <div className='wrapper'>
             <form onSubmit={handleLogin}>
@@ -94,9 +74,9 @@ const Loginpage = () => {
                             </div>
                         </form>
         </div>
-        </div>
+      
         </ThemeProvider>
-        </div>
+      </div>
     );
 };
 

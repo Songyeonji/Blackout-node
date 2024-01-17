@@ -4,6 +4,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { FaUser, FaUserCheck, FaLock, FaEnvelope, FaCheckSquare, FaRegCheckSquare } from "react-icons/fa";
 import './Login.css';
 import { AppBar, Toolbar, createTheme, ThemeProvider } from "@mui/material";
+import NavigationBar from '../../components/NavigationBar';
 
 const theme = createTheme({
   palette: {
@@ -90,29 +91,8 @@ const RegisterPage = () => {
     return (
         <div className="member">
         <ThemeProvider theme={theme}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh",
-          }}
-        >
-          <AppBar position="fixed">
-            <Toolbar style={{ justifyContent: "space-between" }}>
-              <Link
-                to="/diary-calendar"
-                style={{ color: "white", textDecoration: "none" }}
-              >
-                <span className="font-bold">달력</span>
-              </Link>
-              {/* 로그인 버튼 및 이동 */}
-              <Link to="/drink-recommendation" style={{ color: "white", textDecoration: "none" }}>
-                <span className="font-bold">오늘의 술 추천</span>
-              </Link>
-            </Toolbar>
-          </AppBar>
-
+        <NavigationBar/>
+    
         <div className='wrapper'>
         <form onSubmit={handleRegister}>
             <h1>Register</h1>
@@ -142,7 +122,6 @@ const RegisterPage = () => {
               <p>Already have an account? <Link to="/login">Login</Link></p>
             </div>
           </form>
-        </div>
         </div>
         </ThemeProvider>
         </div>

@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link, useLocation, useHistory } from 'react-router-dom';
-import { AppBar, Toolbar } from '@mui/material';
+import { AppBar, Toolbar, Menu, MenuItem } from '@mui/material';
 import { AuthContext } from '../AuthContext';
 
 
@@ -17,33 +17,53 @@ const NavigationBar = () => {
     history.push('/login');
   };
 
+    // 드롭다운 메뉴 상태
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+     // 드롭다운 메뉴 핸들러
+    const handleMenu = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+
+  const isActive = (path) => location.pathname.includes(path);
+
   return (
     <div style={{ marginTop: "64px" }}>
-      <AppBar position="fixed">
-        <Toolbar style={{ justifyContent: "space-between" }}>
-
-        <Link to="/Logo" style={{ color: "white", textDecoration: "none" }}>
+      <AppBar position="fixed" className="navbar-mainbg">
+        <Toolbar className="custom-navbar-collapse" style={{ justifyContent: 'space-between' }}>
+          <Link to="/Logo" className={`nav-link ${isActive('/Logo') ? 'active' : ''}`} style={{ color: 'white' }}>
             <span className="font-bold">Blackout</span>
           </Link>
 
-          
-          {location.pathname.includes('/drink-recommendation') ? (
-            <Link to="/diary-calendar" style={{ color: "white", textDecoration: "none" }}>
+          <div className="custom-navbar-nav">
+            <Link to="/diary-calendar" className={`nav-link ${isActive('/diary-calendar') ? 'active' : ''}`}>
               <span className="font-bold">달력</span>
             </Link>
-          ) : (
-            <Link to="/drink-recommendation" style={{ color: "white", textDecoration: "none" }}>
-              <span className="font-bold">오늘의 술 추천</span>
+            <Link to="/drink-recommendation" className={`nav-link ${isActive('/drink-recommendation') ? 'active' : ''}`}>
+              <span className="font-bold">오늘의 술 추천</span> 
             </Link>
-          )}
-          <div>
+            <Link to="/learn-more" className={`nav-link ${isActive('/learn-more') ? 'active' : ''}`} onClick={handleMenu}>
+              <span className="font-bold">술 정보</span>
+            </Link>
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={() => { handleClose(); history.push('/write'); }}>글쓰기</MenuItem>
+              </Menu>
+            
             {isLoggedIn ? (
               <>
-                <Link to="/mypage" style={{ marginRight: "10px" }}>MyPage</Link>
-                <button onClick={handleLogout}>Logout</button>
+                <Link to="/mypage" className={`nav-link ${isActive('/mypage') ? 'active' : ''}`}>MyPage</Link>
+                <button onClick={handleLogout} className="nav-link">Logout</button>
               </>
             ) : (
-              <Link to="/login">Login</Link>
+              <Link to="/login"  className={`nav-link ${isActive('/login') ? 'active' : ''}`}>Login</Link>
             )}
           </div>
         </Toolbar>

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { AppBar, Toolbar, createTheme, ThemeProvider } from "@mui/material";
 import './Login.css'; // 'Login.css'를 사용
+import NavigationBar from '../../components/NavigationBar';
 
 const theme = createTheme({
   palette: {
@@ -52,24 +53,7 @@ const MyPage = () => {
   return (
     <div className="member">
         <ThemeProvider theme={theme}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh",
-          }}
-        >
-        <AppBar position="fixed">
-          <Toolbar style={{ justifyContent: "space-between" }}>
-            <Link to="/diary-calendar" style={{ color: "white", textDecoration: "none" }}>
-              <span className="font-bold">달력</span>
-            </Link>
-            <Link to="/drink-recommendation" style={{ color: "white", textDecoration: "none" }}>
-              <span className="font-bold">오늘의 술 추천</span>
-            </Link>
-          </Toolbar>
-        </AppBar>
+        <NavigationBar/>
 
         <div className='wrapper'>
           <h1>MyPage</h1>
@@ -89,7 +73,7 @@ const MyPage = () => {
             <button type="submit">정보 수정</button>
           </form>
         </div>
-        </div>
+
     </ThemeProvider>
     </div>
   );
