@@ -45,7 +45,7 @@ const RecipeReviewCard = ({ article, handleLike }) => {
           >
             <FavoriteIcon />
           </IconButton>
-          <Typography>{article.hitCount || 0}</Typography>
+          <Typography>{article.point || 0}</Typography>
         </CardActions>
       </CardContent>
     </Card>

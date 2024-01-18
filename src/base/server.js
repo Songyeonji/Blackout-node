@@ -159,23 +159,18 @@ app.get('/usr/article/showListWithRecommendCount', (req, res) => {
       a.title, 
       a.img, 
       a.body, 
-      a.hitCount, 
+      a.hitCount,
+      a.point,
       COUNT(rp.id) AS recommendCount 
     FROM 
       article a 
     LEFT JOIN 
       recommendPoint rp ON a.id = rp.relId AND rp.relTypeCode = 'article' 
     GROUP BY 
-      a.id, 
-      a.regDate, 
-      a.updateDate, 
-      a.memberId, 
-      a.boardId, 
-      a.title, 
-      a.img, 
-      a.body, 
-      a.hitCount
+      a.id
+
   `;
+
 
   db.query(query, (err, results) => {
     if (err) {
@@ -215,9 +210,15 @@ app.post('/usr/recommendPoint/toggleRecommend/article/:articleId', async (req, r
 
     // 추천 수 계산
     const countQuery = `
-      SELECT COUNT(id) AS recommendCount 
+      SELECT SUM(id) AS recommendCount 
       FROM recommendPoint 
       WHERE relId = ? AND relTypeCode = 'article'
+
+      SELECT IFNULL(SUM(RP.point),0)
+				FROM recommendPoint AS RP
+				WHERE RP.relTypeCode = #{relTypeCode}
+				AND RP.relId = #{id}
+				AND RP.memberId = 
     `;
     const [countResults] = await db.promise().query(countQuery, [articleId]);
 
@@ -291,7 +292,7 @@ app.get('/usr/article/getArticle', async (req, res) => {
   }
 
   try {
-    const selectArticleQuery = 'SELECT id, regDate, updateDate, memberId, boardId, title, body FROM article WHERE id = ?';
+    const selectArticleQuery = 'SELECT id, regDate, updateDate, memberId, boardId, title, point, body FROM article WHERE id = ?';
     const [article] = await db.promise().query(selectArticleQuery, [id]);
     if (article.length > 0) {
       res.json(article[0]);
