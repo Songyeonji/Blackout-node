@@ -1,16 +1,6 @@
 import React from "react";
-import {
-  Card,
-  CardContent,
-  IconButton,
-  CardActions,
-  CardHeader,
-  CardMedia,
-  Typography,
-} from "@mui/material";
+import { Card, CardContent, IconButton, CardActions, CardHeader, CardMedia, Typography } from "@mui/material";
 import FavoriteIcon from '@mui/icons-material/Favorite';
-
-
 
 const RecipeReviewCard = ({ article, handleLike }) => {
   return (
@@ -32,15 +22,16 @@ const RecipeReviewCard = ({ article, handleLike }) => {
           {article.body}
         </Typography>
         <CardActions disableSpacing>
-        <IconButton
-            onClick={() => {
-              if (typeof handleLike === 'function') {
-                handleLike(article.id);
-              } else {
-                console.error('handleLike is not a function');
-              }
-            }}
-            color={article.isLiked ? "secondary" : "default"}
+          {/* <IconButton
+            onClick={() => handleLike(article.id)}
+            color={article.isLikedByUser ? "secondary" : "default"}
+            aria-label="add to favorites"
+          >
+            <FavoriteIcon />
+          </IconButton> */}
+         <IconButton
+            onClick={() => handleLike(article.id)}
+            color={article.isLikedByUser ? "secondary" : "default"}
             aria-label="add to favorites"
           >
             <FavoriteIcon />

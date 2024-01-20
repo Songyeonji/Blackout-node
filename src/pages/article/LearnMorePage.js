@@ -79,36 +79,41 @@ function LearnMorePage() {
   
     try {
       const url = `http://localhost:8081/usr/recommendPoint/toggleRecommend/article/${articleId}`;
-      const response = await axios.post(url, {}, {
+      await axios.post(url, {}, {
         withCredentials: true,
         params: { memberId: userId }
       });
-      const newRecommendCount = response.data.recommendCount;
   
-      setArticles(articles.map(article => {
+      // 게시글 목록 상태 업데이트
+      const updatedArticles = articles.map(article => {
         if (article.id === articleId) {
           return {
             ...article,
-            isLiked: !article.isLiked,
-            recommendCount: newRecommendCount
+            isLikedByUser: !article.isLikedByUser, // 좋아요 상태 토글
+            point: article.isLikedByUser ? article.point - 1 : article.point + 1 // 좋아요 수 업데이트
           };
         }
         return article;
-      }));
+      });
+  
+      console.log("Updated Articles:", updatedArticles);
+      setArticles(updatedArticles);
     } catch (error) {
       console.error('Error handling like:', error);
     }
   };
-
+  
   useEffect(() => {
-    // 게시글 데이터 가져오기
     const fetchArticles = async () => {
       try {
         const response = await axios.get('http://localhost:8081/usr/article/showListWithRecommendCount');
-        setArticles(response.data.map(article => ({
+        const fetchedArticles = response.data.map(article => ({
           ...article,
-          isLiked: article.recommendPointUsers && article.recommendPointUsers.includes(userId)
-        })));
+          isLikedByUser: article.isLikedByUser === 1 // 사용자가 좋아요를 눌렀는지 여부 (1이면 true, 그 외는 false)
+        }));
+  
+        console.log("Fetched Articles:", fetchedArticles);
+        setArticles(fetchedArticles);
       } catch (error) {
         console.error('Error fetching articles:', error);
       }

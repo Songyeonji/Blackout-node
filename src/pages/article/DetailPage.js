@@ -22,11 +22,12 @@ const DetailPage = (props) => {
   const { id } = useParams();
 
   const history = useHistory();
-
+  const [articles, setArticles] = useState([]); // 게시글 데이터 상태
   const [article, setArticle] = useState({});
   const [replies, setReplies] = useState([]);
-  const { userId } = useContext(AuthContext); 
+  const { userId, isLoggedIn } = useContext(AuthContext);
   // 게시글 정보 가져오기
+
   useEffect(() => {
     const fetchArticle = async () => {
       try {
@@ -60,18 +61,36 @@ const DetailPage = (props) => {
       history.push(`/edit/${article.id}`);
     };
 
-    const handleRecommend = async () => {
-      try {
-        const response = await axios.post(`http://localhost:8081/api/recommendPoint/toggleRecommend`, {
-          relTypeCode: 'article',
-          relId: article.id,
-          recommendBtn: article.point > 0,
-        });
-        // 나머지 로직
-      } catch (error) {
-        console.error('Error handling recommendation:', error);
-      }
-    };
+
+  // handleLike 함수 정의
+  const handleLike = async (articleId) => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+  
+    try {
+      const url = `http://localhost:8081/usr/recommendPoint/toggleRecommend/article/${articleId}`;
+      const response = await axios.post(url, {}, {
+        withCredentials: true,
+        params: { memberId: userId }
+      });
+      const newRecommendCount = response.data.recommendCount;
+  
+      setArticles(articles.map(article => {
+        if (article.id === articleId) {
+          return {
+            ...article,
+            isLiked: !article.isLiked,
+            point: article.isLiked ? article.point - 1 : article.point + 1 // 좋아요 수 업데이트
+          };
+        }
+        return article;
+      }));
+    } catch (error) {
+      console.error('Error handling like:', error);
+    }
+  };
     
   // const handleReplyModify = async (replyId, index) => {
   //   try {
@@ -150,7 +169,7 @@ const DetailPage = (props) => {
                                   className={`mr-8 btn-text-color btn btn-outline btn-xs ${
                                     article.point > 0 ? 'btn-active' : ''
                                   }`}
-                                  onClick={handleRecommend}
+                                  onClick={handleLike}
                                 >
                                   좋아요👍
                                 </button>

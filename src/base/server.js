@@ -149,6 +149,7 @@ app.post('/usr/member/doModify', (req, res) => {
 });
 
 app.get('/usr/article/showListWithRecommendCount', (req, res) => {
+  const userId = req.session.userId; // 현재 로그인한 사용자 ID
   const query = `
     SELECT 
       a.id, 
@@ -161,30 +162,29 @@ app.get('/usr/article/showListWithRecommendCount', (req, res) => {
       a.body, 
       a.hitCount,
       a.point,
-      COUNT(rp.id) AS recommendCount 
+      EXISTS(SELECT * FROM recommendPoint WHERE relId = a.id AND relTypeCode = 'article' AND memberId = ?) AS isLikedByUser
     FROM 
-      article a 
+      article a
     LEFT JOIN 
       recommendPoint rp ON a.id = rp.relId AND rp.relTypeCode = 'article' 
     GROUP BY 
-      a.id
-
+      a.id;
   `;
 
-
-  db.query(query, (err, results) => {
+  db.query(query, [userId], (err, results) => {
     if (err) {
       console.error('Database error:', err);
-      return res.status(500).send('Server error');
+      res.status(500).send('Server error');
+    } else {
+      res.json(results);
     }
-    res.json(results);
   });
 });
-
 // 게시글 좋아요 토글 라우트
 app.post('/usr/recommendPoint/toggleRecommend/article/:articleId', async (req, res) => {
   const articleId = req.params.articleId;
   const memberId = req.session.userId;
+  console.log("Session User ID: ", req.session.userId);
 
   if (!memberId) {
     return res.status(403).send('Unauthorized');
@@ -208,26 +208,24 @@ app.post('/usr/recommendPoint/toggleRecommend/article/:articleId', async (req, r
       await db.promise().query(insertQuery, [memberId, articleId]);
     }
 
-    // 추천 수 계산
-    const countQuery = `
-      SELECT SUM(id) AS recommendCount 
-      FROM recommendPoint 
-      WHERE relId = ? AND relTypeCode = 'article'
+   // 추천 수 업데이트
+   const updatePointQuery = 'UPDATE article SET point = (SELECT COUNT(*) FROM recommendPoint WHERE relId = ? AND relTypeCode = "article") WHERE id = ?';
+   await db.promise().query(updatePointQuery, [articleId, articleId]);
 
-      SELECT IFNULL(SUM(RP.point),0)
-				FROM recommendPoint AS RP
-				WHERE RP.relTypeCode = #{relTypeCode}
-				AND RP.relId = #{id}
-				AND RP.memberId = 
-    `;
-    const [countResults] = await db.promise().query(countQuery, [articleId]);
+   // 업데이트된 추천 수 가져오기
+   const selectPointQuery = 'SELECT point FROM article WHERE id = ?';
+   const [pointResults] = await db.promise().query(selectPointQuery, [articleId]);
 
-    res.json({ recommendCount: countResults[0].recommendCount });
-  } catch (err) {
-    console.error('Database error:', err);
-    res.status(500).send('Server error');
-  }
+   res.json({ point: pointResults[0].point });
+ } catch (err) {
+   console.error('Database error:', err);
+   res.status(500).send('Server error');
+ }
 });
+
+
+
+
 
 //게시물 글쓰기 라우트
 app.post('/usr/article/doWrite', async (req, res) => {
@@ -304,6 +302,7 @@ app.get('/usr/article/getArticle', async (req, res) => {
     res.status(500).send('Server error');
 }
 });
+
 
 // 서버 실행
 app.listen(port, () => {
