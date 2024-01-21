@@ -70,39 +70,7 @@ function LearnMorePage() {
   const [articles, setArticles] = useState([]); // 게시글 데이터 상태
   const { userId, isLoggedIn } = useContext(AuthContext);
 
-  // handleLike 함수 정의
-  const handleLike = async (articleId) => {
-    if (!isLoggedIn) {
-      alert("로그인이 필요합니다.");
-      return;
-    }
-  
-    try {
-      const url = `http://localhost:8081/usr/recommendPoint/toggleRecommend/article/${articleId}`;
-      await axios.post(url, {}, {
-        withCredentials: true,
-        params: { memberId: userId }
-      });
-  
-      // 게시글 목록 상태 업데이트
-      const updatedArticles = articles.map(article => {
-        if (article.id === articleId) {
-          return {
-            ...article,
-            isLikedByUser: !article.isLikedByUser, // 좋아요 상태 토글
-            point: article.isLikedByUser ? article.point - 1 : article.point + 1 // 좋아요 수 업데이트
-          };
-        }
-        return article;
-      });
-  
-      console.log("Updated Articles:", updatedArticles);
-      setArticles(updatedArticles);
-    } catch (error) {
-      console.error('Error handling like:', error);
-    }
-  };
-  
+    
   useEffect(() => {
     const fetchArticles = async () => {
       try {
@@ -120,6 +88,43 @@ function LearnMorePage() {
     };
     fetchArticles();
   }, [userId]);
+
+
+  // handleLike 함수 정의
+  const handleLike = async (articleId) => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+  
+    try {
+      const url = `http://localhost:8081/usr/recommendPoint/toggleRecommend/article/${articleId}`;
+      const response = await axios.post(url, {}, {
+        withCredentials: true,
+        params: { memberId: userId }
+      });
+  
+      // 업데이트된 좋아요 수와 좋아요 상태를 받아옴
+      const updatedPoint = response.data.point;
+      const isLiked = response.data.isLikedByUser !== undefined ? response.data.isLikedByUser : false; // 기본값을 false로 설정
+
+      // 게시글 목록 상태 업데이트
+      const updatedArticles = articles.map(article => {
+        if (article.id === articleId) {
+          return {
+            ...article,
+            isLikedByUser: isLiked,
+            point: updatedPoint
+          };
+        }
+        return article;
+      });
+  
+      setArticles(updatedArticles);
+    } catch (error) {
+      console.error('Error handling like:', error);
+    }
+  };
 
 
   const handleChange = (event, newValue) => {

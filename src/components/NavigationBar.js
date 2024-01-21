@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Link, useLocation, useHistory } from 'react-router-dom';
 import { AppBar, Toolbar, Menu, MenuItem } from '@mui/material';
 import { AuthContext } from '../AuthContext';
+import Title from './Title';
 
 
 const NavigationBar = () => {
@@ -36,8 +37,9 @@ const NavigationBar = () => {
       <AppBar position="fixed" className="navbar-mainbg">
         <Toolbar className="custom-navbar-collapse" style={{ justifyContent: 'space-between' }}>
           <Link to="/Logo" className={`nav-link ${isActive('/Logo') ? 'active' : ''}`} style={{ color: 'white' }}>
-            <span className="font-bold">Blackout</span>
+            <Title />
           </Link>
+
 
           <div className="custom-navbar-nav">
             <Link to="/diary-calendar" className={`nav-link ${isActive('/diary-calendar') ? 'active' : ''}`}>

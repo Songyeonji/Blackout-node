@@ -207,11 +207,13 @@ app.post('/usr/recommendPoint/toggleRecommend/article/:articleId', async (req, r
       const insertQuery = 'INSERT INTO recommendPoint (memberId, relTypeCode, relId, point) VALUES (?, "article", ?, 1)';
       await db.promise().query(insertQuery, [memberId, articleId]);
     }
-
-   // 추천 수 업데이트
-   const updatePointQuery = 'UPDATE article SET point = (SELECT COUNT(*) FROM recommendPoint WHERE relId = ? AND relTypeCode = "article") WHERE id = ?';
-   await db.promise().query(updatePointQuery, [articleId, articleId]);
-
+ // 추천 수 업데이트
+    const updatePointQuery = `
+    UPDATE article 
+    SET point = (SELECT COUNT(*) FROM recommendPoint WHERE relId = ? AND relTypeCode = 'article')
+    WHERE id = ?;
+    `;
+    await db.promise().query(updatePointQuery, [articleId, articleId]);
    // 업데이트된 추천 수 가져오기
    const selectPointQuery = 'SELECT point FROM article WHERE id = ?';
    const [pointResults] = await db.promise().query(selectPointQuery, [articleId]);
