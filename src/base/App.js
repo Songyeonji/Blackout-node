@@ -26,7 +26,7 @@ const App = () => {
           <Route path="/login" component={LoginPage} />
           <Route path="/register" component={RegisterPage} />
           <Route path="/mypage" component={MyPage} />
-          <Route path="/logo" component={Logo} /> 
+          <Route path="/Blackout" component={Logo} /> 
         </Switch>
       </Router>
     </AuthProvider>

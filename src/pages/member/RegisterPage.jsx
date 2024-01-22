@@ -6,6 +6,7 @@ import './Login.css';
 import { AppBar, Toolbar, createTheme, ThemeProvider } from "@mui/material";
 import NavigationBar from '../../components/NavigationBar';
 
+// MUI 테마 설정
 const theme = createTheme({
   palette: {
     primary: {
@@ -15,6 +16,7 @@ const theme = createTheme({
 });
 
 const RegisterPage = () => {
+  // 상태 변수 선언
   const [name, setName] = useState('');
   const [loginId, setLoginId] = useState('');
   const [loginPw, setPassword] = useState('');
@@ -25,6 +27,7 @@ const RegisterPage = () => {
   const history = useHistory();
 
 
+  // 로그인 ID의 유효성을 확인하는 함수
   const checkLoginIdAvailability = async (loginId) => {
     if (!loginId) {
       setLoginIdError('아이디는 필수 입력 정보입니다.');
@@ -32,6 +35,7 @@ const RegisterPage = () => {
       return;
     }
     try {
+        // 백엔드 서버에 로그인 ID 유효성 검사 요청
       const response = await axios.get(`http://localhost:8081/usr/member/isLoginIdAvailable`, {
         params: { loginId },
         withCredentials: true
@@ -43,12 +47,13 @@ const RegisterPage = () => {
     }
   };
 
+  // 로그인 ID 변경시 유효성 검사 실행
   useEffect(() => {
     if (loginId.length > 0) {
       checkLoginIdAvailability(loginId);
     }
   }, [loginId]);
-
+  // 회원가입 처리 함수
   const handleRegister = async (event) => {
     event.preventDefault();
 
@@ -62,7 +67,7 @@ const RegisterPage = () => {
         alert("비밀번호가 일치하지 않습니다.");
         return;
     }
-
+  // 백엔드 서버에 회원가입 요청
     try {
         const response = await axios.post('http://localhost:8081/usr/member/doJoin', {
             name,
@@ -78,11 +83,11 @@ const RegisterPage = () => {
     }
 };
 
-  
+  // 패스워드 변경 핸들러
     const handlePasswordChange = (event) => {
       setPassword(event.target.value);
     };
-  
+  // 패스워드 확인 변경 핸들러
     const handlePasswordCheckChange = (event) => {
       setPasswordCheck(event.target.value);
     };

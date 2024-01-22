@@ -20,10 +20,11 @@ const MyPage = () => {
     loginPw:'',
     email: '',
   });
-
+  // 마이페이지 정보를 가져오는 함수
   useEffect(() => {
     const fetchMemberInfo = async () => {
       try {
+        // 백엔드 서버에 마이페이지 정보 요청
         const response = await axios.get('http://localhost:8081/usr/member/myPage', {
           withCredentials: true 
         });
@@ -35,17 +36,18 @@ const MyPage = () => {
     fetchMemberInfo();
   }, []);
   
-
+// 폼 제출 핸들러
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
+       // 백엔드 서버에 회원 정보 수정 요청
       await axios.post('http://localhost:8081/usr/member/doModify', member, { withCredentials: true });
       alert('회원 정보가 업데이트되었습니다.');
     } catch (error) {
       console.error('Error updating member info:', error);
     }
   };
-
+ // 입력 필드 변경 핸들러
   const handleChange = (event) => {
     setMember({ ...member, [event.target.name]: event.target.value });
   };

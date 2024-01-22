@@ -36,7 +36,7 @@ const NavigationBar = () => {
     <div style={{ marginTop: "64px" }}>
       <AppBar position="fixed" className="navbar-mainbg">
         <Toolbar className="custom-navbar-collapse" style={{ justifyContent: 'space-between' }}>
-          <Link to="/Logo" className={`nav-link ${isActive('/Logo') ? 'active' : ''}`} style={{ color: 'white' }}>
+          <Link to="/Blackout" className={`nav-link ${isActive('/Blackout') ? 'active' : ''}`} style={{ color: 'white' }}>
             <Title />
           </Link>
 

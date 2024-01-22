@@ -46,6 +46,9 @@ const DrinkRecommendation = () => {
   const [foodRecommendation, setFoodRecommendation] = useState(null);
   const history = useHistory();
   const { userId, isLoggedIn } = useContext(AuthContext);
+ 
+ 
+ 
   //chatgpt api
   const [userQuery, setUserQuery] = useState('');
   const [gptResponse, setGptResponse] = useState('');
@@ -131,6 +134,9 @@ const DrinkRecommendation = () => {
 
     getLocation();
   }, []);
+
+
+  
 
   const drinkOptions = [
     { name: "Wine", icon: wineIcon },

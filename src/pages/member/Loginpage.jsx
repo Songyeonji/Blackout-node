@@ -21,34 +21,30 @@ const theme = createTheme({
 const Loginpage = () => {
   const [loginId, setLoginId] = useState('');
   const [loginPw, setPassword] = useState('');
-  const { setIsLoggedIn, setUserId } = useContext(AuthContext); // setUserId 추가
+  const { setIsLoggedIn } = useContext(AuthContext);
   const history = useHistory();
 
+  // 로그인 처리 함수
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
+      // 백엔드 서버에 로그인 요청
       const response = await axios.post('http://localhost:8081/usr/member/doLogin', {
         loginId,
         loginPw,
-      }, { withCredentials: true });
-      
-  if (response.data) {
-      const { id, name, authToken } = response.data; // 서버에서 authToken을 반환한다고 가정
+      }, { withCredentials: true }); // withCredentials 옵션으로 세션 쿠키 전송
 
-      setIsLoggedIn(true);
-      setUserId(id); // 사용자 ID 설정
-      sessionStorage.setItem('isLoggedIn', 'true');
-      sessionStorage.setItem('userId', id.toString()); // 숫자를 문자열로 변환하여 저장
-      sessionStorage.setItem('authToken', authToken); // authToken 저장
-
-      alert(`${name}님이 로그인 하셨습니다!`);
-      history.push('/mypage');
+      if (response.data) {
+        // 로그인 성공 처리
+        setIsLoggedIn(true);
+        history.push('/mypage'); // 로그인 성공 후 리디렉션
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+      // 로그인 실패 처리
     }
-  } catch (error) {
-    console.error('Login failed:', error);
-    alert('로그인 실패');
-  }
-};
+  };
+
   
     return (
         <div className="member">

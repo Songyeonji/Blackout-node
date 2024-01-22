@@ -3,7 +3,7 @@ import { Card, CardContent, IconButton, CardActions, CardHeader, CardMedia, Typo
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
 const RecipeReviewCard = ({ article, handleLike }) => {
-  console.log(`Article ID: ${article.id}, isLikedByUser: ${article.isLikedByUser}`);
+  console.log(`Article ID1: ${article.id}, isLikedByUser1: ${article.isLikedByUser}`);
   return (
     <Card sx={{ display: 'flex', flexDirection: 'row', maxWidth: 600, height: 250 }}>
       <CardMedia
