@@ -21,14 +21,13 @@ const theme = createTheme({
 });
 
 const WritePage = () => {
-  const [boardId, setBoardId] = useState(1);
-  const [title, setTitle] = useState("");
+  const [boardId, setBoardId] = useState(1);// 게시판 ID 상태
+  const [title, setTitle] = useState("");// 제목 상태
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const history = useHistory();
-  const { userId } = useContext(AuthContext);
+  const history = useHistory();// 히스토리 객체
 
   const onEditorStateChange = (newState) => {
-    setEditorState(newState);
+    setEditorState(newState);// 에디터 상태 업데이트
   };
 
   const editorStyle = {
@@ -37,29 +36,55 @@ const WritePage = () => {
     padding: '5px',
     border: '1px solid #ddd',
   };
+
+  // 로그인된 사용자의 정보를 가져오는 함수
+  const getLoggedUser = async () => {
+  try {
+    const response = await axios.get('http://localhost:8081/usr/member/getLoggedUser', { withCredentials: true });
+    return response.data; // 로그인된 사용자의 정보 반환
+  } catch (error) {
+    console.error('Error fetching logged user:', error);
+    return null;
+  }
+  };
+    // 폼 제출 처리
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    const userId  = await getLoggedUser();
+    if (!userId ) {
+      console.error('User is not logged in');
+      return;
+    }
+  
     const contentState = editorState.getCurrentContent();
-    const bodyText = contentState.getPlainText();
-    const rawContent = convertToRaw(contentState);
+    const bodyText = contentState.getPlainText(); // 텍스트 내용 추출
+    const rawContent = convertToRaw(contentState); // 에디터 내용을 원시 형식으로 변환
     const imageUrls = rawContent.blocks
-      .filter(block => block.type === 'atomic')
+      .filter(block => block.type === 'atomic') // 이미지 블록 필터링
       .map(block => block.data.src);
 
-    try {
-      await axios.post('http://localhost:8081/usr/article/doWrite', {
-        title,
-        body: bodyText,
-        imageUrls,
-        boardId,
-        memberId: userId, // 현재 로그인된 사용자의 ID 추가
-      });
-      history.goBack();
-    } catch (error) {
-      console.error('Error submitting:', error);
+      console.log("title:", title);
+      console.log("bodyText:", bodyText);
+      console.log("imageUrls:", imageUrls);
+      console.log("boardId:", boardId);
+      console.log("memberId:", sessionStorage.getItem('userId'));
+
+      try {
+        await axios.post('http://localhost:8081/usr/article/doWrite', {
+          title,
+          body: bodyText,
+          imageUrls,
+          boardId,
+          memberId: userId.id, // 여기서 userId를 사용
+        }, {
+          withCredentials: true
+        });
+        history.goBack();
+      } catch (error) {
+        console.error('Error submitting:', error);
+      }
     }
-  };
 
 // 이미지 업로드 콜백 함수
 function uploadImageCallBack(file) {

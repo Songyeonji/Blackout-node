@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import { AppBar, Toolbar, createTheme, ThemeProvider } from '@mui/material';
 import NavigationBar from '../../components/NavigationBar';
-import { AuthContext } from '../../AuthContext';
+
 
 
 
@@ -18,34 +18,31 @@ const theme = createTheme({
   },
 });
 
-const DetailPage = (props) => {
-  const { id } = useParams();
-
-  const history = useHistory();
-  const [articles, setArticles] = useState([]); // 게시글 데이터 상태
+const DetailPage = () => {
+  const { id } = useParams(); // URL에서 게시글 ID 추출
+  const history = useHistory(); // 히스토리 객체
   const [article, setArticle] = useState({});
-  const [replies, setReplies] = useState([]);
-  const { userId, isLoggedIn } = useContext(AuthContext);
-  // 게시글 정보 가져오기
+  const [userId, setUserId] = useState(null);//로그인한 사람의 id
 
+  // 게시글 정보 가져오기
   useEffect(() => {
     const fetchArticle = async () => {
       try {
-        const response = await axios.get(`http://localhost:8081/usr/article/getArticle?id=${id}`);
-        console.log(response.data); // 서버 응답 확인
-        setArticle({
-          ...response.data,
-          memberId: Number(response.data.memberId) // memberId를 숫자로 변환
-        });
+        const articleResponse = await axios.get(`http://localhost:8081/usr/article/getArticle?id=${id}`);
+        setArticle(articleResponse.data);
+
+        // 사용자 ID 가져오기
+        const userResponse = await axios.get('http://localhost:8081/usr/member/myPage', { withCredentials: true });
+        setUserId(userResponse.data.id);
       } catch (error) {
-        console.error('Error fetching article:', error);
+        console.error('Error fetching data:', error);
       }
     };
-  
-    fetchArticle();
-  }, [id, userId]);
 
+    fetchArticle();
+  }, [id]);
   
+  //게시글 삭제함수
   const handleDelete = async () => {
     if (window.confirm('게시글을 삭제하시겠습니까?') && article.id) {
       try {
@@ -63,34 +60,25 @@ const DetailPage = (props) => {
 
 
   // handleLike 함수 정의
-  const handleLike = async (articleId) => {
-    if (!isLoggedIn) {
-      alert("로그인이 필요합니다.");
-      return;
-    }
-  
+  const handleLike = async () => {
     try {
-      const url = `http://localhost:8081/usr/recommendPoint/toggleRecommend/article/${articleId}`;
-      const response = await axios.post(url, {}, {
-        withCredentials: true,
-        params: { memberId: userId }
-      });
-      const newRecommendCount = response.data.recommendCount;
-  
-      setArticles(articles.map(article => {
-        if (article.id === articleId) {
-          return {
-            ...article,
-            isLiked: !article.isLiked,
-            point: article.isLiked ? article.point - 1 : article.point + 1 // 좋아요 수 업데이트
-          };
-        }
-        return article;
-      }));
+      const url = `http://localhost:8081/usr/recommendPoint/toggleRecommend/article/${id}`;
+      const response = await axios.post(url, {}, { withCredentials: true });
+
+      if (response.data.isLikedByUser !== undefined) {
+        setArticle(prevArticle => ({
+          ...prevArticle,
+          isLiked: response.data.isLikedByUser,
+          point: response.data.point
+        }));
+      } else {
+        alert("로그인이 필요합니다.");
+      }
     } catch (error) {
       console.error('Error handling like:', error);
     }
   };
+
     
   // const handleReplyModify = async (replyId, index) => {
   //   try {

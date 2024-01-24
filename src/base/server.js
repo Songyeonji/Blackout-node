@@ -84,19 +84,21 @@ app.get('/usr/member/isLoginIdAvailable', (req, res) => {
 
 // 로그인 라우트
 app.post('/usr/member/doLogin', (req, res) => {
-  const { loginId, loginPw } = req.body;
+  const { loginId, loginPw } = req.body;// 클라이언트로부터 전달받은 로그인 ID와 비밀번호
 
   console.log(`Login Request: loginId=${loginId}, loginPw=${loginPw}`);
 
+  // 데이터베이스 쿼리: 해당 loginId를 가진 사용자 조회
   const query = 'SELECT id, loginId, loginPw, name FROM `member` WHERE loginId = ?';
   db.query(query, [loginId], (err, results) => {
     if (err) {
+      // 데이터베이스 쿼리 중 에러 발생 시
       console.error('Database error:', err);
       return res.status(500).send('서버 에러');
     }
 
     console.log(`Results Length: ${results.length}`);
-      // 데이터베이스에서 사용자 조회 후 비밀번호 확인
+    // 사용자 조회 결과가 있고 비밀번호가 일치하는 경우
     if (results.length > 0) {
       console.log(`User's Password from DB: ${results[0].loginPw}`);
     }
@@ -128,7 +130,7 @@ app.get('/usr/member/myPage', (req, res) => {
       console.error('Database error:', err);
       return res.status(500).send('Server error');
     }
-
+    
     if (results.length > 0) {
       res.json(results[0]);
     } else {
@@ -157,6 +159,28 @@ app.post('/usr/member/doModify', (req, res) => {
       return res.status(500).send('Server error');
     }
     res.send('Information updated successfully');
+  });
+});
+
+
+// 사용자 정보 로그인(userid)를 js 쓸 수있도록 가져오는  라우트
+app.get('/usr/member/getLoggedUser', (req, res) => {
+  const userId = req.session.userId;
+  if (!userId) {
+    return res.status(403).send('Unauthorized');
+  }
+  // 데이터베이스에서 사용자 정보 조회
+  const query = 'SELECT id, name FROM member WHERE id = ?';
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).send('Server error');
+    }
+    if (results.length > 0) {
+      res.json({ id: results[0].id, name: results[0].name });
+    } else {
+      res.status(404).send('User not found');
+    }
   });
 });
 

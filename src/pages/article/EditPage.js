@@ -21,24 +21,26 @@ const theme = createTheme({
 
 
   const EditPage = () => {
-    const { id } = useParams();
-    const [boardId, setBoardId] = useState(1);
-    const [title, setTitle] = useState("");
-    const [editorState, setEditorState] = useState(EditorState.createEmpty());
-    const history = useHistory();
+    const { id } = useParams(); // URL에서 게시글 ID 추출
+    const [boardId, setBoardId] = useState(1); // 게시판 ID 상태
+    const [title, setTitle] = useState(""); // 제목 상태
+    const [editorState, setEditorState] = useState(EditorState.createEmpty()); // 에디터 상태
+    const history = useHistory(); // 히스토리 객체
   
     useEffect(() => {
+      // 게시글 정보 가져오기
       axios.get(`http://localhost:8081/usr/article/getArticle?id=${id}`)
         .then(response => {
           const articleData = response.data;
-          setTitle(articleData.title);
-          setBoardId(articleData.boardId);
-          const content = EditorState.createWithContent(ContentState.createFromText(articleData.body));
+          setTitle(articleData.title); // 제목 설정
+          setBoardId(articleData.boardId); // 게시판 ID 설정
+          const content = EditorState.createWithContent(ContentState.createFromText(articleData.body)); // 내용 설정
           setEditorState(content);
         })
         .catch(error => console.error('Error fetching article:', error));
     }, [id]);
     
+    //수정 제출 처리
     const handleSubmit = async (event) => {
       event.preventDefault();
     
@@ -53,12 +55,13 @@ const theme = createTheme({
     
     
         console.log("Updated:", id);
-        history.goBack();
+        history.goBack();//이전페이지 이동
       } catch (error) {
         console.error('Error updating article:', error);
       }
     };
 
+    //이미지 업로드 처리
   const handleImageUpload = async (file) => {
     const formData = new FormData();
     formData.append('image', file);
