@@ -118,6 +118,18 @@ app.post('/usr/member/doLogin', (req, res) => {
   });
 });
 
+// 로그아웃 라우트
+app.post('/usr/member/doLogout', (req, res) => {
+  // 세션에서 사용자 정보 삭제
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Session destroy error:', err);
+    }
+  });
+
+  res.send('Logout successful');
+});
+
 // 회원 정보 조회 라우트
 app.get('/usr/member/myPage', (req, res) => {
   const userId = req.session.userId;//현재 로그인 된 id 추출

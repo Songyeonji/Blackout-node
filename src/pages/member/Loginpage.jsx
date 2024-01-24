@@ -1,13 +1,12 @@
-import React, { useState , useEffect, useContext} from 'react';
+import React, { useState , useContext} from 'react';
 import { Link , useHistory} from 'react-router-dom';
 import axios from 'axios'; 
 import './Login.css';
 import { FaUser, FaLock } from "react-icons/fa";
-import { AppBar, Toolbar, createTheme, ThemeProvider, Snackbar ,Alert } from "@mui/material";
-import { AuthContext } from '../../AuthContext';
+import { createTheme, ThemeProvider} from "@mui/material";
 import NavigationBar from '../../components/NavigationBar';
 
-
+//테마설정
 const theme = createTheme({
   palette: {
     primary: {
@@ -21,7 +20,6 @@ const theme = createTheme({
 const Loginpage = () => {
   const [loginId, setLoginId] = useState('');
   const [loginPw, setPassword] = useState('');
-  const { setIsLoggedIn } = useContext(AuthContext);
   const history = useHistory();
 
   // 로그인 처리 함수
@@ -36,7 +34,6 @@ const Loginpage = () => {
 
       if (response.data) {
         // 로그인 성공 처리
-        setIsLoggedIn(true);
         history.push('/mypage'); // 로그인 성공 후 리디렉션
       }
     } catch (error) {

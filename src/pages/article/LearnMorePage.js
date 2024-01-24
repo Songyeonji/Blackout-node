@@ -17,7 +17,7 @@ import NavigationBar from "../../components/NavigationBar";
 import RecipeReviewCard from '../../components/RecipeReviewCard';
 
 
-
+// MUI 테마 설정
 const theme = createTheme({
   palette: {
     primary: {
@@ -26,6 +26,7 @@ const theme = createTheme({
   },
 });
 
+// 탭 패널 컴포넌트 정의
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -33,7 +34,7 @@ function CustomTabPanel(props) {
   return (
     <div
       role="tabpanel"
-      hidden={value !== index}
+      hidden={value !== index}// 현재 탭과 일치하지 않는 경우 숨김
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
@@ -47,13 +48,14 @@ function CustomTabPanel(props) {
   );
 }
 
-
+// PropTypes를 사용하여 props 유형 검증
 CustomTabPanel.propTypes = {
   children: PropTypes.node,
   index: PropTypes.number.isRequired,
   value: PropTypes.number.isRequired,
 };
 
+// 접근성 속성을 위한 함수
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
@@ -62,40 +64,17 @@ function a11yProps(index) {
 }
 
 function LearnMorePage() {
-  const [value, setValue] = useState(0);
-  const [articles, setArticles] = useState([]);
+  const [value, setValue] = useState(0);// 탭 상태 관리
+  const [articles, setArticles] = useState([]);// 게시글 데이터 상태 관리
   const [userId, setUserId] = useState(""); // 인증 컨텍스트나 세션에서 설정해야 합니다
-  // const userId = request.session.userId;
-    // const { userId, isLoggedIn } = useContext(AuthContext);
-  // const loginedMemberId = 0;
-    
-  // useEffect(() => {
-  //   const fetchArticles = async () => {
-  //     try {
-  //       // console.log("런모어 로그인 누구? : " + userId);
-  //       const response = await axios.post('http://localhost:8081/usr/article/showListWithRecommendCount');
-  //       const fetchedArticles = response.data.map(article => ({
-  //         ...article,
-  //         // loginedMemberId = userId,
-  //         userId,
-  //         isLikedByUser: article.isLikedByUser === 1 // 사용자가 좋아요를 눌렀는지 여부 (1이면 true, 그 외는 false)
-  //       }));
-  //       console.log("로그인 누구? : " + userId);
-  //       console.log("Fetched Articles:", fetchedArticles);
-  //       setArticles(fetchedArticles);
-  //     } catch (error) {
-  //       console.error('Error fetching articles:', error);
-  //     }
-  //   };
-  //   fetchArticles();
-  // }, [userId]);
 
+  //게시글 데이터 로드
   useEffect(() => {
     const fetchArticles = async () => {
       try {
         const response = await axios.get('http://localhost:8081/usr/article/showListWithRecommendCount', {
-          withCredentials: true,
-          params: { userId }
+          withCredentials: true,//브라우저가 다른 도메인으로의 HTTP 요청 시 쿠키 및 인증 정보를 함께 전송할 수 있도록 허용하는 옵션
+          params: { userId }//요청 URL에 userId라는 매개변수를 추가하여 서버에 필요한 정보 전달
         });
         setArticles(response.data.map(article => ({
           ...article,
@@ -144,7 +123,7 @@ const handleLike = async (articleId) => {
   }
 };
 
-
+ // 탭 변경 핸들러
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };

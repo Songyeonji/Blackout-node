@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-import { AppBar, Toolbar, createTheme, ThemeProvider } from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material";
 import './Login.css'; // 'Login.css'를 사용
 import NavigationBar from '../../components/NavigationBar';
 
@@ -26,7 +25,7 @@ const MyPage = () => {
       try {
         // 백엔드 서버에 마이페이지 정보 요청
         const response = await axios.get('http://localhost:8081/usr/member/myPage', {
-          withCredentials: true 
+          withCredentials: true //브라우저가 다른 도메인으로의 HTTP 요청 시 쿠키 및 인증 정보를 함께 전송할 수 있도록 허용하는 옵션
         });
         setMember(response.data);
       } catch (error) {

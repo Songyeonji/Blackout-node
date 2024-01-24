@@ -28,8 +28,8 @@ import makgeolliIcon from "./icon/rice-wine.png";
 import { useHistory } from "react-router-dom";
 import RecipeReviewCard from "../components/RecipeReviewCard";
 import NavigationBar from "../components/NavigationBar";
-import { AuthContext } from "../AuthContext";
 
+// MUI 테마 설정
 const theme = createTheme({
   palette: {
     primary: {
@@ -39,13 +39,14 @@ const theme = createTheme({
 });
 
 const DrinkRecommendation = () => {
+    // 상태 관리 변수 선언
   const [weather, setWeather] = useState(null);
   const [articles, setArticles] = useState([]);
   const [recommendationType, setRecommendationType] = useState("drink");
   const [selectedDrink, setSelectedDrink] = useState(null);
   const [foodRecommendation, setFoodRecommendation] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const history = useHistory();
-  const { userId, isLoggedIn } = useContext(AuthContext);
  
  
  
@@ -53,11 +54,12 @@ const DrinkRecommendation = () => {
   const [userQuery, setUserQuery] = useState('');
   const [gptResponse, setGptResponse] = useState('');
 
-
+ // 사용자 쿼리 변경 핸들러
   const handleQueryChange = (event) => {
     setUserQuery(event.target.value);
   };
-
+  
+ // ChatGPT API 요청 핸들러
   const handleAskButtonClick = async () => {
     try {
       const response = await axios.post('https://api.openai.com/v1/engines/davinci-codex/completions', {
@@ -76,7 +78,7 @@ const DrinkRecommendation = () => {
     }
   };
 
-
+  // 좋아요 핸들러
   const handleLike = async (articleId) => {
     if (!isLoggedIn) {
       alert("로그인이 필요합니다.");
@@ -104,7 +106,8 @@ const DrinkRecommendation = () => {
       console.error('Error handling like:', error);
     }
   };
-
+  
+  // 날씨 데이터 가져오는 useEffect
   useEffect(() => {
     const fetchWeatherData = async (latitude, longitude) => {
       try {
@@ -116,7 +119,7 @@ const DrinkRecommendation = () => {
         console.log("Error fetching weather data:", error);
       }
     };
-
+//사용자의 위치기반으로 날씨에 넣는 로직
     const getLocation = () => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -137,29 +140,30 @@ const DrinkRecommendation = () => {
 
 
   
-
+//음료 옵션 아이콘들 
   const drinkOptions = [
     { name: "Wine", icon: wineIcon },
     { name: "Soju", icon: sojuIcon },
     { name: "Beer", icon: beerIcon },
     { name: "Makgeolli", icon: makgeolliIcon },
   ];
-
+ // 음료 선택 핸들러
   const handleDrinkSelection = (drink) => {
     setSelectedDrink(drink);
     setFoodRecommendation(null);
   };
-
+//음료아이콘의 스타일
   const drinkIconStyle = {
     width: "50px",
     height: "50px",
     cursor: "pointer",
   };
-
+//선택된 음료의 스타일
   const selectedDrinkStyle = {
     border: "2px solid blue",
   };
 
+ // 날씨 아이콘 가져오는 함수
   const getWeatherIcon = (weather) => {
     const lowerCaseWeather = weather?.toLowerCase() ?? "";
 
@@ -175,7 +179,8 @@ const DrinkRecommendation = () => {
       return faCloudSun;
     }
   };
-
+  
+  // 날씨에 따른 음료 추천 로직
   const getDrinkRecommendationByWeather = () => {
     if (!weather || !weather.weather) return "Unknown";
 
@@ -199,14 +204,15 @@ const DrinkRecommendation = () => {
       }
     }
   };
-
+  
+  // 음식 추천 데이터
   const foodRecommendations = {
     makgeolli: ["파전", "수제비", "김치전", "도토리묵", "두부김치", "계란찜", "모둠 전", "김치찌개", "불고기"],
     soju: ["김치우동", "알탕", "회", "삼겹살", "소고기", "닭발", "곱창", "닭도리탕", "쭈꾸미"],
     wine: ["치즈", "과일", "파스타", "피자", "스테이크", "샐러드", "새우"],
     beer: ["튀김", "나초", "건어물", "피자", "편의점", "치킨", "핫윙", "멕시칸 타코", "소세지", "나초와 팝콘","치킨위드라이스"],
   };
-
+  // 음식 추천 버튼 클릭 핸들러
   const handleRecommendationButtonClick = () => {
     if (selectedDrink) {
       const foodList = foodRecommendations[selectedDrink.toLowerCase()] || [];
@@ -215,11 +221,11 @@ const DrinkRecommendation = () => {
       setFoodRecommendation(recommendation);
     }
   };
-
-  const temperature = weather?.main?.temp;
-  const weatherDescription = weather?.weather?.[0]?.description;
-  const weatherIcon = getWeatherIcon(weatherDescription);
-
+//데이터 객체들
+  const temperature = weather?.main?.temp;//온도 정보 추출
+  const weatherDescription = weather?.weather?.[0]?.description;//날씨 상태 정보 추출
+  const weatherIcon = getWeatherIcon(weatherDescription);//날씨 아이콘 결정
+// 상단 추천 기사 가져오는 useEffect
   useEffect(() => {
     const fetchTopRecommendedArticles = async () => {
       try {
@@ -232,7 +238,30 @@ const DrinkRecommendation = () => {
 
     fetchTopRecommendedArticles();
   }, []);
-
+  // 로그인 상태 확인 useEffect
+  useEffect(() => {
+    axios.get('http://localhost:8081/usr/member/getLoggedUser', { withCredentials: true })
+      .then(response => {
+        if (response.data && response.data.id) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+        }
+      })
+      .catch(error => {
+        console.error('Error checking login status:', error);
+        setIsLoggedIn(false);
+      });
+  }, []);
+  // 로그아웃 핸들러
+  const handleLogout = () => {
+    axios.post('http://localhost:8081/usr/member/doLogout', {}, { withCredentials: true })
+      .then(() => {
+        setIsLoggedIn(false);
+        history.push('/login');
+      })
+      .catch(error => console.error('Logout error:', error));
+  };
   // "더 알아보기" 버튼 클릭 핸들러
   const handleLearnMoreClick = () => {
     if (!isLoggedIn) {

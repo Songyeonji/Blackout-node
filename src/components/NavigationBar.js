@@ -1,34 +1,50 @@
-import React, { useContext, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useHistory } from 'react-router-dom';
 import { AppBar, Toolbar, Menu, MenuItem } from '@mui/material';
-import { AuthContext } from '../AuthContext';
+import axios from 'axios';
 import Title from './Title';
 
 
 const NavigationBar = () => {
-  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
-  const location = useLocation();
-  const history = useHistory();
-
   
+  const history = useHistory();
+  const location = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  useEffect(() => {
+    // 서버에 로그인 상태 확인 요청
+    axios.get('http://localhost:8081/usr/member/getLoggedUser', { withCredentials: true })
+      .then(response => {
+        if (response.data && response.data.id) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+        }
+      })
+      .catch(error => {
+        console.error('Error checking login status:', error);
+        setIsLoggedIn(false);
+      });
+  }, []);
+
   const handleLogout = () => {
-    setIsLoggedIn(false);
-    sessionStorage.removeItem('isLoggedIn');
-    sessionStorage.removeItem('loginMemberName');
-    history.push('/login');
+    axios.post('http://localhost:8081/usr/member/doLogout', {}, { withCredentials: true })
+      .then(() => {
+        setIsLoggedIn(false);
+        history.push('/login');
+      })
+      .catch(error => console.error('Logout error:', error));
   };
 
-    // 드롭다운 메뉴 상태
-    const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
-     // 드롭다운 메뉴 핸들러
-    const handleMenu = (event) => {
-      setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-      setAnchorEl(null);
-    };
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const isActive = (path) => location.pathname.includes(path);
 

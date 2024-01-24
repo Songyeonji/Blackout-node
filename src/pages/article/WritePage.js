@@ -78,7 +78,7 @@ const WritePage = () => {
           boardId,
           memberId: userId.id, // 여기서 userId를 사용
         }, {
-          withCredentials: true
+          withCredentials: true//브라우저가 다른 도메인으로의 HTTP 요청 시 쿠키 및 인증 정보를 함께 전송할 수 있도록 허용하는 옵션
         });
         history.goBack();
       } catch (error) {

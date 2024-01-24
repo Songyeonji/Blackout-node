@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect, Link } from 'react-router-dom';
-import { AuthProvider, AuthContext } from '../AuthContext';
 import DiaryCalendar from "../pages/DiaryCalendar";
 import DrinkRecommendation from "../pages/DrinkRecommendation";
 import LearnMorePage from "../pages/article/LearnMorePage"
@@ -10,11 +9,12 @@ import LoginPage from "../pages/member/Loginpage";
 import RegisterPage from "../pages/member/RegisterPage";
 import EditPage from "../pages/article/EditPage";
 import MyPage from "../pages/member/MyPage"
-import Logo from '../pages/Logo'; // Logo 컴포넌트 임포트              
+import Logo from '../pages/Logo'; // Logo 컴포넌트 임포트
+
 
 const App = () => {
   return (
-    <AuthProvider>
+  
       <Router>
         <Switch>
           <Route exact path="/diary-calendar" component={DiaryCalendar} />
@@ -29,7 +29,7 @@ const App = () => {
           <Route path="/Blackout" component={Logo} /> 
         </Switch>
       </Router>
-    </AuthProvider>
+
   );
 };
 

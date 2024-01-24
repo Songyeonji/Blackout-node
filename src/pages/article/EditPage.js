@@ -7,7 +7,7 @@ import { Editor as WysiwygEditor } from "react-draft-wysiwyg";
 import axios from 'axios';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "draft-js/dist/Draft.css";
-import NavigationBar from '../../components/NavigationBar';
+import NavigationBar from "../../components/NavigationBar";
 import { FaMapMarkedAlt, FaWineBottle, FaUtensils } from "react-icons/fa";
 
 
@@ -54,8 +54,10 @@ const theme = createTheme({
           body: bodyText,
           boardId
         });
+        //업데이트 확인로그
         console.log("Update response:", response);
-        history.goBack();
+        history.goBack();//전으로 돌아가기
+        //에러날 경우
       } catch (error) {
         console.error('Error updating article:', error);
       }
@@ -78,8 +80,7 @@ const theme = createTheme({
   return (
     <ThemeProvider theme={theme}>
       <div>
-        <NavigationBar /> 
-
+      <NavigationBar /> 
         <section className="text-xl mt-20">
             <div className="container mx-auto px-3 text-center">
             <form onSubmit={handleSubmit}>
