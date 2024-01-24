@@ -24,22 +24,24 @@ const DetailPage = () => {
   const [article, setArticle] = useState({});
   const [userId, setUserId] = useState(null);//로그인한 사람의 id
 
-  // 게시글 정보 가져오기
+  //필요한 정보들 백엔드에서 불러오기
   useEffect(() => {
-    const fetchArticle = async () => {
+    const fetchArticleAndUser = async () => {
       try {
+          // 게시글 정보 가져오기
         const articleResponse = await axios.get(`http://localhost:8081/usr/article/getArticle?id=${id}`);
         setArticle(articleResponse.data);
-
-        // 사용자 ID 가져오기
-        const userResponse = await axios.get('http://localhost:8081/usr/member/myPage', { withCredentials: true });
-        setUserId(userResponse.data.id);
+        //사용자 아이디 가져오기
+        const userResponse = await axios.get('http://localhost:8081/usr/member/getLoggedUser', { withCredentials: true });
+        if (userResponse.data && userResponse.data.id) {
+          setUserId(userResponse.data.id);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-
-    fetchArticle();
+  
+    fetchArticleAndUser();
   }, [id]);
   
   //게시글 삭제함수

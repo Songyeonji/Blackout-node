@@ -40,6 +40,7 @@ const theme = createTheme({
         .catch(error => console.error('Error fetching article:', error));
     }, [id]);
     
+    
     //수정 제출 처리
     const handleSubmit = async (event) => {
       event.preventDefault();

@@ -9,7 +9,7 @@ import "draft-js/dist/Draft.css";
 import NavigationBar from "../../components/NavigationBar";
 import { FaMapMarkedAlt, FaWineBottle, FaUtensils } from "react-icons/fa";
 import InsertImage from '../../components/InsertImage';
-import { AuthContext } from '../../AuthContext';
+
 
 
 const theme = createTheme({
