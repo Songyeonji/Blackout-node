@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Link, useHistory } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link} from "react-router-dom";
 import { FaMapMarkedAlt, FaWineBottle, FaUtensils } from 'react-icons/fa';
 import {
-  AppBar,
-  Toolbar,
   createTheme,
   ThemeProvider,
   Box,
@@ -14,10 +12,8 @@ import {
   Grid
 } from "@mui/material";
 import PropTypes from 'prop-types';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import axios from 'axios';
 import NavigationBar from "../../components/NavigationBar";
-import { AuthContext } from '../../AuthContext';
 import RecipeReviewCard from '../../components/RecipeReviewCard';
 
 
@@ -67,26 +63,44 @@ function a11yProps(index) {
 
 function LearnMorePage() {
   const [value, setValue] = useState(0);
-  const [articles, setArticles] = useState([]); // 게시글 데이터 상태
-  const [userId] = useState("");
+  const [articles, setArticles] = useState([]);
+  const [userId, setUserId] = useState(""); // 인증 컨텍스트나 세션에서 설정해야 합니다
   // const userId = request.session.userId;
     // const { userId, isLoggedIn } = useContext(AuthContext);
   // const loginedMemberId = 0;
     
+  // useEffect(() => {
+  //   const fetchArticles = async () => {
+  //     try {
+  //       // console.log("런모어 로그인 누구? : " + userId);
+  //       const response = await axios.post('http://localhost:8081/usr/article/showListWithRecommendCount');
+  //       const fetchedArticles = response.data.map(article => ({
+  //         ...article,
+  //         // loginedMemberId = userId,
+  //         userId,
+  //         isLikedByUser: article.isLikedByUser === 1 // 사용자가 좋아요를 눌렀는지 여부 (1이면 true, 그 외는 false)
+  //       }));
+  //       console.log("로그인 누구? : " + userId);
+  //       console.log("Fetched Articles:", fetchedArticles);
+  //       setArticles(fetchedArticles);
+  //     } catch (error) {
+  //       console.error('Error fetching articles:', error);
+  //     }
+  //   };
+  //   fetchArticles();
+  // }, [userId]);
+
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        // console.log("런모어 로그인 누구? : " + userId);
-        const response = await axios.post('http://localhost:8081/usr/article/showListWithRecommendCount');
-        const fetchedArticles = response.data.map(article => ({
+        const response = await axios.get('http://localhost:8081/usr/article/showListWithRecommendCount', {
+          withCredentials: true,
+          params: { userId }
+        });
+        setArticles(response.data.map(article => ({
           ...article,
-          // loginedMemberId = userId,
-          userId,
-          isLikedByUser: article.isLikedByUser === 1 // 사용자가 좋아요를 눌렀는지 여부 (1이면 true, 그 외는 false)
-        }));
-        console.log("로그인 누구? : " + userId);
-        console.log("Fetched Articles:", fetchedArticles);
-        setArticles(fetchedArticles);
+          isLikedByUser: article.isLikedByUser === 1
+        })));
       } catch (error) {
         console.error('Error fetching articles:', error);
       }

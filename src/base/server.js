@@ -46,12 +46,13 @@ db.connect(err => {
 
 // 회원가입 라우트
 app.post('/usr/member/doJoin', (req, res) => {
-  const { name, loginId, loginPw, email } = req.body;
+  const { name, loginId, loginPw, email } = req.body;//요청받은 내용들 추출
 
   if (!(name && loginId && loginPw && email)) {
     return res.status(400).send('All fields are required');
   }
 
+  //회원추가하는 데이터 베이스 코드
   const query = 'INSERT INTO member (name, loginId, loginPw, email) VALUES (?, ?, ?, ?)';
   db.query(query, [name, loginId, loginPw, email], (err, result) => {
     if (err) {
@@ -64,13 +65,14 @@ app.post('/usr/member/doJoin', (req, res) => {
 
 // 아이디 중복 확인 라우트
 app.get('/usr/member/isLoginIdAvailable', (req, res) => {
-  const { loginId } = req.query;
+  const { loginId } = req.query;//요청받은 내용들 추출
 
+  //로그인 아이디가 없을 경우
   if (!loginId) {
     return res.status(400).send('loginId is required');
   }
 
-  const query = 'SELECT id FROM member WHERE loginId = ?';
+  const query = 'SELECT id FROM member WHERE loginId = ?'; 
   db.query(query, [loginId], (err, results) => {
     if (err) {
       console.error('Database error:', err);
@@ -118,7 +120,7 @@ app.post('/usr/member/doLogin', (req, res) => {
 
 // 회원 정보 조회 라우트
 app.get('/usr/member/myPage', (req, res) => {
-  const userId = req.session.userId;
+  const userId = req.session.userId;//현재 로그인 된 id 추출
   console.log('myPage userId : ' + userId);
   if (!userId) {
     return res.status(403).send('Unauthorized');
@@ -142,8 +144,8 @@ app.get('/usr/member/myPage', (req, res) => {
 
 // 회원 정보 수정 라우트
 app.post('/usr/member/doModify', (req, res) => {
-  const { name, email } = req.body;
-  const userId = req.session.userId;
+  const { name, email } = req.body;//요청받은 내용들 추출
+  const userId = req.session.userId;//현재 로그인 된 id 추출
   console.log('doModify userId : ' + userId);
 
   //userid가 없을 경우
@@ -165,7 +167,7 @@ app.post('/usr/member/doModify', (req, res) => {
 
 // 사용자 정보 로그인(userid)를 js 쓸 수있도록 가져오는  라우트
 app.get('/usr/member/getLoggedUser', (req, res) => {
-  const userId = req.session.userId;
+  const userId = req.session.userId;//현재 로그인 된 아이디 추출
   if (!userId) {
     return res.status(403).send('Unauthorized');
   }
@@ -185,11 +187,12 @@ app.get('/usr/member/getLoggedUser', (req, res) => {
 });
 
 //get
-app.post('/usr/article/showListWithRecommendCount', (req, res) => {
+app.get('/usr/article/showListWithRecommendCount', (req, res) => {
   const userId = req.session.userId; // 현재 로그인한 사용자 ID
   const user = req.session.article;
   const articleId = req.params.articleId;
   const loginedMemberId = req.session.userId;
+  console.log(req.session)
 
   // console.log('글 목록 : articleId : ' + articleId); // ud
 
@@ -236,12 +239,12 @@ app.post('/usr/article/showListWithRecommendCount', (req, res) => {
 // 게시글 좋아요 토글 라우트
 app.post('/usr/recommendPoint/toggleRecommend/article/:articleId', async (req, res) => {
   const articleId = req.params.articleId;
-  const loginedMemberId = req.session.userId;
+  const userId = req.session.userId;
 
   console.log('게시글 좋아요 articleId : ' + articleId);
-  console.log('게시글 좋아요 loginedMemberId : ' + loginedMemberId);
+  console.log('게시글 좋아요 userId : ' + userId);
 
-  if (!loginedMemberId) {
+  if (!userId) {
     return res.status(403).send('Unauthorized');
   }
 
@@ -252,7 +255,7 @@ app.post('/usr/recommendPoint/toggleRecommend/article/:articleId', async (req, r
       FROM recommendPoint
       WHERE memberId = ? AND relId = ? AND relTypeCode = 'article'
     `;
-    const [checkResults] = await db.promise().query(checkQuery, [loginedMemberId, articleId]);
+    const [checkResults] = await db.promise().query(checkQuery, [userId, articleId]);
 
     let isLikedByUser;
 
@@ -263,7 +266,7 @@ app.post('/usr/recommendPoint/toggleRecommend/article/:articleId', async (req, r
       isLikedByUser = false;  // 좋아요 삭제
     } else {
       const insertQuery = 'INSERT INTO recommendPoint (memberId, relTypeCode, relId, point) VALUES (?, "article", ?, 1)';
-      await db.promise().query(insertQuery, [loginedMemberId, articleId]);
+      await db.promise().query(insertQuery, [userId, articleId]);
       isLikedByUser = true;  // 좋아요 추가
     }
 
@@ -288,7 +291,7 @@ app.post('/usr/recommendPoint/toggleRecommend/article/:articleId', async (req, r
 
 //게시물 글쓰기 라우트
 app.post('/usr/article/doWrite', async (req, res) => {
-  const { title, body, boardId, memberId, imageUrls } = req.body;
+  const { title, body, boardId, memberId, imageUrls } = req.body;//요청받은 내용들 추출
 
   if (!(title && body && boardId && memberId)) {
     return res.status(400).send('Missing required fields');
@@ -306,7 +309,7 @@ app.post('/usr/article/doWrite', async (req, res) => {
 
 //게시물 삭제 라우트
 app.delete('/usr/article/doDelete', async (req, res) => {
-  const { id } = req.query;
+  const { id } = req.query;//url 쿼리에서 게시글 id 추출
 
   if (!id) {
     return res.status(400).send('Article ID is required');
@@ -324,16 +327,21 @@ app.delete('/usr/article/doDelete', async (req, res) => {
 
 //게시물 수정 라우트
 app.put('/usr/article/doModify', async (req, res) => {
-  const { id, title, body, boardId } = req.body;
+  const { title, body, boardId } = req.body;//요청받은 내용들 추출
+  const { id } = req.query; // URL 쿼리에서 id 추출
+   // 로그로 요청 본문 확인
+   console.log(`Received PUT request with data: ${JSON.stringify(req.body)}`);
 
   if (!(id && title && body && boardId)) {
     return res.status(400).send('All fields are required');
   }
 
+  //업데이트
   try {
     const updateArticleQuery = 'UPDATE article SET title = ?, body = ?, boardId = ? WHERE id = ?';
     await db.promise().query(updateArticleQuery, [title, body, boardId, id]);
     res.send('Article updated successfully');
+    //오류날 경우
   } catch (err) {
     console.error('Database error:', err);
     res.status(500).send('Server error');
@@ -342,7 +350,7 @@ app.put('/usr/article/doModify', async (req, res) => {
 
 //게시물 불러오기 라우트
 app.get('/usr/article/getArticle', async (req, res) => {
-  const { id } = req.query;
+  const { id } = req.query;// URL 쿼리에서 id 추출
 
   if (!id) {
     return res.status(400).send('Article ID is required');

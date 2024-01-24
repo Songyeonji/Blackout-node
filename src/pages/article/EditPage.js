@@ -26,37 +26,36 @@ const theme = createTheme({
     const [title, setTitle] = useState(""); // 제목 상태
     const [editorState, setEditorState] = useState(EditorState.createEmpty()); // 에디터 상태
     const history = useHistory(); // 히스토리 객체
-  
+    
+    
     useEffect(() => {
       // 게시글 정보 가져오기
       axios.get(`http://localhost:8081/usr/article/getArticle?id=${id}`)
         .then(response => {
           const articleData = response.data;
-          setTitle(articleData.title); // 제목 설정
-          setBoardId(articleData.boardId); // 게시판 ID 설정
-          const content = EditorState.createWithContent(ContentState.createFromText(articleData.body)); // 내용 설정
+          setTitle(articleData.title);
+          setBoardId(articleData.boardId.toString()); // boardId를 문자열로 변환
+          const content = EditorState.createWithContent(ContentState.createFromText(articleData.body));
           setEditorState(content);
         })
         .catch(error => console.error('Error fetching article:', error));
     }, [id]);
-    
-    
-    //수정 제출 처리
+  
     const handleSubmit = async (event) => {
       event.preventDefault();
-    
-      
       const bodyText = editorState.getCurrentContent().getPlainText();
+    
+      // 데이터 로그 확인
+      console.log("Sending PUT request with data:", { title, body: bodyText, boardId });
+    
       try {
-        await axios.put(`http://localhost:8081/usr/article/doModify?id=${id}`, {
+        const response = await axios.put(`http://localhost:8081/usr/article/doModify?id=${id}`, {
           title,
-          body: bodyText, // JSON 대신 순수 텍스트 전송
-          boardId,
+          body: bodyText,
+          boardId
         });
-    
-    
-        console.log("Updated:", id);
-        history.goBack();//이전페이지 이동
+        console.log("Update response:", response);
+        history.goBack();
       } catch (error) {
         console.error('Error updating article:', error);
       }
