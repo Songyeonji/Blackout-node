@@ -17,14 +17,16 @@ const theme = createTheme({
 
 const RegisterPage = () => {
   // 상태 변수 선언
-  const [name, setName] = useState('');
-  const [loginId, setLoginId] = useState('');
-  const [loginPw, setPassword] = useState('');
-  const [passwordCheck, setPasswordCheck] = useState('');
-  const [email, setEmail] = useState('');
-  const [isLoginIdAvailable, setIsLoginIdAvailable] = useState(true);
-  const [loginIdError, setLoginIdError] = useState('');
-  const history = useHistory();
+  const [name, setName] = useState(''); // 사용자 이름을 저장하는 상태, 초기값은 빈 문자열
+  const [loginId, setLoginId] = useState(''); // 사용자 로그인 ID를 저장하는 상태, 초기값은 빈 문자열
+  const [loginPw, setPassword] = useState(''); // 사용자 비밀번호를 저장하는 상태, 초기값은 빈 문자열
+  const [passwordCheck, setPasswordCheck] = useState(''); // 비밀번호 확인을 위한 상태, 초기값은 빈 문자열
+  const [email, setEmail] = useState(''); // 사용자 이메일을 저장하는 상태, 초기값은 빈 문자열
+  const [isLoginIdAvailable, setIsLoginIdAvailable] = useState(true); 
+  // 사용자의 로그인 ID가 사용 가능한지 여부를 저장하는 상태, 초기값은 true (사용 가능)
+  const [loginIdError, setLoginIdError] = useState(''); 
+  // 로그인 ID에 관한 오류 메시지를 저장하는 상태, 초기값은 빈 문자열
+  const history = useHistory();//히스토리 객체
 
 
   // 로그인 ID의 유효성을 확인하는 함수

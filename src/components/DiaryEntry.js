@@ -10,26 +10,27 @@ import { CompactPicker } from "react-color"; // 컬러 피커를 추가합니다
 import AlcoholProgress from "./AlcoholProgress";
 
 const DiaryEntry = ({
-  selectedDate,
-  diaryEntries,
-  setDiaryEntries,
-  handleAdditionalDiaryEntry,
-  handleRadioChange,
-  getImageByDrink,
-  renderDrinkIcon,
-  handleStarClick,
-  calculateDrinkRatio,
-  calculateTotalDrinkRatio,
-  handleColorSelect,
-  selectedColor,
-  colorPalette,
-  setSelectedColor,
-  handleAddColor,
-  handleDeleteColor,
+  // props로 받은 변수들 및 함수들
+  selectedDate, // 선택된 날짜
+  diaryEntries, // 일기 항목들
+  setDiaryEntries, // 일기 항목들을 설정하는 함수
+  handleAdditionalDiaryEntry, // 추가 일기 항목을 처리하는 함수
+  handleRadioChange, // 라디오 버튼 변경을 처리하는 함수
+  getImageByDrink, // 음료에 따른 이미지를 가져오는 함수
+  renderDrinkIcon, // 음료 아이콘을 렌더링하는 함수
+  handleStarClick, // 별점 클릭을 처리하는 함수
+  calculateDrinkRatio, // 음료 비율을 계산하는 함수
+  calculateTotalDrinkRatio, // 총 음료 비율을 계산하는 함수
+  handleColorSelect, // 색상 선택을 처리하는 함수
+  selectedColor, // 선택된 색상
+  colorPalette, // 색상 팔레트
+  setSelectedColor, // 선택된 색상을 설정하는 함수
+  handleAddColor, // 색상을 추가하는 함수
+  handleDeleteColor, // 색상을 삭제하는 함수
 }) => {
 
 
-
+  // 라디오 버튼의 라벨을 반환하는 함수
   const getRadioLabel = (value, text) => {
     const entryValue = diaryEntries[moment(selectedDate).format("YYYY-MM-DD")];
     if (entryValue === value) {
