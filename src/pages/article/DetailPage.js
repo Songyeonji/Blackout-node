@@ -146,6 +146,10 @@ const DetailPage = () => {
                           <td style={{ padding: "10px" }}>{article.updateDate && new Date(article.updateDate).toLocaleString('ko-KR', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
                         </tr>
                         <tr>
+                          <th style={{ padding: "10px" }}>작성자</th>
+                          <td style={{ padding: "10px" }}>{article.writer}</td>
+                        </tr>
+                        <tr>
                           <th style={{ padding: "10px" }}>내용</th>
                           <td style={{ padding: "10px" }}>{article.body}</td> {/* 게시글 내용 */}
                         </tr>

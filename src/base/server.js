@@ -201,9 +201,9 @@ app.get('/usr/member/getLoggedUser', (req, res) => {
 //get
 app.get('/usr/article/showListWithRecommendCount', (req, res) => {
   const userId = req.session.userId; // 현재 로그인한 사용자 ID
-  const user = req.session.article;
-  const articleId = req.params.articleId;
-  const loginedMemberId = req.session.userId;
+  // const user = req.session.article;
+  // const articleId = req.params.articleId;
+  // const loginedMemberId = req.session.userId;
   console.log(req.session)
 
   // console.log('글 목록 : articleId : ' + articleId); // ud
@@ -250,8 +250,8 @@ app.get('/usr/article/showListWithRecommendCount', (req, res) => {
 });
 // 게시글 좋아요 토글 라우트
 app.post('/usr/recommendPoint/toggleRecommend/article/:articleId', async (req, res) => {
-  const articleId = req.params.articleId;
-  const userId = req.session.userId;
+  const articleId = req.params.articleId;//게시물 번호들
+  const userId = req.session.userId;// 현재 로그인한 사용자 ID
 
   console.log('게시글 좋아요 articleId : ' + articleId);
   console.log('게시글 좋아요 userId : ' + userId);
@@ -369,8 +369,9 @@ app.get('/usr/article/getArticle', async (req, res) => {
   }
 
   try {
-    const selectArticleQuery = 'SELECT id, regDate, updateDate, memberId, boardId, title, point, body FROM article WHERE id = ?';
+    const selectArticleQuery = 'SELECT a.id, a.regDate, a.updateDate, a.memberId, a.boardId, a.title, a.point, a.body, m.name AS writer FROM article AS a INNER JOIN `member` AS m on a.memberId = m.id  WHERE a.id = ?';
     const [article] = await db.promise().query(selectArticleQuery, [id]);
+    
     if (article.length > 0) {
       res.json(article[0]);
     } else {
