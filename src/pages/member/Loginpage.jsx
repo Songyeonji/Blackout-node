@@ -18,9 +18,9 @@ const theme = createTheme({
 
 
 const Loginpage = () => {
-  const [loginId, setLoginId] = useState('');
-  const [loginPw, setPassword] = useState('');
-  const history = useHistory();
+  const [loginId, setLoginId] = useState('');//아이디디
+  const [loginPw, setPassword] = useState('');//패스워드
+  const history = useHistory();//히스토리 객체
 
   // 로그인 처리 함수
   const handleLogin = async (event) => {
@@ -34,7 +34,7 @@ const Loginpage = () => {
 
       if (response.data) {
         // 로그인 성공 처리
-        history.push('/mypage'); // 로그인 성공 후 리디렉션
+        history.push('/diary-calendar'); // 로그인 성공 후 리디렉션
       }
     } catch (error) {
       console.error('Login failed:', error);

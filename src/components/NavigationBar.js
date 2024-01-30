@@ -6,19 +6,19 @@ import Title from './Title';
 
 
 const NavigationBar = () => {
-  
-  const history = useHistory();
-  const location = useLocation();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+      // 상태 관리 변수 선언
+  const history = useHistory();//브라우저의 히스토리 스택에 접근
+  const location = useLocation();// 현재 페이지의 URL 정보에 접근할 수 있는 훅
+  const [isLoggedIn, setIsLoggedIn] = useState(false);//로그인여부 상태변수
+  const [anchorEl, setAnchorEl] = useState(null);//드롭다운 메뉴 상태변수
+  const open = Boolean(anchorEl);//메뉴가 열려얗는지 여부 결정에 사용
 
   useEffect(() => {
     // 서버에 로그인 상태 확인 요청
     axios.get('http://localhost:8081/usr/member/getLoggedUser', { withCredentials: true })
       .then(response => {
         if (response.data && response.data.id) {
-          setIsLoggedIn(true);
+          setIsLoggedIn(true);//로그인 O
         } else {
           setIsLoggedIn(false);
         }
@@ -29,6 +29,7 @@ const NavigationBar = () => {
       });
   }, []);
 
+  //로그아운 핸들러
   const handleLogout = () => {
     axios.post('http://localhost:8081/usr/member/doLogout', {}, { withCredentials: true })
       .then(() => {
@@ -37,15 +38,15 @@ const NavigationBar = () => {
       })
       .catch(error => console.error('Logout error:', error));
   };
-
+//드랍다운 메뉴 핸들러
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
+//닫기
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+//현재위치
   const isActive = (path) => location.pathname.includes(path);
 
   return (
