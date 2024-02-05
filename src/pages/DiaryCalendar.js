@@ -107,7 +107,27 @@ const DiaryCalendar = () => {
   // 날짜 변경 핸들러
   const handleDateChange = (date) => {
     setSelectedDate(date);
-  };
+  };useEffect(() => {
+
+    
+    const fetchDiaryEntries = async () => {
+      // 로그인 상태 확인
+      const loggedUserResponse = await axios.get('/usr/member/getLoggedUser', { withCredentials: true });
+      if (loggedUserResponse.data.id) {
+        // 로그인한 경우: 서버로부터 달력 데이터 로드
+        const diaryEntriesResponse = await axios.get(`/api/diaryEntries?userId=${loggedUserResponse.data.id}`);
+        setDiaryEntries(diaryEntriesResponse.data);
+      } else {
+        // 로그인하지 않은 경우: 로컬 스토리지에서 데이터 로드
+        const storedDiaryEntries = localStorage.getItem("diaryEntries");
+        if (storedDiaryEntries) {
+          setDiaryEntries(JSON.parse(storedDiaryEntries));
+        }
+      }
+    };
+  
+    fetchDiaryEntries();
+  }, []);
 
    // 로컬 저장소에서 일기 항목과 컬러 팔레트 불러오기
   useEffect(() => {
