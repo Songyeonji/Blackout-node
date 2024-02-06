@@ -107,9 +107,25 @@ const DiaryCalendar = () => {
   // 날짜 변경 핸들러
   const handleDateChange = (date) => {
     setSelectedDate(date);
-  };useEffect(() => {
+    const handleSubmit = async (event) => {
+      event.preventDefault();
+      // Collect and prepare data from the form
+      const entryData = {
+        entryDate: selectedDate.toISOString().slice(0, 10), // or another format as needed
+        entryText: "", // Collect from state or form
+        entryType: "", // Collect from state or form
+        entryValue: "", // Collect from state or form
+        entryRating: 0, // Collect from state or form
+        entryColor: "" // Collect from state or form
+      };
+      await axios.post('/api/diaryEntries', entryData, { withCredentials: true });
+      // Optionally refresh entries after saving
+    };
+  };
+  
+  useEffect(() => {
 
-    
+//회원 비회원 조건
     const fetchDiaryEntries = async () => {
       // 로그인 상태 확인
       const loggedUserResponse = await axios.get('/usr/member/getLoggedUser', { withCredentials: true });
