@@ -34,7 +34,7 @@ const Loginpage = () => {
 
       if (response.data) {
         // 로그인 성공 처리
-        history.push('/diary-calendar'); // 로그인 성공 후 리디렉션
+        history.push('/login-diary-calendar'); // 로그인 성공 후 리디렉션
       }
     } catch (error) {
       console.error('Login failed:', error);

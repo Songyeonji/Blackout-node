@@ -23,7 +23,7 @@ const theme = createTheme({
 
 
 
-const DiaryCalendar = () => {
+const LoginDiaryCalendar = () => {
     // 상태 변수들
   const [selectedDate, setSelectedDate] = useState(null); // 선택된 날짜 상태
   const [diaryEntries, setDiaryEntries] = useState(() => {
@@ -364,4 +364,4 @@ const DiaryCalendar = () => {
   );
 };
 
-export default DiaryCalendar;
+export default LoginDiaryCalendar;

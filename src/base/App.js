@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect, Link } from 'react-router-dom';
 import DiaryCalendar from "../pages/DiaryCalendar";
+import LoginDiaryCalendar from "../pages/LoginDiaryCalendar";
 import DrinkRecommendation from "../pages/DrinkRecommendation";
 import LearnMorePage from "../pages/article/LearnMorePage"
 import WritePage from "../pages/article/WritePage"
@@ -18,6 +19,7 @@ const App = () => {
       <Router>
         <Switch>
           <Route exact path="/diary-calendar" component={DiaryCalendar} />
+          <Route exact path="/login-diary-calendar" component={LoginDiaryCalendar} />
           <Route path="/drink-recommendation" component={DrinkRecommendation} />
           <Route path="/learn-more" component={LearnMorePage} />
           <Route path="/write-page" component={WritePage} />

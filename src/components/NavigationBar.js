@@ -59,7 +59,7 @@ const NavigationBar = () => {
 
 
           <div className="custom-navbar-nav">
-            <Link to="/diary-calendar" className={`nav-link ${isActive('/diary-calendar') ? 'active' : ''}`}>
+            <Link to={isLoggedIn ? "/login-diary-calendar" : "/diary-calendar"} className={`nav-link ${isActive('/diary-calendar') || isActive('/login-diary-calendar') ? 'active' : ''}`}>
               <span className="font-bold">달력</span>
             </Link>
             <Link to="/drink-recommendation" className={`nav-link ${isActive('/drink-recommendation') ? 'active' : ''}`}>

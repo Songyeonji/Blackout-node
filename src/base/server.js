@@ -405,7 +405,43 @@ app.get('/usr/article/getArticle', async (req, res) => {
 // });
 
 
+//회원용 달력 일기 가져오기
+app.get('/api/diaryEntries', async (req, res) => {
+  const userId = req.session.userId;
+  if (!userId) {
+    // Consider returning an empty array or a message for non-logged-in users
+    return res.status(403).send('Unauthorized');
+  }
 
+  try {
+    const query = 'SELECT * FROM DiaryEntries WHERE userId = ? ORDER BY entryDate DESC';
+    const [entries] = await db.query(query, [userId]);
+    res.json(entries);
+  } catch (err) {
+    console.error('Database error:', err);
+    res.status(500).send('Server error');
+  }
+});
+//회원 일기 항목 데이터 저장하기
+app.post('/api/diaryEntries', async (req, res) => {
+  const userId = req.session.userId;
+  if (!userId) {
+    return res.status(403).send('Unauthorized');
+  }
+
+  const { entryDate, entryText, entryType, entryValue, entryRating, entryColor } = req.body;
+
+  try {
+    const insertQuery = `
+      INSERT INTO DiaryEntries (userId, entryDate, entryText, entryType, entryValue, entryRating, entryColor)
+      VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    await db.query(insertQuery, [userId, entryDate, entryText, entryType, entryValue, entryRating, entryColor]);
+    res.send('Entry saved successfully');
+  } catch (err) {
+    console.error('Database error:', err);
+    res.status(500).send('Server error');
+  }
+});
 // 서버 실행
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
