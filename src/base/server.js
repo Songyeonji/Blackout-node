@@ -200,54 +200,42 @@ app.get('/usr/member/getLoggedUser', (req, res) => {
 
 //get
 app.get('/usr/article/showListWithRecommendCount', (req, res) => {
-  const userId = req.session.userId; // 현재 로그인한 사용자 ID
-  // const user = req.session.article;
-  // const articleId = req.params.articleId;
-  // const loginedMemberId = req.session.userId;
-  console.log(req.session)
+  const userId = req.session.userId || 0; // Fallback to 0 or a guest user representation if not logged in
+  const { boardId, page = 1, pageSize = 10 } = req.query;
+  const offset = (page - 1) * pageSize;
 
-  // console.log('글 목록 : articleId : ' + articleId); // ud
-
-  // console.log('글 목록 : loginedMemberId' + loginedMemberId); ud
-  // console.log('guser1 : ' + user);
-  // console.log('g로그인한놈1' + userId);
-  console.log('글 목록 : 로그인한놈 : ' + req.session.userId);
-  console.log('글 목록 : session : ' + req.session);
-  
-  console.log(JSON.stringify(req.session));
   const query = `
-    SELECT 
-      a.id, 
-      a.regDate, 
-      a.updateDate, 
-      a.memberId, 
-      a.boardId, 
-      a.title, 
-      a.img, 
-      a.body, 
-      a.hitCount,
-      a.point,
-      (SELECT COUNT(*) > 0 FROM recommendPoint WHERE relId = a.id AND relTypeCode = 'article' AND memberId = ?) AS isLikedByUser
-    FROM 
-      article a
-    LEFT JOIN 
-      recommendPoint rp ON a.id = rp.relId AND rp.relTypeCode = 'article' 
-    GROUP BY 
-      a.id;
+    SELECT a.*, 
+           (SELECT COUNT(*) FROM recommendPoint WHERE relId = a.id AND relTypeCode = 'article' AND memberId = ?) AS isLikedByUser
+    FROM article a
+    WHERE a.boardId = ?
+    ORDER BY a.id DESC
+    LIMIT ?
+    OFFSET ?;
   `;
 
+  const countQuery = `SELECT COUNT(*) AS total FROM article WHERE boardId = ?`;
 
-  db.query(query, [userId], (err, results) => {
+  db.query(countQuery, [boardId], (err, totalResults) => {
     if (err) {
       console.error('Database error:', err);
-      res.status(500).send('Server error');
-    } else {
-      res.json(results);
+      return res.status(500).send('Server error');
     }
 
-  });
+    const totalItems = totalResults[0].total;
+    const totalPages = Math.ceil(totalItems / pageSize);
 
+    db.query(query, [userId, boardId, parseInt(pageSize), parseInt(offset)], (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).send('Server error');
+      }
+
+      res.json({ articles: results, totalPages, currentPage: parseInt(page) });
+    });
+  });
 });
+
 // 게시글 좋아요 토글 라우트
 app.post('/usr/recommendPoint/toggleRecommend/article/:articleId', async (req, res) => {
   const articleId = req.params.articleId;//게시물 번호들
@@ -382,6 +370,8 @@ app.get('/usr/article/getArticle', async (req, res) => {
     res.status(500).send('Server error');
 }
 });
+
+
 // // 크롤링
 // app.get('/api/crawl', async (req, res) => {
 //   try {
@@ -405,43 +395,43 @@ app.get('/usr/article/getArticle', async (req, res) => {
 // });
 
 
-//회원용 달력 일기 가져오기
-app.get('/api/diaryEntries', async (req, res) => {
-  const userId = req.session.userId;
-  if (!userId) {
-    // Consider returning an empty array or a message for non-logged-in users
-    return res.status(403).send('Unauthorized');
-  }
+// //회원용 달력 일기 가져오기
+// app.get('/api/diaryEntries', async (req, res) => {
+//   const userId = req.session.userId;
+//   if (!userId) {
+//     // Consider returning an empty array or a message for non-logged-in users
+//     return res.status(403).send('Unauthorized');
+//   }
 
-  try {
-    const query = 'SELECT * FROM DiaryEntries WHERE userId = ? ORDER BY entryDate DESC';
-    const [entries] = await db.query(query, [userId]);
-    res.json(entries);
-  } catch (err) {
-    console.error('Database error:', err);
-    res.status(500).send('Server error');
-  }
-});
-//회원 일기 항목 데이터 저장하기
-app.post('/api/diaryEntries', async (req, res) => {
-  const userId = req.session.userId;
-  if (!userId) {
-    return res.status(403).send('Unauthorized');
-  }
+//   try {
+//     const query = 'SELECT * FROM DiaryEntries WHERE userId = ? ORDER BY entryDate DESC';
+//     const [entries] = await db.query(query, [userId]);
+//     res.json(entries);
+//   } catch (err) {
+//     console.error('Database error:', err);
+//     res.status(500).send('Server error');
+//   }
+// });
+// //회원 일기 항목 데이터 저장하기
+// app.post('/api/diaryEntries', async (req, res) => {
+//   const userId = req.session.userId;
+//   if (!userId) {
+//     return res.status(403).send('Unauthorized');
+//   }
 
-  const { entryDate, entryText, entryType, entryValue, entryRating, entryColor } = req.body;
+//   const { entryDate, entryText, entryType, entryValue, entryRating, entryColor } = req.body;
 
-  try {
-    const insertQuery = `
-      INSERT INTO DiaryEntries (userId, entryDate, entryText, entryType, entryValue, entryRating, entryColor)
-      VALUES (?, ?, ?, ?, ?, ?, ?)`;
-    await db.query(insertQuery, [userId, entryDate, entryText, entryType, entryValue, entryRating, entryColor]);
-    res.send('Entry saved successfully');
-  } catch (err) {
-    console.error('Database error:', err);
-    res.status(500).send('Server error');
-  }
-});
+//   try {
+//     const insertQuery = `
+//       INSERT INTO DiaryEntries (userId, entryDate, entryText, entryType, entryValue, entryRating, entryColor)
+//       VALUES (?, ?, ?, ?, ?, ?, ?)`;
+//     await db.query(insertQuery, [userId, entryDate, entryText, entryType, entryValue, entryRating, entryColor]);
+//     res.send('Entry saved successfully');
+//   } catch (err) {
+//     console.error('Database error:', err);
+//     res.status(500).send('Server error');
+//   }
+// });
 // 서버 실행
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

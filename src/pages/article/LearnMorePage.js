@@ -65,27 +65,44 @@ function a11yProps(index) {
 
 function LearnMorePage() {
   const [value, setValue] = useState(0);// 탭 상태 관리
-  const [articles, setArticles] = useState([]);// 게시글 데이터 상태 관리
+  const [articles, setArticles] = useState({1: [], 2: [], 3: []}); // 게시글 데이터
   const [userId, setUserId] = useState(""); // 인증 컨텍스트나 세션에서 설정해야 합니다
+  const [currentPage, setCurrentPage] = useState({1: 1, 2: 1, 3: 1}); // 각 게시판 별 현재 페이지 상태
+  const [totalPages, setTotalPages] = useState({1: 0, 2: 0, 3: 0}); // 각 게시판 별 총 페이지 수
+  const [loading, setLoading] = useState(true);
+
+
 
   //게시글 데이터 로드
   useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const response = await axios.get('http://localhost:8081/usr/article/showListWithRecommendCount', {
-          withCredentials: true,//브라우저가 다른 도메인으로의 HTTP 요청 시 쿠키 및 인증 정보를 함께 전송할 수 있도록 허용하는 옵션
-          params: { userId }//요청 URL에 userId라는 매개변수를 추가하여 서버에 필요한 정보 전달
-        });
-        setArticles(response.data.map(article => ({
-          ...article,
-          isLikedByUser: article.isLikedByUser === 1
-        })));
-      } catch (error) {
-        console.error('Error fetching articles:', error);
-      }
-    };
-    fetchArticles();
-  }, [userId]);
+    const boardId = value + 1; // Assuming boardId is 1-indexed and matches tab order
+    fetchArticles(boardId, currentPage[boardId]);
+  }, [value, currentPage]);
+
+  const fetchArticles = async (boardId, page) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`http://localhost:8081/usr/article/showListWithRecommendCount`, {
+        params: { boardId, page },
+        withCredentials: true,
+      });
+      setArticles(prev => ({ ...prev, [boardId]: response.data.articles }));
+      setTotalPages(prev => ({ ...prev, [boardId]: response.data.totalPages }));
+    } catch (error) {
+      console.error('Error fetching articles:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  const handlePageChange = (boardId, newPage) => {
+    setCurrentPage(prev => ({ ...prev, [boardId]: newPage }));
+    fetchArticles(boardId, newPage); // Fetch new articles for the current board and page
+  };
 
 // handleLike 함수 정의
 const handleLike = async (articleId) => {
@@ -123,19 +140,16 @@ const handleLike = async (articleId) => {
   }
 };
 
- // 탭 변경 핸들러
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
 
 
 
-  // boardId에 따라 게시글을 필터링하는 함수
-  const filterArticlesByBoardId = (boardId) => {
-    const filtered = articles.filter((article) => parseInt(article.boardId) === boardId);
-    console.log(`Articles for boardId ${boardId}:`, filtered); // 필터링 결과 확인
-    return filtered;
-  };
+
+// boardId에 따라 게시글을 필터링하는 함수
+const filterArticlesByBoardId = (boardId) => {
+  // Directly access the array for the current boardId
+  const filtered = articles[boardId] ? articles[boardId] : [];
+  return filtered;
+};
 
 
 

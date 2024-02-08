@@ -25,31 +25,37 @@ const theme = createTheme({
 
 const LoginDiaryCalendar = () => {
     // 상태 변수들
-  const [selectedDate, setSelectedDate] = useState(null); // 선택된 날짜 상태
-  const [diaryEntries, setDiaryEntries] = useState(() => {
-    const storedDiaryEntries = localStorage.getItem("diaryEntries");
-    return storedDiaryEntries ? JSON.parse(storedDiaryEntries) : {};
-  });// 로컬 저장소에서 일기 항목 불러오기
-
-  
-  const [showSnackbar, setShowSnackbar] = useState(false); // 스낵바 상태
-
-  // 날씨
-  const [weather, setWeather] = useState(null); // 날씨 정보 상태
-
-  // 컬러 팔레트와 선택된 색상을 관리하기 위한 상태
-  const [colorPalette, setColorPalette] = useState(() => {
-    const storedColorPalette = localStorage.getItem("colorPalette");
-    return storedColorPalette ? JSON.parse(storedColorPalette) : [];
-  });// 컬러 팔레트 상태
-
-  const [selectedColor, setSelectedColor] = useState("#ffffff");  // 선택된 색상 상태
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [diaryEntries, setDiaryEntries] = useState({});
+    const [showSnackbar, setShowSnackbar] = useState(false); // 스낵바 상태
+    const [weather, setWeather] = useState(null); // 날씨 정보 상태
+    // 컬러 팔레트와 선택된 색상을 관리하기 위한 상태
+    const [colorPalette, setColorPalette] = useState(() => { });// 컬러 팔레트 상태
+    const [selectedColor, setSelectedColor] = useState("#ffffff");  // 선택된 색상 상태
   
   // 컬러 선택 핸들러
   const handleColorSelect = (color) => {
     setSelectedColor(color);
   };
-// 색상 추가 핸들러
+
+  // 일기 항목 불러오기
+  useEffect(() => {
+    const fetchDiaryEntries = async () => {
+      try {
+        const response = await axios.get('http://localhost:8081/api/diaryEntries', { withCredentials: true });
+        const formattedEntries = response.data.reduce((acc, entry) => {
+          acc[moment(entry.entryDate).format("YYYY-MM-DD")] = entry;
+          return acc;
+        }, {});
+        setDiaryEntries(formattedEntries);
+      } catch (error) {
+        console.error("Error fetching diary entries:", error);
+      }
+    };
+
+    fetchDiaryEntries();
+  }, []);
+  //이거없으면 일단 오류나서 이건 보류// 색상 추가 핸들러
   const handleAddColor = () => {
     const newColorPalette = [...colorPalette, selectedColor];
     setColorPalette(newColorPalette);
@@ -61,6 +67,29 @@ const LoginDiaryCalendar = () => {
     setColorPalette(newColorPalette);
     localStorage.setItem("colorPalette", JSON.stringify(newColorPalette));
   };
+
+  // 날짜 변경 핸들러
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
+  // 일기 항목 저장하기
+  const saveDiaryEntry = async (entryData) => {
+    const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
+    const entry = {
+      ...entryData,
+      entryDate: formattedDate,
+      userId: '사용자 ID', // 실제 사용자 ID로 대체해야 함
+    };
+    try {
+      await axios.post('http://localhost:8081/api/diaryEntries', entry, { withCredentials: true });
+      setDiaryEntries({ ...diaryEntries, [formattedDate]: entry });
+      setShowSnackbar(true);
+    } catch (error) {
+      console.error("Error saving diary entry:", error);
+    }
+  };
+
   // 날씨 데이터 가져오기
   useEffect(() => {
     const fetchWeatherData = async (latitude, longitude) => {
@@ -91,39 +120,6 @@ const LoginDiaryCalendar = () => {
 
     getLocation();
   }, []);
-// 날짜에 대한 색상 정보 상태
-  const [dateColors, setDateColors] = useState(() => {
-    const storedDateColors = localStorage.getItem("dateColors");
-    return storedDateColors ? JSON.parse(storedDateColors) : {};
-  });
-
-  // 일기 항목과 컬러 팔레트가 변경될 때마다 로컬 저장소에 저장
-  useEffect(() => {
-    // Save diary entries and dateColors to localStorage whenever they change
-    localStorage.setItem("diaryEntries", JSON.stringify(diaryEntries));
-    localStorage.setItem("colorPalette", JSON.stringify(colorPalette));
-  }, [diaryEntries, colorPalette]);
-
-  // 날짜 변경 핸들러
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
-
-   // 로컬 저장소에서 일기 항목과 컬러 팔레트 불러오기
-  useEffect(() => {
-    // Diary Entries
-    const storedDiaryEntries = localStorage.getItem("diaryEntries");
-    if (storedDiaryEntries) {
-      setDiaryEntries(JSON.parse(storedDiaryEntries));
-    }
-  
-    // Color Palette
-    const storedColorPalette = localStorage.getItem("colorPalette");
-    if (storedColorPalette) {
-      setColorPalette(JSON.parse(storedColorPalette));
-    }
-  }, []);
-
   
 
 // 추가 일기 항목 처리 핸들러
@@ -303,18 +299,10 @@ const LoginDiaryCalendar = () => {
         <NavigationBar /> 
 
         <div className="calendar-container" style={{ marginTop: "10px" }}>
-          <Calendar
+        <Calendar
             onChange={handleDateChange}
             locale="en"
             value={selectedDate}
-            tileContent={tileContent}
-            tileClassName={({ date }) => {
-              // 선택한 날짜의 배경색을 dateColors 상태에서 가져옴
-              const selectedDateColor = dateColors[moment(date).format("YYYY-MM-DD")];
-              return selectedDateColor
-                ? `custom-background-${selectedDateColor}`
-                : null;
-            }}
           />
 
           {weather && <WeatherInfo weather={weather} />}

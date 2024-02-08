@@ -141,7 +141,7 @@ const DiaryEntry = ({
       </div>
       
       <div className="color-palette">
-        {colorPalette.map((color, index) => (
+        {colorPalette && colorPalette.map((color, index) => (
           <div
             key={index}
             className="color-option"
