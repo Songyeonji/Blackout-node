@@ -17,6 +17,7 @@ import NavigationBar from "../../components/NavigationBar";
 import RecipeReviewCard from '../../components/RecipeReviewCard';
 
 
+
 // MUI 테마 설정
 const theme = createTheme({
   palette: {
@@ -219,8 +220,8 @@ const PaginationControls = ({ boardId, currentPage, totalPages, onPageChange }) 
             </Grid>
             <PaginationControls
               boardId={2}
-              currentPage={currentPage[1]}
-              totalPages={totalPages[1]}
+              currentPage={currentPage[2]}
+              totalPages={totalPages[2]}
               onPageChange={handlePageChange}
             />
           </CustomTabPanel>
@@ -229,6 +230,7 @@ const PaginationControls = ({ boardId, currentPage, totalPages, onPageChange }) 
               {filterArticlesByBoardId(3).map((article, index) => (
                 <Grid item xs={12} sm={6} key={index}>
                    <RecipeReviewCard article={article} handleLike={handleLike} />
+
                   <Link to={`/detail/${article.id}`} style={{ textDecoration: "none" }}>
                     <Button variant="contained" color="primary" style={{ marginTop: "16px" }}>
                       자세히 보기
@@ -239,8 +241,8 @@ const PaginationControls = ({ boardId, currentPage, totalPages, onPageChange }) 
             </Grid>
             <PaginationControls
               boardId={3}
-              currentPage={currentPage[1]}
-              totalPages={totalPages[1]}
+              currentPage={currentPage[3]}
+              totalPages={totalPages[3]}
               onPageChange={handlePageChange}
             />
           </CustomTabPanel>
