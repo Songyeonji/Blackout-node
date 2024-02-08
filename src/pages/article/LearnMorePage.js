@@ -83,7 +83,7 @@ function LearnMorePage() {
     setLoading(true);
     try {
       const response = await axios.get(`http://localhost:8081/usr/article/showListWithRecommendCount`, {
-        params: { boardId, page },
+        params: { boardId,  page, pageSize: 4 },
         withCredentials: true,
       });
       setArticles(prev => ({ ...prev, [boardId]: response.data.articles }));
@@ -101,9 +101,8 @@ function LearnMorePage() {
 
   const handlePageChange = (boardId, newPage) => {
     setCurrentPage(prev => ({ ...prev, [boardId]: newPage }));
-    fetchArticles(boardId, newPage); // Fetch new articles for the current board and page
+    fetchArticles(boardId, newPage);
   };
-
 // handleLike 함수 정의
 const handleLike = async (articleId) => {
   // if (!isLoggedIn) {
@@ -150,7 +149,22 @@ const filterArticlesByBoardId = (boardId) => {
   const filtered = articles[boardId] ? articles[boardId] : [];
   return filtered;
 };
-
+//페이징
+const PaginationControls = ({ boardId, currentPage, totalPages, onPageChange }) => {
+  return (
+    <div>
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNumber => (
+        <Button
+          key={pageNumber}
+          onClick={() => onPageChange(boardId, pageNumber)}
+          disabled={currentPage === pageNumber}
+        >
+          {pageNumber}
+        </Button>
+      ))}
+    </div>
+  );
+};
 
 
   return (
@@ -179,8 +193,15 @@ const filterArticlesByBoardId = (boardId) => {
                     </Button>
                   </Link>
                 </Grid>
+                
               ))}
             </Grid>
+            <PaginationControls
+              boardId={1}
+              currentPage={currentPage[1]}
+              totalPages={totalPages[1]}
+              onPageChange={handlePageChange}
+            />
           </CustomTabPanel>
         
           <CustomTabPanel value={value} index={1}>
@@ -196,6 +217,12 @@ const filterArticlesByBoardId = (boardId) => {
                 </Grid>
               ))}
             </Grid>
+            <PaginationControls
+              boardId={2}
+              currentPage={currentPage[1]}
+              totalPages={totalPages[1]}
+              onPageChange={handlePageChange}
+            />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
             <Grid container spacing={2}>
@@ -210,6 +237,12 @@ const filterArticlesByBoardId = (boardId) => {
                 </Grid>
               ))}
             </Grid>
+            <PaginationControls
+              boardId={3}
+              currentPage={currentPage[1]}
+              totalPages={totalPages[1]}
+              onPageChange={handlePageChange}
+            />
           </CustomTabPanel>
         </div>
         
