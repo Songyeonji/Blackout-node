@@ -1,8 +1,6 @@
 import React from "react";
-import { Card, CardContent, IconButton, CardActions, CardHeader, CardMedia, Typography, Tooltip } from "@mui/material";
+import { Card, CardContent, IconButton, CardActions, CardHeader, CardMedia, Typography } from "@mui/material";
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import AddIcon from '@mui/icons-material/Add'; // Assuming you have imported AddIcon
-import { Link } from 'react-router-dom';
 
 const RecipeReviewCard = ({ article, handleLike }) => {
   console.log(`Article ID1: ${article.id}, isLikedByUser1: ${article.isLikedByUser}`);
@@ -25,6 +23,13 @@ const RecipeReviewCard = ({ article, handleLike }) => {
           {article.body}
         </Typography>
         <CardActions disableSpacing>
+          {/* <IconButton
+            onClick={() => handleLike(article.id)}
+            color={article.isLikedByUser ? "secondary" : "default"}
+            aria-label="add to favorites"
+          >
+            <FavoriteIcon />
+          </IconButton> */}
          <IconButton
             onClick={() => handleLike(article.id)}
             color={article.isLikedByUser ? "secondary" : "default"}
@@ -34,17 +39,7 @@ const RecipeReviewCard = ({ article, handleLike }) => {
           </IconButton>
           
           <Typography>{article.point || 0}</Typography>
-          <Tooltip title="자세히 보기" placement="top" enterDelay={500}>
-            <IconButton
-              sx={{ position: 'absolute', right: 16, bottom: 16 }}
-              component={Link}
-              to={`/detail/${article.id}`}
-            >
-              <AddIcon />
-            </IconButton>
-          </Tooltip>
         </CardActions>
-   
       </CardContent>
     </Card>
   );

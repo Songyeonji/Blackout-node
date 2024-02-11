@@ -105,7 +105,7 @@ function LearnMorePage() {
     fetchArticles(boardId, newPage);
   };
 // handleLike 함수 정의
-const handleLike = async (articleId) => {
+const handleLike = async (articleId, boardId) => {
   // if (!isLoggedIn) {
   //   alert("로그인이 필요합니다.");
   //   return;
@@ -122,19 +122,16 @@ const handleLike = async (articleId) => {
     const updatedPoint = response.data.point;
     const isLiked = response.data.isLikedByUser;
 
-    // 게시글 목록 상태 업데이트
-    const updatedArticles = articles.map(article => {
-      if (article.id === articleId) {
-        return {
-          ...article,
-          isLikedByUser: isLiked,
-          point: updatedPoint
-        };
-      }
-      return article;
-    });
 
-    setArticles(updatedArticles);
+    setArticles(prev => ({
+      ...prev,
+      [boardId]: prev[boardId].map(article => {
+        if (article.id === articleId) {
+          return { ...article, isLikedByUser: isLiked, point: updatedPoint };
+        }
+        return article;
+      })
+    }));
   } catch (error) {
     console.error('Error handling like:', error);
   }
