@@ -123,20 +123,23 @@ const handleLike = async (articleId, boardId) => {
     const isLiked = response.data.isLikedByUser;
 
 
-    setArticles(prev => ({
-      ...prev,
-      [boardId]: prev[boardId].map(article => {
+    // Update the articles state correctly
+    setArticles(prevArticles => {
+      // Clone the previous state
+      const updatedArticles = { ...prevArticles };
+      // Map over the articles array for the correct board, updating the liked status and point for the matched article
+      updatedArticles[boardId] = updatedArticles[boardId].map(article => {
         if (article.id === articleId) {
           return { ...article, isLikedByUser: isLiked, point: updatedPoint };
         }
         return article;
-      })
-    }));
+      });
+      return updatedArticles;
+    });
   } catch (error) {
     console.error('Error handling like:', error);
   }
 };
-//
 
 
 
@@ -205,9 +208,12 @@ const PaginationControls = ({ boardId, currentPage, totalPages, onPageChange }) 
         
           <CustomTabPanel value={value} index={1}>
             <Grid container spacing={2}>
-              {filterArticlesByBoardId(2).map((article, index) => (
-                <Grid item xs={12} sm={6} key={index}>
-                    <RecipeReviewCard article={article} handleLike={handleLike} />
+            {filterArticlesByBoardId(value + 1).map((article, index) => (
+  <Grid item xs={12} sm={6} key={index}>
+    <RecipeReviewCard 
+      article={article} 
+      handleLike={() => handleLike(article.id, value + 1)} // Notice how boardId is passed here
+    />
                   <Link to={`/detail/${article.id}`} style={{ textDecoration: "none" }}>
                     <Button variant="contained" color="primary" style={{ marginTop: "16px" }}>
                       자세히 보기
