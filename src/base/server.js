@@ -200,35 +200,70 @@ app.get('/usr/member/getLoggedUser', (req, res) => {
 
 //get
 app.get('/usr/article/showListWithRecommendCount', (req, res) => {
-  const userId = req.session.userId || 0; // Fallback to 0 or a guest user representation if not logged in
-  const { boardId, page = 1, pageSize = 10 } = req.query;
+  const userId = req.session.userId || 0; // 로그인하지 않은 경우 0 또는 게스트 사용자 표현으로 사용
+  const { boardId, page = 1, pageSize = 10, searchKeyword, searchKeywordType } = req.query;
   const offset = (page - 1) * pageSize;
 
+  // 검색어에 따라 SQL 쿼리 조건 추가
+  let searchSQL = '';
+  let searchParams = [];
+  if (searchKeyword) {
+    switch (searchKeywordType) {
+      case 'title':
+        searchSQL += 'AND title LIKE ? ';
+        searchParams.push(`%${searchKeyword}%`);
+        break;
+      case 'body':
+        searchSQL += 'AND body LIKE ? ';
+        searchParams.push(`%${searchKeyword}%`);
+        break;
+      case 'title,body':
+        searchSQL += 'AND (title LIKE ? OR body LIKE ?) ';
+        searchParams.push(`%${searchKeyword}%`, `%${searchKeyword}%`);
+        break;
+      default:
+        // 기본값이나 정의되지 않은 searchKeywordType에 대한 처리
+        break;
+    }
+  }
+
+  // 게시글 데이터를 가져오는 쿼리
   const query = `
     SELECT a.*, 
            (SELECT COUNT(*) FROM recommendPoint WHERE relId = a.id AND relTypeCode = 'article' AND memberId = ?) AS isLikedByUser
     FROM article a
-    WHERE a.boardId = ?
+    WHERE a.boardId = ? ${searchSQL}
     ORDER BY a.id DESC
     LIMIT ?
     OFFSET ?;
   `;
 
-  const countQuery = `SELECT COUNT(*) AS total FROM article WHERE boardId = ?`;
+  // 전체 게시글 수를 계산하는 쿼리 (페이지네이션을 위해 필요)
+  const countQuery = `
+    SELECT COUNT(*) AS total 
+    FROM article 
+    WHERE boardId = ? ${searchSQL};
+  `;
 
-  db.query(countQuery, [boardId], (err, totalResults) => {
+  // 쿼리 파라미터 설정 (검색 조건 포함)
+  let queryParams = [userId, boardId, ...searchParams, parseInt(pageSize), parseInt(offset)];
+  let countQueryParams = [boardId, ...searchParams];
+
+  // 전체 게시글 수 조회
+  db.query(countQuery, countQueryParams, (err, totalResults) => {
     if (err) {
-      console.error('Database error:', err);
-      return res.status(500).send('Server error');
+      console.error('데이터베이스 오류:', err);
+      return res.status(500).send('서버 오류');
     }
 
     const totalItems = totalResults[0].total;
     const totalPages = Math.ceil(totalItems / pageSize);
 
-    db.query(query, [userId, boardId, parseInt(pageSize), parseInt(offset)], (err, results) => {
+    // 검색 조건에 맞는 게시글 데이터 조회
+    db.query(query, queryParams, (err, results) => {
       if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Server error');
+        console.error('데이터베이스 오류:', err);
+        return res.status(500).send('서버 오류');
       }
 
       res.json({ articles: results, totalPages, currentPage: parseInt(page) });

@@ -73,6 +73,8 @@ function LearnMorePage() {
   const [currentPage, setCurrentPage] = useState({1: 1, 2: 1, 3: 1}); // 각 게시판 별 현재 페이지 상태
   const [totalPages, setTotalPages] = useState({1: 0, 2: 0, 3: 0}); // 각 게시판 별 총 페이지 수
   const [loading, setLoading] = useState(true);
+  const [searchKeyword, setSearchKeyword] = useState('');//검색창 키워드 찾기를 위한 상태변수
+  const [searchType, setSearchType] = useState('title');//검색창 제목 찾기를 위한 상태변수
 
 
 
@@ -86,7 +88,7 @@ function LearnMorePage() {
     setLoading(true);
     try {
       const response = await axios.get(`http://localhost:8081/usr/article/showListWithRecommendCount`, {
-        params: { boardId,  page, pageSize: 4 },
+        params: { boardId,  page, pageSize: 4, searchKeyword, searchKeywordType: searchType},
         withCredentials: true,
       });
       setArticles(prev => ({ ...prev, [boardId]: response.data.articles }));
@@ -200,6 +202,31 @@ const PaginationControls = ({ boardId, currentPage, totalPages, onPageChange }) 
             <Tab icon={<FaWineBottle />} label="술" {...a11yProps(1)} />
             <Tab icon={<FaUtensils />} label="안주" {...a11yProps(2)} />
           </Tabs>
+        </Box>
+        {/* 여기서부터 검색 바 */}
+        <Box sx={{ my: 2, mx: 'auto', width: '80%' }}>
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            fetchArticles(value + 1, currentPage[value + 1]); // Re-fetch articles with the search parameters
+          }}>
+            <select
+              value={searchType}
+              onChange={(e) => setSearchType(e.target.value)}
+              style={{ marginRight: '8px' }}
+            >
+              <option value="title">제목</option>
+              <option value="body">내용</option>
+              <option value="title,body">제목 + 내용</option>
+            </select>
+            <input
+              type="text"
+              placeholder="검색어를 입력해주세요"
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              style={{ marginRight: '8px' }}
+            />
+            <button type="submit">검색</button>
+          </form>
         </Box>
 
         <div>
