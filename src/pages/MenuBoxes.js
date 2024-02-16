@@ -2,14 +2,17 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import './MenuBoxes.scss';
+// Import images
+import calendarImage from './icon/C.png';
+import drinkRecommendationImage from './icon/R.png';
+import alcoholInformationImage from './icon/W.png';
 
 const MenuBoxes = () => {
   const history = useHistory();
   const boxes = [
-    
-    { id: 1, img: 'https://i.postimg.cc/sgBkfbtx/img-1.jpg', text: '달력', path: '/diary-calendar' },
-    { id: 2, img: 'https://i.postimg.cc/3RZ6bhDS/img-2.jpg', text: '오늘의 술 추천', path: '/drink-recommendation' },
-    { id: 3, img: 'https://i.postimg.cc/DZhHg0m4/img-3.jpg', text: '술 정보', path: '/learn-more' }
+    { id: 1, img: calendarImage, text: '달력', path: '/diary-calendar' },
+    { id: 2, img: drinkRecommendationImage, text: '오늘의 술 추천', path: '/drink-recommendation' },
+    { id: 3, img: alcoholInformationImage, text: '술 정보', path: '/learn-more' }
   ];
 
   const handleBoxClick = (path) => {
