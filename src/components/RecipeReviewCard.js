@@ -1,9 +1,21 @@
 import React from "react";
-import { Card, CardContent, IconButton, CardActions, CardHeader, CardMedia, Typography } from "@mui/material";
+import { Card, CardContent, IconButton, CardActions, CardHeader, CardMedia, Typography, Tooltip } from "@mui/material";
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import AddIcon from '@mui/icons-material/Add';
+import { useHistory } from "react-router-dom";
+
 
 const RecipeReviewCard = ({ article, handleLike }) => {
+  const history = useHistory(); // Initialize useHistory hook
   console.log(`Article ID1: ${article.id}, isLikedByUser1: ${article.isLikedByUser}`);
+  const navigateToDetail = () => {
+    history.push(`/detail/${article.id}`); // Use history.push to navigate
+  };
+
+ 
+
+
+
   return (
     <Card sx={{ display: 'flex', flexDirection: 'row', maxWidth: 600, height: 250 }}>
       <CardMedia
@@ -39,8 +51,20 @@ const RecipeReviewCard = ({ article, handleLike }) => {
           </IconButton>
           
           <Typography>{article.point || 0}</Typography>
+   
         </CardActions>
       </CardContent>
+            {/* Tooltip with IconButton for navigation */}
+      {/* <Tooltip title="자세히 보기">
+        <IconButton
+          onClick={navigateToDetail}
+          sx={{ position: 'absolute', bottom: 16, right: 16 }}
+          color="primary"
+        >
+          <AddIcon />
+        </IconButton>
+      </Tooltip> */}
+
     </Card>
   );
 };

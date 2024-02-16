@@ -9,13 +9,15 @@ import {
   Tab,
   Typography,
   Button,
+  Tooltip,
+  IconButton,
   Grid
 } from "@mui/material";
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import NavigationBar from "../../components/NavigationBar";
 import RecipeReviewCard from '../../components/RecipeReviewCard';
-
+import AddIcon from '@mui/icons-material/Add';
 
 
 // MUI 테마 설정
@@ -206,13 +208,20 @@ const PaginationControls = ({ boardId, currentPage, totalPages, onPageChange }) 
               {filterArticlesByBoardId(1).map((article, index) => (
                 <Grid item xs={12} sm={6} key={index}>
                 <RecipeReviewCard
-  article={article}
-  handleLike={() => handleLike(article.id, value + 1)} // Assuming boardId matches tab value + 1
-/>
+                  article={article}
+                  handleLike={() => handleLike(article.id, value + 1)} // Assuming boardId matches tab value + 1
+                />
                   <Link to={`/detail/${article.id}`} style={{ textDecoration: "none" }}>
-                    <Button variant="contained" color="primary" style={{ marginTop: "16px" }}>
-                      자세히 보기
-                    </Button>
+                            {/* Tooltip with IconButton for navigation */}
+                    <Tooltip title="자세히 보기">
+                      <IconButton
+                        sx={{ position: 'absolute', bottom: 16, right: 16 }}
+                        color="primary"
+                      >
+                        <AddIcon />
+                      </IconButton>
+                    </Tooltip>
+
                   </Link>
                 </Grid>
                 
@@ -229,11 +238,11 @@ const PaginationControls = ({ boardId, currentPage, totalPages, onPageChange }) 
           <CustomTabPanel value={value} index={1}>
             <Grid container spacing={2}>
             {filterArticlesByBoardId(value + 1).map((article, index) => (
-  <Grid item xs={12} sm={6} key={index}>
-    <RecipeReviewCard 
-      article={article} 
-      handleLike={() => handleLike(article.id, value + 1)} // Notice how boardId is passed here
-    />
+              <Grid item xs={12} sm={6} key={index}>
+                <RecipeReviewCard 
+                  article={article} 
+                  handleLike={() => handleLike(article.id, value + 1)} // Notice how boardId is passed here
+                />
                   <Link to={`/detail/${article.id}`} style={{ textDecoration: "none" }}>
                     <Button variant="contained" color="primary" style={{ marginTop: "16px" }}>
                       자세히 보기
@@ -254,9 +263,10 @@ const PaginationControls = ({ boardId, currentPage, totalPages, onPageChange }) 
               {filterArticlesByBoardId(3).map((article, index) => (
                 <Grid item xs={12} sm={6} key={index}>
                   <RecipeReviewCard
-  article={article}
-  handleLike={() => handleLike(article.id, value + 1)} // Assuming boardId matches tab value + 1
-/>
+                    article={article}
+                    handleLike={() => handleLike(article.id, value + 1)} // Assuming boardId matches tab value + 1
+                  />
+                  
 
                   <Link to={`/detail/${article.id}`} style={{ textDecoration: "none" }}>
                     <Button variant="contained" color="primary" style={{ marginTop: "16px" }}>
