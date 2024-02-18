@@ -198,7 +198,7 @@ app.get('/usr/member/getLoggedUser', (req, res) => {
   });
 });
 
-//get
+//게시물 불러오는 라우터
 app.get('/usr/article/showListWithRecommendCount', (req, res) => {
   const userId = req.session.userId || 0; // 로그인하지 않은 경우 0 또는 게스트 사용자 표현으로 사용
   const { boardId, page = 1, pageSize = 10, searchKeyword, searchKeywordType } = req.query;
@@ -209,14 +209,17 @@ app.get('/usr/article/showListWithRecommendCount', (req, res) => {
   let searchParams = [];
   if (searchKeyword) {
     switch (searchKeywordType) {
+      //제목 검색하는 쿼리
       case 'title':
         searchSQL += 'AND title LIKE ? ';
         searchParams.push(`%${searchKeyword}%`);
         break;
+      //내용 검색하는 쿼리
       case 'body':
         searchSQL += 'AND body LIKE ? ';
         searchParams.push(`%${searchKeyword}%`);
         break;
+      //제목+내용 검색하는 쿼리
       case 'title,body':
         searchSQL += 'AND (title LIKE ? OR body LIKE ?) ';
         searchParams.push(`%${searchKeyword}%`, `%${searchKeyword}%`);
@@ -230,7 +233,7 @@ app.get('/usr/article/showListWithRecommendCount', (req, res) => {
   // 게시글 데이터를 가져오는 쿼리
   const query = `
     SELECT a.*, 
-           (SELECT COUNT(*) FROM recommendPoint WHERE relId = a.id AND relTypeCode = 'article' AND memberId = ?) AS isLikedByUser
+          (SELECT COUNT(*) FROM recommendPoint WHERE relId = a.id AND relTypeCode = 'article' AND memberId = ?) AS isLikedByUser
     FROM article a
     WHERE a.boardId = ? ${searchSQL}
     ORDER BY a.id DESC

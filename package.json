@@ -23,6 +23,7 @@
     "bcrypt": "^5.1.1",
     "browserify-zlib": "^0.2.0",
     "classnames": "^2.3.2",
+    "concurrently": "^8.2.2",
     "cors": "^2.8.5",
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",

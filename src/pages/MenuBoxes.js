@@ -10,8 +10,9 @@ import alcoholInformationImage from './icon/W.png';
 const MenuBoxes = () => {
   const history = useHistory();
   const boxes = [
-    { id: 1, img: calendarImage, text: '달력', path: '/diary-calendar' },
-    { id: 2, img: drinkRecommendationImage, text: '오늘의 술 추천', path: '/drink-recommendation' },
+   
+    { id: 1, img: drinkRecommendationImage, text: '오늘의 술 추천', path: '/drink-recommendation' },
+    { id: 2, img: calendarImage, text: '달력', path: '/diary-calendar' },
     { id: 3, img: alcoholInformationImage, text: '술 정보', path: '/learn-more' }
   ];
 
