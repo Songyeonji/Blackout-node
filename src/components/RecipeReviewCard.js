@@ -64,7 +64,6 @@ const RecipeReviewCard = ({ article, handleLike }) => {
           <AddIcon />
         </IconButton>
       </Tooltip> */}
-// 좋아요 정리
     </Card>
   );
 };

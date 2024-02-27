@@ -26,6 +26,7 @@ import makgeolliIcon from "./icon/rice-wine.png";
 import { useHistory } from "react-router-dom";
 import RecipeReviewCard from "../components/RecipeReviewCard";
 import NavigationBar from "../components/NavigationBar";
+import BlogSearchComponent from '../components/BlogSearchComponent'; 
 
 // MUI 테마 설정
 const theme = createTheme({
@@ -41,7 +42,8 @@ const DrinkRecommendation = () => {
   const [weather, setWeather] = useState(null);
   const [articles, setArticles] = useState([]);
   const [recommendationType, setRecommendationType] = useState("drink");
-  const [selectedDrink, setSelectedDrink] = useState(null);
+  const [selectedDrink, setSelectedDrink] = useState(null);//선택된 음료를 위한 상태변수
+  const [blogPosts, setBlogPosts] = useState([]);//블로그 크롤링을 위한 상태변수
   const [foodRecommendation, setFoodRecommendation] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const history = useHistory();
@@ -150,11 +152,24 @@ const DrinkRecommendation = () => {
     { name: "Beer", icon: beerIcon },
     { name: "Makgeolli", icon: makgeolliIcon },
   ];
- // 음료 선택 핸들러
+
+   // 블로그 포스트 검색
+   const searchBlogPosts = async (drink) => {
+    try {
+      // 여기에 블로그 검색 API 호출 로직을 구현하세요.
+      // 예제에서는 임시 URL을 사용합니다. 실제 URL로 변경해야 합니다.
+      const response = await axios.get(`https://your-blog-search-api.com/search?query=${drink}+drink`);
+      setBlogPosts(response.data.posts);
+    } catch (error) {
+      console.error('Error searching blog posts:', error);
+    }
+  };
+
+  // 음료 선택 핸들러
   const handleDrinkSelection = (drink) => {
     setSelectedDrink(drink);
-    setFoodRecommendation(null);
   };
+
 //음료아이콘의 스타일
   const drinkIconStyle = {
     width: "50px",
@@ -209,38 +224,38 @@ const DrinkRecommendation = () => {
   };
   
   // 음식 추천 데이터
-  const foodRecommendations = {
-    makgeolli: ["파전", "수제비", "김치전", "도토리묵", "두부김치", "계란찜", "모둠 전", "김치찌개", "불고기"],
-    soju: ["김치우동", "알탕", "회", "삼겹살", "소고기", "닭발", "곱창", "닭도리탕", "쭈꾸미"],
-    wine: ["치즈", "과일", "파스타", "피자", "스테이크", "샐러드", "새우"],
-    beer: ["튀김", "나초", "건어물", "피자", "편의점", "치킨", "핫윙", "멕시칸 타코", "소세지", "나초와 팝콘","치킨위드라이스"],
-  };
+  // const foodRecommendations = {
+  //   makgeolli: ["파전", "수제비", "김치전", "도토리묵", "두부김치", "계란찜", "모둠 전", "김치찌개", "불고기"],
+  //   soju: ["김치우동", "알탕", "회", "삼겹살", "소고기", "닭발", "곱창", "닭도리탕", "쭈꾸미"],
+  //   wine: ["치즈", "과일", "파스타", "피자", "스테이크", "샐러드", "새우"],
+  //   beer: ["튀김", "나초", "건어물", "피자", "편의점", "치킨", "핫윙", "멕시칸 타코", "소세지", "나초와 팝콘","치킨위드라이스"],
+  // };
   // 음식 추천 버튼 클릭 핸들러
-  const handleRecommendationButtonClick = () => {
-    if (selectedDrink) {
-      const foodList = foodRecommendations[selectedDrink.toLowerCase()] || [];
-      const randomIndex = Math.floor(Math.random() * foodList.length);
-      const recommendation = foodList[randomIndex] || "No recommendation available.";
-      setFoodRecommendation(recommendation);
-    }
-  };
+  // const handleRecommendationButtonClick = () => {
+  //   if (selectedDrink) {
+  //     const foodList = foodRecommendations[selectedDrink.toLowerCase()] || [];
+  //     const randomIndex = Math.floor(Math.random() * foodList.length);
+  //     const recommendation = foodList[randomIndex] || "No recommendation available.";
+  //     setFoodRecommendation(recommendation);
+  //   }
+  // };
 //데이터 객체들
   const temperature = weather?.main?.temp;//온도 정보 추출
   const weatherDescription = weather?.weather?.[0]?.description;//날씨 상태 정보 추출
   const weatherIcon = getWeatherIcon(weatherDescription);//날씨 아이콘 결정
-// 상단 추천 기사 가져오는 useEffect
-  useEffect(() => {
-    const fetchTopRecommendedArticles = async () => {
-      try {
-        const response = await axios.get('http://localhost:8081/usr/article/top-recommended');
-        setArticles(response.data);
-      } catch (error) {
-        console.error('Error fetching top recommended articles:', error);
-      }
-    };
+// // 상단 추천 기사 가져오는 useEffect
+//   useEffect(() => {
+//     const fetchTopRecommendedArticles = async () => {
+//       try {
+//         const response = await axios.get('http://localhost:8081/usr/article/top-recommended');
+//         setArticles(response.data);
+//       } catch (error) {
+//         console.error('Error fetching top recommended articles:', error);
+//       }
+//     };
 
-    fetchTopRecommendedArticles();
-  }, []);
+//     fetchTopRecommendedArticles();
+//   }, []);
   // 로그인 상태 확인 useEffect
   useEffect(() => {
     axios.get('http://localhost:8081/usr/member/getLoggedUser', { withCredentials: true })
@@ -282,6 +297,7 @@ const DrinkRecommendation = () => {
     <ThemeProvider theme={theme}>
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
         <NavigationBar /> 
+   
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={12} sm={6} md={4}>
             <Card>
@@ -309,6 +325,7 @@ const DrinkRecommendation = () => {
               </CardContent>
             </Card>
           </Grid>
+          
           <Grid item xs={12} sm={6} md={4}>
             <Card>
               <CardContent>
@@ -318,7 +335,19 @@ const DrinkRecommendation = () => {
                 <Typography variant="body1" align="center" style={{ marginBottom: "20px" }}>
                   {foodRecommendation}
                 </Typography>
-                <div style={{ display: "flex", justifyContent: "center" }}>
+                <div>
+                  {drinkOptions.map((option) => (
+                    <Button
+                      key={option.name}
+                      variant={selectedDrink === option.name ? "contained" : "outlined"}
+                      onClick={() => handleDrinkSelection(option.name)}
+                      startIcon={<img src={option.icon} alt={option.name} style={{ width: 50, height: 50 }} />}
+                    >
+                      {option.name}
+                    </Button>
+                  ))}
+                </div>
+                {/* <div style={{ display: "flex", justifyContent: "center" }}>
                   {drinkOptions.map((option) => (
                     <div
                       key={option.name}
@@ -335,10 +364,11 @@ const DrinkRecommendation = () => {
                       Get New Recommendation
                     </Button>
                   </div>
-                )}
+                )} */}
               </CardContent>
             </Card>
           </Grid>
+
 
           <Grid item xs={8}>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -355,29 +385,10 @@ const DrinkRecommendation = () => {
               </Button>
               {gptResponse && <div style={{ marginTop: "10px" }}>{gptResponse}</div>}
             </div>
-          </Grid>
+          </Grid>     
 
-          <Grid container spacing={1} justifyContent="center" style={{ marginTop: "20px" }}>
-            <Grid item xs={12} sm={6} md={4} style={{ display: "flex", justifyContent: "center" }}>
-              <Carousel
-                autoPlay
-                animation="slide"
-                interval={3000}
-                navButtonsAlwaysVisible={true}
-                className="carousel-container"
-              >
-                {articles.map((article, index) => (
-                  <div key={index} style={{ height: "100%", width: "100%" }}>
-                     <RecipeReviewCard article={article} handleLike={handleLike} />
-                  </div>
-                ))}
-              </Carousel>
-            </Grid>
-          </Grid>
+    <BlogSearchComponent drink={selectedDrink} />
 
-          <Button onClick={handleLearnMoreClick} color="primary">
-            더 알아보기
-          </Button>
         </Grid>
         
       </div>

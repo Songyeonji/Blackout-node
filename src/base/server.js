@@ -3,6 +3,7 @@ const cors = require('cors');
 const mysql = require('mysql2'); // 'mysql2'로 변경
 const session = require('express-session')
 const app = express();
+const cheerio = require('cheerio');
 const port = 8081;
 // const axios = require('axios');
 // const cheerio = require('cheerio');
@@ -411,66 +412,39 @@ app.get('/usr/article/getArticle', async (req, res) => {
 });
 
 
-// // 크롤링
-// app.get('/api/crawl', async (req, res) => {
-//   try {
-//       const url = '여기에 크롤링할 웹사이트 주소를 입력하세요';
-//       const { data } = await axios.get(url);
-//       const $ = cheerio.load(data);
-//       let articles = [];
+// 크롤링
 
-//       // 예시: 각 기사의 제목과 링크를 가져오기
-//       $('article').each((index, element) => {
-//           const title = $(element).find('h2').text();
-//           const link = $(element).find('a').attr('href');
-//           articles.push({ title, link });
-//       });
+app.get('/search', async (req, res) => {
+  const query = req.query.query; // 클라이언트로부터 받은 검색 쿼리
+  const url = `대상 웹사이트 URL + ${query}`;
 
-//       res.json(articles);
-//   } catch (error) {
-//       console.error('Crawling failed:', error);
-//       res.status(500).send('Server Error');
-//   }
-// });
+  try {
+    const { data } = await axios.get(url);
+    const $ = cheerio.load(data);
+    const posts = [];
+
+    // 대상 웹사이트의 구조에 맞게 수정
+    $('대상 웹사이트의 블로그 포스트 선택자').each((index, element) => {
+      const title = $(element).find('포스트 제목 선택자').text();
+      const summary = $(element).find('포스트 요약 선택자').text();
+      const url = $(element).find('a').attr('href');
+      posts.push({ title, summary, url });
+    });
+
+    res.json(posts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('서버 에러');
+  }
+});
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`서버가 ${PORT}번 포트에서 실행중입니다.`);
+});
 
 
-// //회원용 달력 일기 가져오기
-// app.get('/api/diaryEntries', async (req, res) => {
-//   const userId = req.session.userId;
-//   if (!userId) {
-//     // Consider returning an empty array or a message for non-logged-in users
-//     return res.status(403).send('Unauthorized');
-//   }
 
-//   try {
-//     const query = 'SELECT * FROM DiaryEntries WHERE userId = ? ORDER BY entryDate DESC';
-//     const [entries] = await db.query(query, [userId]);
-//     res.json(entries);
-//   } catch (err) {
-//     console.error('Database error:', err);
-//     res.status(500).send('Server error');
-//   }
-// });
-// //회원 일기 항목 데이터 저장하기
-// app.post('/api/diaryEntries', async (req, res) => {
-//   const userId = req.session.userId;
-//   if (!userId) {
-//     return res.status(403).send('Unauthorized');
-//   }
-
-//   const { entryDate, entryText, entryType, entryValue, entryRating, entryColor } = req.body;
-
-//   try {
-//     const insertQuery = `
-//       INSERT INTO DiaryEntries (userId, entryDate, entryText, entryType, entryValue, entryRating, entryColor)
-//       VALUES (?, ?, ?, ?, ?, ?, ?)`;
-//     await db.query(insertQuery, [userId, entryDate, entryText, entryType, entryValue, entryRating, entryColor]);
-//     res.send('Entry saved successfully');
-//   } catch (err) {
-//     console.error('Database error:', err);
-//     res.status(500).send('Server error');
-//   }
-// });
 // 서버 실행
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
