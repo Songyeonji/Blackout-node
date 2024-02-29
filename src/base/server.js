@@ -3,6 +3,7 @@ const cors = require('cors');
 const mysql = require('mysql2'); // 'mysql2'로 변경
 const session = require('express-session')
 const app = express();
+const axios = require('axios');
 const cheerio = require('cheerio');
 const port = 8081;
 // const axios = require('axios');
@@ -414,33 +415,31 @@ app.get('/usr/article/getArticle', async (req, res) => {
 
 // 크롤링
 
-app.get('/search', async (req, res) => {
-  const query = req.query.query; // 클라이언트로부터 받은 검색 쿼리
-  const url = `대상 웹사이트 URL + ${query}`;
-
+app.get('/api/search', async (req, res) => {
+  const query = req.query.query;
+  console.log(`검색 쿼리: ${query}`); // 콘솔에 검색 쿼리 로깅
+  
   try {
-    const { data } = await axios.get(url);
-    const $ = cheerio.load(data);
-    const posts = [];
-
-    // 대상 웹사이트의 구조에 맞게 수정
-    $('대상 웹사이트의 블로그 포스트 선택자').each((index, element) => {
-      const title = $(element).find('포스트 제목 선택자').text();
-      const summary = $(element).find('포스트 요약 선택자').text();
-      const url = $(element).find('a').attr('href');
-      posts.push({ title, summary, url });
+    // 네이버 블로그 검색 API 사용
+    const response = await axios.get('https://openapi.naver.com/v1/search/blog.json', {
+      params: { query: `${query} 술` },
+      headers: {
+        'X-Naver-Client-Id': 'XmW984WqUSoPwCffqkk_', // 실제 사용할 Client ID
+        'X-Naver-Client-Secret': 'Ky9uQ2GFsY' // 실제 사용할 Client Secret
+      }
     });
 
-    res.json(posts);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('서버 에러');
-  }
-});
+    // 성공적으로 데이터를 받아왔는지 콘솔로 확인
+    console.log('네이버 API로부터 데이터 수신 성공');
 
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`서버가 ${PORT}번 포트에서 실행중입니다.`);
+
+    // 클라이언트에게 API 응답 전송
+    res.json(response.data.items);
+  } catch (error) {
+    // 에러 로깅
+    console.error('네이버 API 요청 중 오류 발생:', error.message);
+    res.status(500).send('서버 내부 오류');
+  }
 });
 
 

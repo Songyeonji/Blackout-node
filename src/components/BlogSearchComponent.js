@@ -1,52 +1,61 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import Slider from 'react-slick'; // 캐러셀을 위한 라이브러리 추가
-import "slick-carousel/slick/slick.css"; 
-import "slick-carousel/slick/slick-theme.css";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 
-const BlogSearchComponent = () => {
+const BlogSearchComponent = ({ selectedDrink }) => {
   const [blogPosts, setBlogPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // 크롤링 함수
-  const fetchBlogPosts = async () => {
-    const keyword = "막걸리+술"; // 검색 키워드
+  const handleSearchClick = async () => {
+    if (!selectedDrink) {
+      setError('검색할 음료를 선택해주세요.');
+      return;
+    }
+
     setLoading(true);
+    setError('');
     try {
-      const response = await axios.get(`YOUR_API_ENDPOINT/search?query=${encodeURIComponent(keyword)}`);
-      setBlogPosts(response.data); // API 응답 구조에 따라 조정 필요
+      const response = await axios.get(`http://localhost:3000/api/search`, { params: { query: selectedDrink } });
+      setBlogPosts(response.data); 
     } catch (err) {
       setError('블로그 포스트를 불러오는 데 실패했습니다.');
-      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 3, // 한 번에 보여줄 슬라이드 수
-    slidesToScroll: 3 // 스크롤 할 때마다 넘어갈 슬라이드 수
-  };
-
-  // UI 렌더링 부분
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
-
   return (
     <div>
-      <button onClick={fetchBlogPosts}>막걸리 검색</button>
-      <Slider {...settings}>
-        {blogPosts.map((post, index) => (
-          <div key={index}>
-            <a href={post.url} target="_blank" rel="noopener noreferrer">{post.title}</a>
-            <p>{post.summary}</p>
-          </div>
-        ))}
-      </Slider>
+      <button onClick={handleSearchClick}>검색</button>
+      {loading && <div>Loading...</div>}
+      {error && <div>{error}</div>}
+      {!loading && !error && blogPosts.length > 0 && (
+        <TableContainer component={Paper}>
+          <Table aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>타이틀</TableCell>
+                <TableCell align="right">링크</TableCell>
+                <TableCell align="right">내용(축약)</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {blogPosts.map((post, index) => (
+                <TableRow key={index}>
+                  <TableCell component="th" scope="row">
+                    {post.title.replace(/(<([^>]+)>)/gi, "")}
+                  </TableCell>
+                  <TableCell align="right">
+                    <a href={post.link} target="_blank" rel="noopener noreferrer">링크</a>
+                  </TableCell>
+                  <TableCell align="right">{post.description.replace(/(<([^>]+)>)/gi, "").substring(0, 50) + '...'}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </div>
   );
 };

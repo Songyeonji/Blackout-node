@@ -223,40 +223,12 @@ const DrinkRecommendation = () => {
     }
   };
   
-  // 음식 추천 데이터
-  // const foodRecommendations = {
-  //   makgeolli: ["파전", "수제비", "김치전", "도토리묵", "두부김치", "계란찜", "모둠 전", "김치찌개", "불고기"],
-  //   soju: ["김치우동", "알탕", "회", "삼겹살", "소고기", "닭발", "곱창", "닭도리탕", "쭈꾸미"],
-  //   wine: ["치즈", "과일", "파스타", "피자", "스테이크", "샐러드", "새우"],
-  //   beer: ["튀김", "나초", "건어물", "피자", "편의점", "치킨", "핫윙", "멕시칸 타코", "소세지", "나초와 팝콘","치킨위드라이스"],
-  // };
-  // 음식 추천 버튼 클릭 핸들러
-  // const handleRecommendationButtonClick = () => {
-  //   if (selectedDrink) {
-  //     const foodList = foodRecommendations[selectedDrink.toLowerCase()] || [];
-  //     const randomIndex = Math.floor(Math.random() * foodList.length);
-  //     const recommendation = foodList[randomIndex] || "No recommendation available.";
-  //     setFoodRecommendation(recommendation);
-  //   }
-  // };
+
 //데이터 객체들
   const temperature = weather?.main?.temp;//온도 정보 추출
   const weatherDescription = weather?.weather?.[0]?.description;//날씨 상태 정보 추출
   const weatherIcon = getWeatherIcon(weatherDescription);//날씨 아이콘 결정
-// // 상단 추천 기사 가져오는 useEffect
-//   useEffect(() => {
-//     const fetchTopRecommendedArticles = async () => {
-//       try {
-//         const response = await axios.get('http://localhost:8081/usr/article/top-recommended');
-//         setArticles(response.data);
-//       } catch (error) {
-//         console.error('Error fetching top recommended articles:', error);
-//       }
-//     };
 
-//     fetchTopRecommendedArticles();
-//   }, []);
-  // 로그인 상태 확인 useEffect
   useEffect(() => {
     axios.get('http://localhost:8081/usr/member/getLoggedUser', { withCredentials: true })
       .then(response => {
@@ -280,18 +252,7 @@ const DrinkRecommendation = () => {
       })
       .catch(error => console.error('Logout error:', error));
   };
-  // "더 알아보기" 버튼 클릭 핸들러
-  const handleLearnMoreClick = () => {
-    if (!isLoggedIn) {
-      // 로그인하지 않은 경우 경고 메시지 표시
-      alert('로그인 후 이용해주십시오');
-      // 로그인 페이지로 리다이렉션
-      history.push('/login');
-    } else {
-      // 로그인한 경우 LearnMorePage로 이동
-      history.push('/learn-more');
-    }
-  };
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -347,24 +308,7 @@ const DrinkRecommendation = () => {
                     </Button>
                   ))}
                 </div>
-                {/* <div style={{ display: "flex", justifyContent: "center" }}>
-                  {drinkOptions.map((option) => (
-                    <div
-                      key={option.name}
-                      onClick={() => handleDrinkSelection(option.name)}
-                      style={selectedDrink === option.name ? { ...drinkIconStyle, ...selectedDrinkStyle } : drinkIconStyle}
-                    >
-                      <img src={option.icon} alt={option.name} style={{ width: "50px", height: "50px" }} />
-                    </div>
-                  ))}
-                </div>
-                {selectedDrink && (
-                  <div style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}>
-                    <Button variant="contained" onClick={handleRecommendationButtonClick}>
-                      Get New Recommendation
-                    </Button>
-                  </div>
-                )} */}
+           
               </CardContent>
             </Card>
           </Grid>
@@ -387,7 +331,7 @@ const DrinkRecommendation = () => {
             </div>
           </Grid>     
 
-    <BlogSearchComponent drink={selectedDrink} />
+          <BlogSearchComponent selectedDrink={selectedDrink} />
 
         </Grid>
         
