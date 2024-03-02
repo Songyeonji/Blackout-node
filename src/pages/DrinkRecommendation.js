@@ -58,29 +58,23 @@ const DrinkRecommendation = () => {
   const handleQueryChange = (event) => {
     setUserQuery(event.target.value);
   };
-  
- // ChatGPT API 요청 핸들러
- const handleAskButtonClick = async () => {
+
+// ChatGPT API 요청 핸들러
+const handleAskButtonClick = async () => {
+  if (!userQuery) {
+    alert('질문을 입력해주세요.');
+    return;
+  }
+
   try {
-    const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "user",
-          content: userQuery
-        }
-      ]
-    }, {
-      headers: {
-        'Authorization': `Bearer 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`,
-        'Content-Type': 'application/json'
-      }
+    // 백엔드를 통해 ChatGPT API를 호출
+    const response = await axios.post('http://localhost:3000/api/chatgpt', {
+      query: userQuery
     });
     setGptResponse(response.data.choices[0].text);
   } catch (error) {
     console.error('Error calling ChatGPT API:', error);
     setGptResponse('Sorry, there was an error processing your request.');
-    console.log(error.response); // 오류 응답을 콘솔에 기록
   }
 };
   // 좋아요 핸들러
@@ -153,17 +147,6 @@ const DrinkRecommendation = () => {
     { name: "Makgeolli", icon: makgeolliIcon },
   ];
 
-   // 블로그 포스트 검색
-   const searchBlogPosts = async (drink) => {
-    try {
-      // 여기에 블로그 검색 API 호출 로직을 구현하세요.
-      // 예제에서는 임시 URL을 사용합니다. 실제 URL로 변경해야 합니다.
-      const response = await axios.get(`https://your-blog-search-api.com/search?query=${drink}+drink`);
-      setBlogPosts(response.data.posts);
-    } catch (error) {
-      console.error('Error searching blog posts:', error);
-    }
-  };
 
   // 음료 선택 핸들러
   const handleDrinkSelection = (drink) => {

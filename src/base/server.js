@@ -9,6 +9,8 @@ const port = 8081;
 // const axios = require('axios');
 // const cheerio = require('cheerio');
 
+require('dotenv').config();
+
 // 세션 설정
 app.use(session({
   secret: 'blackout', // 세션 암호화 키 (보안을 위해 복잡한 문자열 사용)
@@ -410,6 +412,35 @@ app.get('/usr/article/getArticle', async (req, res) => {
     console.error('Database error:', err);
     res.status(500).send('Server error');
 }
+});
+
+
+// 클라이언트로부터 받은 질문을 OpenAI의 ChatGPT로 전달하는 엔드포인트
+app.post('/api/chatgpt', async (req, res) => {
+  try {
+    const userQuery = req.body.query;
+      // 요청 로그 출력
+    console.log('Received request:', req.body);
+    const response = await axios.post(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: userQuery }]
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.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}`,
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+    console.log('Sending response to client...');
+    // OpenAI로부터 받은 응답을 클라이언트에 전달
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error calling ChatGPT API:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 
