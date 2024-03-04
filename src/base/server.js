@@ -413,7 +413,7 @@ app.get('/usr/article/getArticle', async (req, res) => {
     res.status(500).send('Server error');
 }
 });
-
+//
 
 // 클라이언트로부터 받은 질문을 OpenAI의 ChatGPT로 전달하는 엔드포인트
 app.post('/api/chatgpt', async (req, res) => {
