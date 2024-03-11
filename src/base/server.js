@@ -443,7 +443,7 @@ app.post('/api/chatgpt', async (req, res) => {
 });
 
 
-// 크롤링
+// 크롤링 완전 완료 
 
 app.get('/api/search', async (req, res) => {
   const query = req.query.query;
