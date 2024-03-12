@@ -10,6 +10,8 @@ import RegisterPage from "../pages/member/RegisterPage";
 import EditPage from "../pages/article/EditPage";
 import MyPage from "../pages/member/MyPage"
 import Logo from '../pages/Logo'; // Logo 컴포넌트 임포트
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 
 const App = () => {

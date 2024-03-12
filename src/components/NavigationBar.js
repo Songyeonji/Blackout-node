@@ -3,6 +3,10 @@ import { Link, useLocation, useHistory } from 'react-router-dom';
 import { AppBar, Toolbar, Menu, MenuItem } from '@mui/material';
 import axios from 'axios';
 import Title from './Title';
+// App.js 또는 index.js에 추가
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 
 
 const NavigationBar = () => {
