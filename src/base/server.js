@@ -6,6 +6,8 @@ const app = express();
 const axios = require('axios');
 const cheerio = require('cheerio');
 const port = 8081;
+const multer = require('multer');
+const path = require('path');
 // const axios = require('axios');
 // const cheerio = require('cheerio');
 
@@ -331,25 +333,47 @@ app.post('/usr/recommendPoint/toggleRecommend/article/:articleId', async (req, r
 
 
 
-
-//게시물 글쓰기 라우트
-app.post('/usr/article/doWrite', async (req, res) => {
-  const { title, body, boardId, memberId, imageUrls } = req.body;//요청받은 내용들 추출
-
-  if (!(title && body && boardId && memberId)) {
-    return res.status(400).send('Missing required fields');
-  }
-
-  try {
-    const insertArticleQuery = 'INSERT INTO article (title, body, boardId, memberId, img, regDate) VALUES (?, ?, ?, ?, ?, NOW())';
-    await db.promise().query(insertArticleQuery, [title, body, boardId, memberId, imageUrls.join(',')]);
-    res.send('Article created successfully');
-  } catch (err) {
-    console.error('Database error:', err);
-    res.status(500).send('Server error');
-  }
+// multer 설정: 업로드된 파일을 서버의 'uploads' 폴더에 저장
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './uploads');
+  },
+  filename: (req, file, cb) => {
+    // 파일 이름 설정: 현재 시간-원본 파일 이름
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
 });
 
+const upload = multer({ storage: storage });
+
+// 파일 업로드 및 데이터베이스에 글 저장 라우트
+app.post('/usr/article/doWrite', upload.single('img'), (req, res) => {
+  const { title, body, boardId, memberId } = req.body;
+  const img = req.file ? `/uploads/${req.file.filename}` : ''; // 업로드된 파일 경로
+
+  const query = 'INSERT INTO article (title, body, boardId, memberId, img, regDate) VALUES (?, ?, ?, ?, ?, NOW())';
+  db.query(query, [title, body, boardId, memberId, img], (err, result) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).send('Server error');
+    }
+    console.log('Article created successfully with ID:', result.insertId);
+    res.send({ message: 'Article created successfully', articleId: result.insertId });
+  });
+});
+
+// 파일 업로드 에러 처리
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    console.error('Multer upload error:', err);
+    return res.status(500).send('Multer upload error');
+  } else if (err) {
+    console.error('Unknown error:', err);
+    return res.status(500).send('Unknown error');
+  }
+
+  next();
+});
 //게시물 삭제 라우트
 app.delete('/usr/article/doDelete', async (req, res) => {
   const { id } = req.query;//url 쿼리에서 게시글 id 추출

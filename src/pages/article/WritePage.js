@@ -8,7 +8,7 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "draft-js/dist/Draft.css";
 import NavigationBar from "../../components/NavigationBar";
 import { FaMapMarkedAlt, FaWineBottle, FaUtensils } from "react-icons/fa";
-import InsertImage from '../../components/InsertImage';
+
 
 
 
@@ -25,6 +25,7 @@ const WritePage = () => {
   const [title, setTitle] = useState("");// 제목 상태
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const history = useHistory();// 히스토리 객체
+  const [selectedFile, setSelectedFile] = useState(null);//파일 업로드 객체
 
   const onEditorStateChange = (newState) => {
     setEditorState(newState);// 에디터 상태 업데이트
@@ -37,6 +38,36 @@ const WritePage = () => {
     border: '1px solid #ddd',
   };
 
+
+   // 파일 선택 핸들러
+   const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  // 파일 업로드 핸들러
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      alert('파일을 선택해주세요.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+
+    try {
+      const response = await axios.post('http://localhost:8081/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('File Uploaded Successfully:', response.data);
+      // 업로드 후 작업 (예: 업로드된 이미지 URL을 상태에 저장)
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
+  };
+
+  
   // 로그인된 사용자의 정보를 가져오는 함수
   const getLoggedUser = async () => {
   try {
@@ -164,6 +195,12 @@ function uploadImageCallBack(file) {
                   </tbody>
                 </table>
               </div>
+
+              <div>
+                <input type="file" onChange={handleFileChange} />
+               
+              </div>
+              
               <div className="btns mt-4" style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
                 <button className="btn btn-primary" type="submit">작성</button>
                 <button type="button" className="btn btn-outline btn-sm" onClick={() => history.goBack()}>뒤로가기</button>
