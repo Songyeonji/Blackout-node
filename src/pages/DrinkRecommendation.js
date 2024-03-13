@@ -297,7 +297,7 @@ const handleAskButtonClick = async () => {
           </Grid>
 
 
-          <Grid item xs={8}>
+          <Grid xs={8}>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <TextField
                 label="Ask a question about drinks"
@@ -312,9 +312,10 @@ const handleAskButtonClick = async () => {
               </Button>
               {gptResponse && <div style={{ marginTop: "10px" }}>{gptResponse}</div>}
             </div>
+            <BlogSearchComponent selectedDrink={selectedDrink} />
           </Grid>     
 
-          <BlogSearchComponent selectedDrink={selectedDrink} />
+   
 
         </Grid>
         

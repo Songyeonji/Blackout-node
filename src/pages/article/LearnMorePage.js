@@ -73,8 +73,8 @@ function LearnMorePage() {
   const [currentPage, setCurrentPage] = useState({1: 1, 2: 1, 3: 1}); // 각 게시판 별 현재 페이지 상태
   const [totalPages, setTotalPages] = useState({1: 0, 2: 0, 3: 0}); // 각 게시판 별 총 페이지 수
   const [loading, setLoading] = useState(true);
-  const [searchKeyword, setSearchKeyword] = useState('');//검색창 키워드 찾기를 위한 상태변수
-  const [searchType, setSearchType] = useState('title');//검색창 제목 찾기를 위한 상태변수
+  const [searchKeyword, setSearchKeyword] = useState('');//검색창  찾기를 위한 상태변수
+  const [searchType, setSearchType] = useState('title');//검색창  찾기를 위한 상태변수
 
 
 
@@ -108,6 +108,7 @@ function LearnMorePage() {
     setCurrentPage(prev => ({ ...prev, [boardId]: newPage }));
     fetchArticles(boardId, newPage);
   };
+  
 // handleLike 함수 정의
 const handleLike = async (articleId, boardId) => {
 
@@ -204,56 +205,57 @@ const PaginationControls = ({ boardId, currentPage, totalPages, onPageChange }) 
           </Tabs>
         </Box>
         {/* 여기서부터 검색 바 */}
-        <Box sx={{ my: 2, mx: 'auto', width: '80%' }}>
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            fetchArticles(value + 1, currentPage[value + 1]); // Re-fetch articles with the search parameters
-          }}>
-            <select
-              value={searchType}
-              onChange={(e) => setSearchType(e.target.value)}
-              style={{ marginRight: '8px' }}
-            >
-              <option value="title">제목</option>
-              <option value="body">내용</option>
-              <option value="title,body">제목 + 내용</option>
-            </select>
-            <input
-              type="text"
-              placeholder="검색어를 입력해주세요"
-              value={searchKeyword}
-              onChange={(e) => setSearchKeyword(e.target.value)}
-              style={{ marginRight: '8px' }}
-            />
-            <button type="submit">검색</button>
-          </form>
-        </Box>
+        <Box sx={{ my: 2, mx: 'auto', width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {/* 검색 관련 요소들을 담는 Box */}
+            <Box sx={{ width: '80%' }}>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                fetchArticles(value + 1, currentPage[value + 1]); // Re-fetch articles with the search parameters
+              }}>
+                <select
+                  value={searchType}
+                  onChange={(e) => setSearchType(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                >
+                  <option value="title">제목</option>
+                  <option value="body">내용</option>
+                  <option value="title,body">제목 + 내용</option>
+                </select>
+                <input
+                  type="text"
+                  placeholder="검색어를 입력해주세요"
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                />
+                <button type="submit">검색</button>
+              </form>
+            </Box>
+
+            {/* 글쓰기 버튼을 담는 Box */}
+            <Box>
+              <Link to="/write-page" style={{ textDecoration: "none" }}>
+                <Button variant="contained" color="primary">
+                  글쓰기
+                </Button>
+              </Link>
+            </Box>
+          </Box>
 
         <div>
         <CustomTabPanel value={value} index={0}>
-            <Grid container spacing={2}>
-              {filterArticlesByBoardId(1).map((article, index) => (
-                <Grid item xs={12} sm={6} key={index}>
-                <RecipeReviewCard
-                  article={article}
-                  handleLike={() => handleLike(article.id, value + 1)} // Assuming boardId matches tab value + 1
-                />
-                  <Link to={`/detail/${article.id}`} style={{ textDecoration: "none" }}>
-                            {/* Tooltip with IconButton for navigation */}
-                    <Tooltip title="자세히 보기">
-                      <IconButton
-                        sx={{ position: 'absolute', bottom: 16, right: 16 }}
-                        color="primary"
-                      >
-                        <AddIcon />
-                      </IconButton>
-                    </Tooltip>
-
-                  </Link>
-                </Grid>
-                
-              ))}
-            </Grid>
+         <Grid container spacing={2}>
+            {filterArticlesByBoardId(1).map((article, index) => (
+              <Grid item xs={12} sm={6} key={index} style={{ position: 'relative' }}>
+                <RecipeReviewCard article={article} handleLike={() => handleLike(article.id, value + 1)} />
+                <Link to={`/detail/${article.id}`} style={{ position: 'absolute', top: '8px', right: '8px', margin: '8px' }}>
+                  <IconButton aria-label="add to favorites" style={{ color: theme.palette.primary.main }}>
+                    <AddIcon />
+                  </IconButton>
+                </Link>
+              </Grid>
+            ))}
+          </Grid>
             <PaginationControls
               boardId={1}
               currentPage={currentPage[1]}
@@ -263,21 +265,18 @@ const PaginationControls = ({ boardId, currentPage, totalPages, onPageChange }) 
           </CustomTabPanel>
         
           <CustomTabPanel value={value} index={1}>
-            <Grid container spacing={2}>
-            {filterArticlesByBoardId(value + 1).map((article, index) => (
-              <Grid item xs={12} sm={6} key={index}>
-                <RecipeReviewCard 
-                  article={article} 
-                  handleLike={() => handleLike(article.id, value + 1)} // Notice how boardId is passed here
-                />
-                  <Link to={`/detail/${article.id}`} style={{ textDecoration: "none" }}>
-                    <Button variant="contained" color="primary" style={{ marginTop: "16px" }}>
-                      자세히 보기
-                    </Button>
-                  </Link>
-                </Grid>
-              ))}
-            </Grid>
+          <Grid container spacing={2}>
+            {filterArticlesByBoardId(2).map((article, index) => (
+              <Grid item xs={12} sm={6} key={index} style={{ position: 'relative' }}>
+                <RecipeReviewCard article={article} handleLike={() => handleLike(article.id, value + 1)} />
+                <Link to={`/detail/${article.id}`} style={{ position: 'absolute', top: '8px', right: '8px', margin: '8px' }}>
+                  <IconButton aria-label="add to favorites" style={{ color: theme.palette.primary.main }}>
+                    <AddIcon />
+                  </IconButton>
+                </Link>
+              </Grid>
+            ))}
+          </Grid>
             <PaginationControls
               boardId={2}
               currentPage={currentPage[2]}
@@ -286,23 +285,18 @@ const PaginationControls = ({ boardId, currentPage, totalPages, onPageChange }) 
             />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
-            <Grid container spacing={2}>
-              {filterArticlesByBoardId(3).map((article, index) => (
-                <Grid item xs={12} sm={6} key={index}>
-                  <RecipeReviewCard
-                    article={article}
-                    handleLike={() => handleLike(article.id, value + 1)} // Assuming boardId matches tab value + 1
-                  />
-                  
-
-                  <Link to={`/detail/${article.id}`} style={{ textDecoration: "none" }}>
-                    <Button variant="contained" color="primary" style={{ marginTop: "16px" }}>
-                      자세히 보기
-                    </Button>
-                  </Link>
-                </Grid>
-              ))}
-            </Grid>
+          <Grid container spacing={2}>
+            {filterArticlesByBoardId(3).map((article, index) => (
+              <Grid item xs={12} sm={6} key={index} style={{ position: 'relative' }}>
+                <RecipeReviewCard article={article} handleLike={() => handleLike(article.id, value + 1)} />
+                <Link to={`/detail/${article.id}`} style={{ position: 'absolute', top: '8px', right: '8px', margin: '8px' }}>
+                  <IconButton aria-label="add to favorites" style={{ color: theme.palette.primary.main }}>
+                    <AddIcon />
+                  </IconButton>
+                </Link>
+              </Grid>
+            ))}
+          </Grid>
             <PaginationControls
               boardId={3}
               currentPage={currentPage[3]}
@@ -312,12 +306,7 @@ const PaginationControls = ({ boardId, currentPage, totalPages, onPageChange }) 
           </CustomTabPanel>
         </div>
         
-         {/* 글쓰기 버튼 */}
-        <Link to="/write-page" style={{ textDecoration: "none" }}>
-          <Button variant="contained" color="primary" style={{ marginTop: "16px" }}>
-            글쓰기
-          </Button>
-        </Link>
+        
 
       </div>
     </ThemeProvider>
