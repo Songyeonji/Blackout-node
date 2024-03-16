@@ -91,6 +91,15 @@ const WritePage = () => {
     const contentState = editorState.getCurrentContent();
     const bodyText = contentState.getPlainText(); // 텍스트 내용 추출
     const rawContent = convertToRaw(contentState); // 에디터 내용을 원시 형식으로 변환
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('body', bodyText);
+    formData.append('boardId', boardId);
+    formData.append('memberId', userId.id);
+    if (selectedFile) {
+      formData.append('img', selectedFile); // Include the file
+    }
+  
     const imageUrls = rawContent.blocks
       .filter(block => block.type === 'atomic') // 이미지 블록 필터링
       .map(block => block.data.src);
@@ -100,21 +109,36 @@ const WritePage = () => {
       console.log("imageUrls:", imageUrls);
       console.log("boardId:", boardId);
       console.log("memberId:", sessionStorage.getItem('userId'));
-
+      console.log("img:", selectedFile);
+      
       try {
-        await axios.post('http://localhost:8081/usr/article/doWrite', {
-          title,
-          body: bodyText,
-          imageUrls,
-          boardId,
-          memberId: userId.id, // 여기서 userId를 사용
-        }, {
-          withCredentials: true//브라우저가 다른 도메인으로의 HTTP 요청 시 쿠키 및 인증 정보를 함께 전송할 수 있도록 허용하는 옵션
+        const response = await axios.post('http://localhost:8081/usr/article/doWrite', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          withCredentials: true,
         });
-        history.goBack();
+    
+        // Optionally, handle the response, such as redirecting the user or showing a success message
+        console.log('Article created successfully:', response.data);
+        history.push('/wherever-you-want-to-redirect');
       } catch (error) {
         console.error('Error submitting:', error);
       }
+      // try {
+      //   await axios.post('http://localhost:8081/usr/article/doWrite', {
+      //     title,
+      //     body: bodyText,
+      //     imageUrls,
+      //     boardId,
+      //     memberId: userId.id, // 여기서 userId를 사용
+      //   }, {
+      //     withCredentials: true//브라우저가 다른 도메인으로의 HTTP 요청 시 쿠키 및 인증 정보를 함께 전송할 수 있도록 허용하는 옵션
+      //   });
+      //   history.goBack();
+      // } catch (error) {
+      //   console.error('Error submitting:', error);
+      // }
     }
 
 // 이미지 업로드 콜백 함수
