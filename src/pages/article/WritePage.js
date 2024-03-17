@@ -127,7 +127,7 @@ const WritePage = () => {
       }
       // try {
       //   await axios.post('http://localhost:8081/usr/article/doWrite', {
-      //     title,
+      //     title
       //     body: bodyText,
       //     imageUrls,
       //     boardId,
