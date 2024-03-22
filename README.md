@@ -79,11 +79,12 @@ MySQL에서의 connection pool 사용은 mysql.createPool을 통해 구현되며
 ------------------------------------------
 - **이미지 파일 업로드**: image 파일 라이브러리를 활용해 게시물 이미지 활용 능력 향상
 - **지도 표시 기능**: 각 컨텐츠 위치를 지도에 표시하여 사용자 경험 향상
-- **회원 , 비회원 등급 표시*: 사용자의 프로그래스 바 형태를 활용하여 등급표시
+- **회원 , 비회원 등급 표시**: 사용자의 프로그래스 바 형태를 활용하여 등급표시
 - **사용자 댓글 및 리뷰 기능**: 커뮤니티 활성화를 댓글 및 리뷰 기능 도입
 - **맞춤형 알림 서비스**: 사용자의 관심사에 맞는 정보를 제공하기 위한 알람 기능 구현
 
 <br><br>
 ### 시연 영상
 ------------------------------------------
-(https://www.youtube.com/watch?v=QCXTLq9ZMbY)https://www.youtube.com/watch?v=QCXTLq9ZMbY)
+[![KakaoTalk_20240322_153417640](https://github.com/Songyeonji/Blackout-node/assets/104824428/37e007ec-ce07-4fff-9e0f-c3513ea6a75c)](https://www.youtube.com/watch?v=QCXTLq9ZMbY&t=3s)
+
