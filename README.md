@@ -28,7 +28,7 @@
     
 ---
     
-**문제. mysql-node / mysql 과부화 오류**
+**문제. mysql-node / mysql 과부하 오류**
     
 클라이언트가 데이터베이스에 접근하기 위해 필요한 connection 생성은 비용이 많이 드는 작업입니다. 이를 해결하기 위해, connection pool을 사용하여 여러 개의 connection을 미리 생성하고 필요할 때 사용한 후 반환하는 기법을 도입했습니다. 이 방법은 매 연결마다 새로운 connection을 만들고 종료시키는 비용을 줄이고, 데이터베이스 접근 시간을 단축시키며, 과부하를 방지하는 효과가 있습니다. 특히, MySQL과 같은 무료 DBMS에서 connection pool을 사용하면 auto release 기능을 통해 퍼포먼스가 극대화됩니다.
 
